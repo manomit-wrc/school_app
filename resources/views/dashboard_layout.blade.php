@@ -8,7 +8,7 @@
 <head>
 	<meta charset="utf-8" />
   
-	<title>CryptShares Admin | Dashboard</title>
+	<title>LMS Admin | Dashboard</title>
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
 	<meta content="" name="description" />
 	<meta content="" name="author" />
@@ -133,401 +133,50 @@
   			Dashboard.init();
         TableManageDefault.init();
 
-        $('.open_join_group_modal').on('click', function(){
-            var group_id = $(this).attr('value');
-            var group_type = $(this).attr('group_type');
-            
-            $('#append_group_id').val(group_id);
-            $('#append_group_id').attr('group_type',group_type);
-        });
 
-        $('#join_group_form').validate({
-            rules:{
-                notes:{
-                    required: true
-                }
-            },
-            messages:{
-                notes: {
-                    required: "<font color='red'>Please Enter Notes</font>"
-                }
-            }
-        });
-
-        $('#join_group_submit').on('click', function(){
-            var valid = $('#join_group_form').valid();
-            if(valid){
-                $('#join_group_submit').prop('disabled', false);
-
-                var group_id = $("#append_group_id").val();
-                var group_type = $("#append_group_id").attr('group_type');
-                var notes = $('#notes').val();
-
-                $.ajax({
-                    type: "POST",
-                    url: '/join_group_request_sent',
-                    data:{
-                        group_id: group_id,
-                        group_type: group_type,
-                        notes: notes,
-                        _token: "{{ csrf_token() }}"
-                    },
-                    success: function(data){
-                        if(data == 1){
-                          $('#join_group_submit').prop('disabled', true);
-
-                          $.confirm({
-                              title: 'Confirmation!',
-                              content: 'Applied successfully',
-                              buttons: {
-                                  OK: function () {
-                                    window.location.reload();
-                                  }
-                              }
-                          });
-                        }
-                    }
-
-                });
-            }
-        });
-
-        $('.open_leave_group_modal').on('click', function(){
-            var group_id = $(this).attr('value');
-            var group_type = $(this).attr('group_type');
-            
-            $('#append_group_id').val(group_id);
-            $('#append_group_id').attr('group_type',group_type);
-        });
-
-        $('#leave_group_form').validate({
-            rules:{
-                leave_notes:{
-                    required: true
-                }
-            },
-            messages:{
-                leave_notes: {
-                    required: "<font color='red'>Please Enter Notes</font>"
-                }
-            }
-        });
-
-        $('#leave_group_submit').on('click', function(){
-          var valid = $('#leave_group_form').valid();
-          if(valid){
-            $('#leave_group_submit').prop('disabled', false);
-
-            var group_id = $("#append_group_id").val();
-            var group_type = $("#append_group_id").attr('group_type');
-            var notes = $('#leave_notes').val();
-            // alert (group_id);
-            // return false;
-
-            $.ajax({
-              type: 'POST',
-              url: '/group/group-leave',
-              data:{
-                group_id:group_id,
-                notes:notes,
-                _token: "{{ csrf_token() }}"
-              },
-              success: function (data){
-                if(data == 1){
-                  $('#leave_group_submit').prop('disabled', true);
-
-                  $.confirm({
-                      title: 'Confirmation!',
-                      content: 'You have successfully leaved from this group.',
-                      buttons: {
-                          OK: function () {
-                            window.location.href='/group';
-                          }
-                      }
-                  });
-                }
-              }
-            });
-
-          }
-
-        });
-
-
-        $('#quick_post_form').validate({
+        $('#edit_profile_form').validate({
           rules:{
-            post_title:{
-              required: true
+            f_name:{
+              required:true
             },
-            quick_post:{
-              required: true
+            l_name:{
+              required:true
+            },
+            mobile:{
+              required:true,
+              number:true,
+              maxlength:10,
+              minlength:10
+            },
+            address:{
+              required:true
             }
           },
           messages:{
-            post_title:{
-              required: "<font color='red'>Post title can't be left blank.</font>"
+            f_name:{
+              required:"<font color='red'>First name can't be left blank.</font>"
             },
-            quick_post:{
-              required: "<font color='red'>Quick post can't be left blank.</font>"
+            l_name:{
+              required:"<font color='red'>Last name can't be left blank.</font>"
+            },
+            mobile:{
+              required:"<font color='red'>Mobile number can't be left blank.</font>",
+              number:"<font color='red'>Please enter valid mobile number.</font>",
+              maxlength:"<font color='red'>Mobile number should be 10 digit.</font>",
+              minlength:"<font color='red'>Mobile number should be 10 digit.</font>"
+            },
+            address:{
+              required:"<font color='red'>Address can't be left blank.</font>"
             }
           }
         });
 
-        $('#quick_post_form_submit').on('click', function(){
-          var valid = $('#quick_post_form').valid();
+        $('#edit_profile_submit').on('click',function(){
+          var valid = $('#edit_profile_form').valid();
           if(valid){
-            $('#quick_post_form').submit();
+            $('#edit_profile_form').submit();
           }
         });
-
-        $('#feedback_form').validate({
-          rules:{
-            feedback_msg:{
-              required: true
-            }
-          },
-          messages:{
-            feedback_msg:{
-              required: "<font color='red'>Message can't be left blank.<br /><br /></font>"
-            }
-          }
-        });
-
-        $('#feedback_form_submit').on('click', function(){
-          var valid = $('#feedback_form').valid();
-          if(valid){
-            $('#feedback_form').submit();
-          }
-        });
-
-        $('.pinned_post').on('click',function(){
-          
-          var user_id = $(this).attr('user_id');
-
-          $.ajax({
-            type: "POST",
-            url: '/group/pinned-post',
-            data:{
-              user_id:user_id,
-              _token: '{{csrf_token()}}'
-            },
-            success: function(data){
-              if(data == 1){
-
-                $.confirm({
-                    title: 'Confirmation!',
-                    content: 'Pinned post successfully',
-                    buttons: {
-                        OK: function () {
-                          window.location.reload();
-                        }
-                    }
-                });
-              }
-            }
-          });
-        });
-
-        $('.unpinned').on('click',function (){
-          var user_id = $(this).attr('user_id');
-
-          $.ajax({
-            type: "POST",
-            url: '/group/unpinned-post',
-            data:{
-              user_id:user_id,
-              _token: '{{csrf_token()}}'
-            },
-            success: function(data){
-              if(data == 1){
-
-                $.confirm({
-                    title: 'Confirmation!',
-                    content: 'Post unpinned successfully',
-                    buttons: {
-                        OK: function () {
-                          window.location.reload();
-                        }
-                    }
-                });
-              }
-            }
-          });
-        });
-
-        $('.edit_post').on('click', function(){
-          var post_id = $(this).attr('post_id');
-          $.ajax({
-            type: "POST",
-            url: '/group/edit-post',
-            data:{
-              post_id:post_id,
-              _token: '{{csrf_token()}}'
-            },
-            success: function(response){
-              $('#post_title').html(response.fetch_details_of_group_post[0].post_title);
-              $('#quick_post').html(response.fetch_details_of_group_post[0].post);
-
-              var res = response.fetch_details_of_group_post[0].post_image;
-              var new_url =  '{{url('upload/quick_post/resize')}}/'+res;
-              var url_all = '<img src="'+new_url+'"/>';
-              $('#quick_post_image_append').html(url_all);
-
-              if (response.fetch_details_of_group_post[0].sticky_to_top == 1) {
-                //$('#sticky_to_top').checked = true;
-                $('#sticky_to_top').prop("checked", "checked");
-              } else {
-                $('#sticky_to_top').prop("checked", "");
-              }
-
-              $('#edit_post_id').val(response.fetch_details_of_group_post[0].id)
-
-            }
-          });
-        });
-
-        $('.delete_post').on('click',function(){
-          var post_id = $(this).attr('post_id');
-          
-          $.ajax({
-            type: "POST",
-            url: '/group/delete-post',
-            data:{
-              post_id:post_id,
-              _token: '{{csrf_token()}}'
-            },
-            success: function(data){
-              if(data == 1){
-
-                $.confirm({
-                    title: 'Confirmation!',
-                    content: 'Post deleted successfully',
-                    buttons: {
-                        OK: function () {
-                          window.location.reload();
-                        }
-                    }
-                });
-              }
-            }
-          });
-        });
-
-        $('.group_invitation_modal').on('click', function(){
-          var group_id = $(this).attr('group_id');
-
-          $('.send_group_id').val(group_id);
-
-          $.ajax({
-            type: "POST",
-            url: '/group/check-user',
-            data:{
-              group_id: group_id,
-              _token: "{{ csrf_token() }}"
-            },
-            success:function(data) {
-              $('#send_group_invitation').empty();
-              for(var i=0; i<data.user_list.length; i++) {
-                $("#send_group_invitation").append('<option value="'+data.user_list[i].user_id+'">'+data.user_list[i].first_name+" "+data.user_list[i].last_name+'</option>');
-              }
-              $('#send_group_invitation').multiselect('destroy');
-              $('#send_group_invitation').multiselect({
-                includeSelectAllOption: false,
-                enableFiltering: true,
-                numberDisplayed: 4,
-                enableCaseInsensitiveFiltering: true,
-                maxHeight: 300
-            });
-              $("#modal_for_send_invitation").modal('show');
-            }
-          });
-        });
-
-        
-
-        $('#group_invitation_form').validate({
-          rules:{
-            'send_group_invitation[]':{
-              required: true
-            },
-            send_group_invitation_note:{
-              required: true
-            }
-          },
-          messages:{
-            'send_group_invitation[]':{
-              required: "<font color='red'>Please select user."
-            },
-            send_group_invitation_note:{
-              required: "<font color='red'>Note can't be left blank."
-            }
-          }
-        });
-
-        $('#send_invitation').on('click', function(){
-          var valid = $('#group_invitation_form').valid();
-          var group_id = $('.send_group_id').val();
-
-          var user_ids = $('#send_group_invitation').val();
-          var notes = $('#send_group_invitation_note').val();
-
-          if(valid){
-            if(user_ids == null){
-              $.alert({
-                title: 'Confirmation!',
-                  content: 'Please select atleast One user.',
-                  buttons: {
-                      OK: function () {
-                      }
-                  }
-              });
-            }else{
-              $('.btn').prop('disabled', true);
-
-              $.ajax({
-                type: "POST",
-                url: '/group/send_invitation/',
-                data:{
-                  user_ids:user_ids,
-                  group_id:group_id,
-                  notes:notes,
-                  _token: "{{ csrf_token() }}"
-                },
-                success: function(data){
-                  if(data == 1){
-                    $('.btn').prop('disabled', false);
-                    //$('#modal_for_send_invitation').modal('toggle');
-
-                    jconfirm({
-                        title: 'Confirmation!',
-                        content: 'Invitation sent successfully',
-                        buttons: {
-                            OK: function () {
-                              window.location.reload();
-                            }
-                        }
-                    });
-                  }
-                }
-              });
-            }
-            
-          }
-
-        });
-
-        //for auto refresh Transaction Lists div
-        // $('#data-table').DataTable( {
-        //     stateSave: true
-        // } );
-        var URL = '<?php echo "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];?>';
-        setInterval(function()
-        {
-            $('#data-table_myTransaction').load(document.URL +  ' #data-table_myTransaction');
-            $('#accordion').load(document.URL +  ' #accordion');
-
-        }, 30000);
-        //end
             
 		});
 	</script>

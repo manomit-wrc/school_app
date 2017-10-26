@@ -3,7 +3,7 @@
 	<div class="container-fluid">
 		<!-- begin mobile sidebar expand / collapse button -->
 		<div class="navbar-header">
-			<a href="/dashboard" class="navbar-brand"><img src="{{url('/storage/frontend/assets/img/logo.png')}}" alt="CryptShares" width="200" /></a>
+			<a href="/dashboard" class="navbar-brand"><img src="" alt="LMS" width="200" /></a>
 			<button type="button" class="navbar-toggle" data-click="sidebar-toggled">
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
@@ -26,7 +26,7 @@
 				<ul class="dropdown-menu animated fadeInLeft">
 					<li class="arrow"></li>
 					<li><a href="/profile-view">Profile</a></li>
-					<li><a href="/change_pass">Change Password</a></li>
+					<li><a href="/change-password">Change Password</a></li>
 					<li class="divider"></li>
 					<li><a href="/logout">Log Out</a></li>
 				</ul>
