@@ -24,4 +24,5 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::post('/change-password-submit', 'DashboardController@change_password_submit');
 	Route::get('/category','CategoryController@index');
 	Route::get('/category/add', 'CategoryController@add');
+	Route::post('/category/save', 'CategoryController@save');
 });
