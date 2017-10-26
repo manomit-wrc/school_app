@@ -7,7 +7,7 @@
 <!-- Mirrored from seantheme.com/color-admin-v3.0/admin/html/index_v2.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 15 Sep 2017 12:28:50 GMT -->
 <head>
     <meta charset="utf-8" />
-    <title>Color Admin | Login Page</title>
+    <title>LMS | Login Page</title>
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
     <meta content="" name="description" />
     <meta content="" name="author" />
@@ -54,7 +54,7 @@
         <div class="theme-panel">
             <a href="javascript:;" data-click="theme-panel-expand" class="theme-collapse-btn"><i class="fa fa-cog"></i></a>
             <div class="theme-panel-content">
-                <h5 class="m-t-0">Color Theme</h5>
+                <h5 class="m-t-0">Learning Management System</h5>
                 <ul class="theme-list clearfix">
                     <li class="active"><a href="javascript:;" class="bg-green" data-theme="default" data-click="theme-selector" data-toggle="tooltip" data-trigger="hover" data-container="body" data-title="Default">&nbsp;</a></li>
                     <li><a href="javascript:;" class="bg-red" data-theme="red" data-click="theme-selector" data-toggle="tooltip" data-trigger="hover" data-container="body" data-title="Red">&nbsp;</a></li>

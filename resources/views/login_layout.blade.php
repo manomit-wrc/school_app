@@ -5,11 +5,8 @@
             <!-- begin brand -->
             <div class="login-header">
                 <div class="brand">
-                    <span class="logo"></span> Color Admin
-                    <small>responsive bootstrap 3 admin template</small>
-                </div>
-                <div class="icon">
-                    <i class="fa fa-sign-in"></i>
+                    Learning Management System
+                    
                 </div>
             </div>
 
