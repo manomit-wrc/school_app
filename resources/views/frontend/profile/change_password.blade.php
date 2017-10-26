@@ -31,31 +31,19 @@
                                 <div class="form-group">
                                     <label class="col-md-3 control-label">Old Password</label>
                                     <div class="col-md-9">
-                                        <input type="text" class="form-control" placeholder="First Name" name="f_name" value="{{ Auth::guard('admin')->user()->first_name }}" />
+                                        <input type="Password" class="form-control" placeholder="Old Password" name="old_password" />
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-md-3 control-label">New Password</label>
                                     <div class="col-md-9">
-                                        <input type="text" class="form-control" placeholder="Last Name" name="l_name" value="{{ Auth::guard('admin')->user()->last_name }}" />
+                                        <input type="Password" class="form-control" placeholder="New Password" name="new_password" />
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-md-3 control-label">Confirm Password</label>
                                     <div class="col-md-9">
-                                        <input type="text" class="form-control" placeholder="Mobile" name="mobile" value="{{ Auth::guard('admin')->user()->mobile }}" />
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-3 control-label">Email</label>
-                                    <div class="col-md-9">
-                                        <input type="text" class="form-control" placeholder="Email" name="email" value="{{ Auth::guard('admin')->user()->email }}" disabled />
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-3 control-label">Address</label>
-                                    <div class="col-md-9">
-                                        <textarea class="form-control" placeholder="Address" rows="5" name="address">{{ Auth::guard('admin')->user()->address }}</textarea>
+                                        <input type="Password" class="form-control" placeholder="Confirm Password" name="confirm_password" />
                                     </div>
                                 </div>
                                 
