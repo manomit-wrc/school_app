@@ -177,6 +177,10 @@
             $('#edit_profile_form').submit();
           }
         });
+
+        setTimeout(function() {
+          $("#success-alert").hide('blind', {}, 500)
+        }, 2000);
             
 		});
 	</script>

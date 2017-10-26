@@ -20,4 +20,8 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::get('/profile-view', 'DashboardController@view_profile');
 	Route::post('/profile-submit', 'DashboardController@profile_submit');
 	Route::get('/change-password', 'DashboardController@change_password_view');
+	Route::get('/logout', 'DashboardController@logout');
+	Route::post('/change-password-submit', 'DashboardController@change_password_submit');
+	Route::get('/category','CategoryController@index');
+	Route::get('/category/add', 'CategoryController@add');
 });

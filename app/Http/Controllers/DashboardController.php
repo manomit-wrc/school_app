@@ -56,7 +56,7 @@ class DashboardController extends Controller
             $fileName = $request->exiting_profile_image;
         }
 
-        $edit = User::find('1');
+        $edit = User::find(Auth::guard('admin')->user()->id);
         $edit->first_name = $f_name;
         $edit->last_name = $l_name;
         $edit->mobile = $mobile;
@@ -72,4 +72,35 @@ class DashboardController extends Controller
  	public function change_password_view(){
  		return view('frontend.profile.change_password');
  	}
+
+    public function logout(Request $request) {
+        Auth::guard('admin')->logout();
+        return redirect('/');
+    }
+
+    public function change_password_submit(Request $request) {
+        
+        Validator::make($request->all(),[
+            'old_password' => 'required|password_exists:' . Auth::guard('admin')->user()->password,
+            'new_password' => 'required|different:old_password|min:6|max:32',
+            'confirm_password' => 'required|same:new_password'
+        ],[
+            'old_password.required' => "Please enter old password",
+            'old_password.password_exists' => "Old password doesn't matched",
+            'new_password.required' => "Please enter new password",
+            'new_password.different' => "New password can't be same with old password",
+            'new_password.min' => 'New password must have minimum 6 characters',
+            'new_password.max' => 'New password must have maximum 32 characters',
+            'confirm_password.required' => "Please enter confirm password",
+            'confirm_password.same' => "Confirm password must be same with new password"
+        ])->validate();
+
+        $edit = User::find(Auth::guard('admin')->user()->id);
+        $edit->password = bcrypt($request->new_password);
+        if($edit->save()) {
+            $request->session()->flash("message", "Password change successfully");
+            return redirect('/change-password');
+        }
+
+    }
 }
