@@ -25,4 +25,11 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::get('/category','CategoryController@index');
 	Route::get('/category/add', 'CategoryController@add');
 	Route::post('/category/save', 'CategoryController@save');
+
+	Route::get('/course', 'CourseController@index');
+	Route::get('/course/add', 'CourseController@add');
+	Route::post('/course/save', 'CourseController@course_save');
+	Route::get('/course/edit/{course_id}', 'CourseController@course_edit');
+	Route::post('/course/edit-submit/{course_id}', 'CourseController@course_edit_submit');
+	Route::get('/course/delete/{course_id}', 'CourseController@course_delete');
 });

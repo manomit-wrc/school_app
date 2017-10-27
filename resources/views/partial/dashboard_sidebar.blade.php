@@ -37,6 +37,12 @@
 			    </a>
 			</li>
 
+			<li class="has-sub {{ (Request::segment(1) === "course" ? 'active' : '') }}">
+				<a href="/course">
+				    <span>Course</span>
+			    </a>
+			</li>
+
 	        <!-- begin sidebar minify button -->
 			<li><a href="javascript:;" class="sidebar-minify-btn" data-click="sidebar-minify"><i class="fa fa-angle-double-left"></i></a></li>
 	        <!-- end sidebar minify button -->

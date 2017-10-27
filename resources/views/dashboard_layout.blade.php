@@ -55,6 +55,10 @@
   {!! Html::script('storage/admin_dashboard/assets/plugins/flot/jquery.flot.pie.min.js') !!}
 
   {!! Html::script('storage/admin_dashboard/assets/js/jquery.waterwheelCarousel.js') !!}
+
+  {!! Html::script('storage/admin_dashboard/assets/ckeditor/resources/libs/ckeditor/ckeditor.js') !!}
+  {!! Html::script('storage/admin_dashboard/assets/ckeditor/resources/libs/ckeditor/adapters/jquery.js') !!}
+  {!! Html::script('storage/admin_dashboard/assets/ckeditor/resources/js/index.js') !!}
   
 	<!-- ================== END BASE JS ================== -->
 </head>
@@ -132,6 +136,11 @@
   			App.init();
   			Dashboard.init();
         TableManageDefault.init();
+
+        CKEDITOR.replace( 'course_description', {
+            height: 260,
+            width: 880,
+        } );
 
 
         $('#edit_profile_form').validate({
