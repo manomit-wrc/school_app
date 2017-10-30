@@ -17,8 +17,14 @@ class CourseController extends Controller
     }
 
     public function add () {
-    	$all_categories = Category::where('status','1')->get()->toArray();
-    	return view('frontend.course.add')->with('all_categories',$all_categories);
+    	$category = new \App\Category();
+        $categories = $category->tree();
+        $category_array = array();
+        foreach ($categories->toArray() as  $value) {
+           $name = $category->generate_dropdown($value, $value['name']);
+           $category_array[] = array('id'=>$value['id'], 'name' => $name);
+        }
+    	return view('frontend.course.add')->with('all_categories',$category_array);
     }
 
     public function course_save (Request $request) {
@@ -86,14 +92,20 @@ class CourseController extends Controller
 
     public function course_edit ($course_id) {
     	$fetch_course = Course::with('category_details')->find($course_id)->toArray();
-    	$all_categories = Category::where('status','1')->get()->toArray();
+    	$category = new \App\Category();
+        $categories = $category->tree();
+        $category_array = array();
+        foreach ($categories->toArray() as  $value) {
+           $name = $category->generate_dropdown($value, $value['name']);
+           $category_array[] = array('id'=>$value['id'], 'name' => $name);
+        }
 
     	$path = $fetch_course['description_file'];
 		$file_extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
 
     	if(count($fetch_course) > 0){
     		return view('frontend.course.edit')->with('fetch_course',$fetch_course)
-    											->with('all_categories',$all_categories)
+    											->with('all_categories',$category_array)
     											->with('file_extension',$file_extension);
     	}else{
     		return redirect('/course');
