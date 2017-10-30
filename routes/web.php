@@ -25,6 +25,9 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::get('/category','CategoryController@index');
 	Route::get('/category/add', 'CategoryController@add');
 	Route::post('/category/save', 'CategoryController@save');
+	Route::get('/category/edit/{id}', 'CategoryController@edit');
+	Route::post('/category/update/{id}', 'CategoryController@update');
+	Route::get('/category/delete/{id}', 'CategoryController@delete');
 
 	Route::get('/course', 'CourseController@index');
 	Route::get('/course/add', 'CourseController@add');

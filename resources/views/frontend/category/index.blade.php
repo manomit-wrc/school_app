@@ -53,9 +53,9 @@
                                     <td>{{ $value['name'] }}</td>
                                     <td>{{ ($value['status'] == '1' ? 'Active' : 'Inactive') }}</td>
                                     <td>
-										<a href="/categroy/edit/{{ $value['id'] }}" class="btn btn-primary btn-sm m-r-5"><i class="fa fa-pencil"></i></a>
+										<a href="/category/edit/{{ $value['id'] }}" class="btn btn-primary btn-sm m-r-5"><i class="fa fa-pencil"></i></a>
 
-										<a href="/categroy/delete/{{ $value['id'] }}" onclick="return confirm('Do you really want to delete the current record ?');" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
+										<a href="/category/delete/{{ $value['id'] }}" onclick="return confirm('Do you really want to delete the current record ?');" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
                                     </td>
                                 </tr>
                         	@endforeach
