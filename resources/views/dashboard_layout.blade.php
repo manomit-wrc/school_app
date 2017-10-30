@@ -137,11 +137,14 @@
   			Dashboard.init();
         TableManageDefault.init();
 
-        CKEDITOR.replace( 'course_description', {
+        CKEDITOR.replace('course_description', {
             height: 260,
             width: 880,
         } );
-
+        CKEDITOR.replace('sub_description', {
+            height: 260,
+            width: 880,
+        });
 
         $('#edit_profile_form').validate({
           rules:{

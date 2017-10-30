@@ -32,4 +32,8 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::get('/course/edit/{course_id}', 'CourseController@course_edit');
 	Route::post('/course/edit-submit/{course_id}', 'CourseController@course_edit_submit');
 	Route::get('/course/delete/{course_id}', 'CourseController@course_delete');
+
+	Route::get('/subject', 'SubjectController@index');
+	Route::get('/subject/add', 'SubjectController@subject_add');
+	Route::post('/subject/sub-add', 'SubjectController@subject_add_save');
 });
