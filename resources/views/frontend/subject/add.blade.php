@@ -9,7 +9,7 @@
         <!-- begin breadcrumb -->
         <ol class="breadcrumb pull-right">
             <li><a href="/dashboard">Dashboard</a></li>
-            <li><a href="/course">Subject</a></li>
+            <li><a href="/subject">Subject</a></li>
             <li class="active">Add</li>
         </ol>
         <!-- end breadcrumb -->
