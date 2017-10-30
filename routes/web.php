@@ -42,4 +42,8 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::get('/subject/edit/{subject_id}', 'SubjectController@subject_edit');
 	Route::post('/subject/sub-edit/{subject_id}', 'SubjectController@subject_edit_save');
 	Route::get('/subject/delete/{subject_id}', 'SubjectController@subject_delete');
+
+	Route::get('/topic', 'TopicController@index');
+	Route::get('/topic/add', 'TopicController@topic_add');
+	Route::post('/topic/topic-add', 'TopicController@topic_add_save');
 });
