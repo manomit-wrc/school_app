@@ -40,6 +40,8 @@ class SubjectController extends Controller
     		'sub_file.max' => 'Please upload file within 6MB'
     	])->validate();
 
+    	$fileName = '';
+
     	if ($request->hasFile('sub_file')) {
             $file = $request->file('sub_file');
 

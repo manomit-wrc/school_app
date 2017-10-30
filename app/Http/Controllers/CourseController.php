@@ -48,6 +48,7 @@ class CourseController extends Controller
     		'file.mimes' => 'Please upload correct file.',
     		'file.max' => 'Please upload file within 6MB'
     	])->validate();
+        $fileName = '';
 
     	if ($request->hasFile('file')) {
             $file = $request->file('file');
