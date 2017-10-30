@@ -140,12 +140,7 @@
         CKEDITOR.replace('course_description', {
             height: 260,
             width: 880,
-        } );
-        CKEDITOR.replace('sub_description', {
-            height: 260,
-            width: 880,
-            allowedContent: true
-        });  
+        } ); 
 
         $('#edit_profile_form').validate({
           rules:{

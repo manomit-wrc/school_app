@@ -39,4 +39,7 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::get('/subject', 'SubjectController@index');
 	Route::get('/subject/add', 'SubjectController@subject_add');
 	Route::post('/subject/sub-add', 'SubjectController@subject_add_save');
+	Route::get('/subject/edit/{subject_id}', 'SubjectController@subject_edit');
+	Route::post('/subject/sub-edit/{subject_id}', 'SubjectController@subject_edit_save');
+	Route::get('/subject/delete/{subject_id}', 'SubjectController@subject_delete');
 });
