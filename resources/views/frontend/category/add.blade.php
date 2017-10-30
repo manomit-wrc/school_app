@@ -30,8 +30,8 @@
                         <div class="col-md-10 {{ $errors->has('p_id') ? 'has-error' : '' }}">
                             <select name="p_id" id="p_id" class="form-control">
                                 <option value="0">Top</option>
-                                @foreach($categories as $key => $value)
-                                <option value="{{ $key }}">{{ $value }}</option>
+                                @foreach($categories as  $value)
+                                <option value="{{ $value['id'] }}">{{ $value['name'] }}</option>
                                 @endforeach
                             </select>
                         </div>

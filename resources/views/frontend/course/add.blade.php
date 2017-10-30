@@ -44,7 +44,7 @@
                         <div class="col-md-10 {{ $errors->has('course_category') ? 'has-error' : '' }}">
                             <select name="course_category" id="course_category" class="form-control">
                                 <option value="">Select Category</option>
-                                @foreach($all_categories as $key=> $value )
+                                @foreach($all_categories as  $value )
                                     <option value="{{ $value['id'] }}">{{ ucwords($value['name']) }}</option>
                                 @endforeach
                             </select>

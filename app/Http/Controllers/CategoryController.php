@@ -8,13 +8,22 @@ use Validator;
 class CategoryController extends Controller
 {
     public function index() {
-    	$categories = \App\Category::all();
+    	$categories = \App\Category::with('parent')->get()->toArray();
+        
     	return view('frontend.category.index')->with('categories', $categories);
     }
 
     public function add() {
-    	$categories = \App\Category::pluck('name', 'id');
-    	return view('frontend.category.add')->with('categories', $categories);
+    	
+        $category = new \App\Category();
+        $categories = $category->tree();
+        $category_array = array();
+        foreach ($categories->toArray() as  $value) {
+           $name = $category->generate_dropdown($value, $value['name']);
+           $category_array[] = array('id'=>$value['id'], 'name' => $name);
+        }
+
+    	return view('frontend.category.add')->with('categories', $category_array);
     }
 
     public function save(Request $request) {
