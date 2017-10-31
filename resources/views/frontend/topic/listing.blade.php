@@ -44,18 +44,18 @@
                             </tr>
                         </thead>
                         <tbody>
-                           {{--  @foreach($fetch_all_subject as $key => $value)
+                            @foreach($fetch_all_topics as $key => $value)
                                 <tr class="odd gradeX">
                                     <td>{{ ++$key }}</td>
-                                    <td>{{ $value['sub_full_name'] }}</td>
-                                    <td>{{ $value['sub_short_name'] }}</td>
+                                    <td>{{ $value['topic_name'] }}</td>
+                                    <td>{{ $value['subject_details']['sub_full_name'] }}</td>
                                     <td>
-                                        <a title="Edit" href="/subject/edit/{{$value['id']}}" class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i></a>
+                                        <a title="Edit" href="/topic/edit/{{$value['id']}}" class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i></a>
 
-                                        <a title="Delete" href="/subject/delete/{{$value['id']}}" onclick="return confirm('Do you really want to delete the current record ?');" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
+                                        <a title="Delete" href="/topic/delete/{{$value['id']}}" onclick="return confirm('Do you really want to delete the current record ?');" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
                                     </td>
                                 </tr>
-                            @endforeach --}}
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
