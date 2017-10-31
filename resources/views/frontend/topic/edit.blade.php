@@ -86,6 +86,12 @@
                                             <i class="fa fa-file-zip-o" style="font-size:48px;color:red" title="{{ $all_uploaded_file[$key] }}"></i>
                                         </a>
                                     </div>
+                                    @elseif($file_extension == 'mp4')
+                                    <div class="col-md-2" style="margin-bottom: 10px;">
+                                        <a href="{{ url('/upload/topic_file/others/'.$all_uploaded_file[$key]) }}" target="_blank">
+                                            <i class="fa fa-video-camera" aria-hidden="true" style="font-size:48px;color:red" title="{{ $all_uploaded_file[$key] }}"></i>
+                                        </a>
+                                    </div>
                                     @endif
 
                             <?php 
@@ -111,6 +117,7 @@
                         <ul>
                             <li>The maximum file size for uploads is <strong>6 MB</strong>.</li>
                             <li>Only image files (<strong>JPG, JPEG, PNG</strong>) are allowed & <strong>pdf,zip</strong> files are allowed.</li>
+                            <li>Video file must be a <strong>mp4</strong> format.</li>
                         </ul>
                     </div>
             </div>

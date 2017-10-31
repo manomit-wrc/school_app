@@ -84,6 +84,11 @@
                                 </a>
                                 <br>
                                 <br>
+
+                            @elseif($file_extension == 'mp4')
+                                <a href="{{ url('/upload/subject_file/others/'.$subject_details['sub_file']) }}" target="_blank">
+                                    <i class="fa fa-video-camera" aria-hidden="true" style="font-size:48px;color:red" title="{{ $subject_details['sub_file'] }}"></i>
+                                </a>
                             @endif
 
                             <input type="hidden" name="existing_file" id="existing_file" class="form-control" value="{{ $subject_details['sub_file'] }}" style="width: 100px;height: 100px">

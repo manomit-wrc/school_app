@@ -26,7 +26,7 @@ class TopicController extends Controller
     		'topic_name' => 'required|unique:topics,topic_name',
     		'subject_type' => 'required',
     		'topic_description' => 'required',
-     		'topic_file.*' => 'mimetypes:image/jpeg,image/png,image/jpg,application/zip,application/pdf|max:6144'
+     		'topic_file.*' => 'mimetypes:image/jpeg,image/png,image/jpg,video/mp4,application/zip,application/pdf|max:6144'
 
     	],[
     		'topic_name.required' => 'Please enter topic name.',
@@ -114,7 +114,7 @@ class TopicController extends Controller
     		'topic_name' => 'required|unique:topics,topic_name,'.$topic_id,
     		'subject_type' => 'required',
     		'topic_description' => 'required',
-    		'topic_file.*' => 'mimetypes:image/jpeg,image/png,image/jpg,application/zip,application/pdf|max:6144'
+    		'topic_file.*' => 'mimetypes:image/jpeg,image/png,image/jpg,video/mp4,application/zip,application/pdf|max:6144'
 
     	],[
     		'topic_name.required' => 'Please enter topic name.',

@@ -28,7 +28,7 @@ class SubjectController extends Controller
     		'sub_short_name' => 'required|unique:subjects,sub_short_name',
     		'course' => 'required',
     		'sub_description' => 'required',
-    		'sub_file' => 'mimes:jpeg,png,jpg,zip,pdf|max:6144'
+    		'sub_file' => 'mimes:jpeg,png,mp4,jpg,zip,pdf|max:6144'
     	],[
     		'sub_full_name.required' => 'Please enter subject full name.',
     		'sub_full_name.unique' => 'Subject name already taken',
@@ -104,7 +104,7 @@ class SubjectController extends Controller
     		'sub_short_name' => 'required|unique:subjects,sub_short_name,'.$subject_id,
     		'course' => 'required',
     		'sub_description' => 'required',
-    		'sub_file' => 'mimes:jpeg,png,jpg,zip,pdf|max:6144'
+    		'sub_file' => 'mimes:jpeg,png,jpg,mp4,zip,pdf|max:6144'
     	],[
     		'sub_full_name.required' => 'Please enter subject full name.',
     		'sub_full_name.unique' => 'Subject name already taken',

@@ -35,7 +35,7 @@ class CourseController extends Controller
     		'course_description' => 'required',
     		'start_date' => 'required',
     		'end_date' => 'required',
-    		'file' => 'mimes:jpeg,png,jpg,zip,pdf|max:6144'
+    		'file' => 'mimes:jpeg,png,jpg,mp4,zip,pdf|max:6144'
     	],[
     		'course_full_name.required' => 'Please enter course full name.',
     		'course_full_name.unique' => 'Course name already taken',
@@ -121,7 +121,7 @@ class CourseController extends Controller
     		'course_description' => 'required',
     		'start_date' => 'required',
     		'end_date' => 'required',
-    		'file' => 'mimes:jpeg,png,jpg,zip,pdf|max:6144'
+    		'file' => 'mimes:jpeg,png,jpg,mp4,zip,pdf|max:6144'
     	],[
     		'course_full_name.required' => 'Please enter course full name.',
     		'course_full_name.unique' => 'Course name already taken',

@@ -76,6 +76,7 @@
                         <ul>
                             <li>The maximum file size for uploads is <strong>6 MB</strong>.</li>
                             <li>Only image files (<strong>JPG, JPEG, PNG</strong>) are allowed & <strong>pdf,zip</strong> files are allowed.</li>
+                            <li>Video file must be a <strong>mp4</strong> format.</li>
                         </ul>
                     </div>
             </div>
