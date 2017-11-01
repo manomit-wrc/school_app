@@ -100,6 +100,18 @@
                         @if ($errors->first('sub_file'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('sub_file') }}</span>@endif
                     </div>
                     <div class="form-group">
+                        <label class="col-md-2 control-label">Tags</label>
+                        <div class="col-md-10 {{ $errors->has('tags') ? 'has-error' : '' }}">
+                            <select name="tags[]" id="tags" class="form-control" multiple>
+                                @foreach($all_tags as $key=>$value)
+                                    <option value="{{ $value['id'] }}" @if(in_array($value['id'], $tags_array)) selected="selected" @endif>{{ $value['tag_name'] }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        @if ($errors->first('tags'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('tags') }}</span>@endif
+                    </div>
+                    <div class="form-group">
                         <div class="col-md-4 col-md-offset-2">
                             <button type="submit" class="btn btn-sm btn-primary">Submit</button>
                             {{-- <button type="reset" class="btn btn-sm btn-default">Cancel</button> --}}

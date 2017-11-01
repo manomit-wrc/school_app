@@ -86,6 +86,18 @@
                         @if ($errors->first('end_date'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('end_date') }}</span>@endif
                     </div>
                     <div class="form-group">
+                        <label class="col-md-2 control-label">Tags</label>
+                        <div class="col-md-10 {{ $errors->has('tags') ? 'has-error' : '' }}">
+                            <select name="tags[]" id="tags" class="form-control" multiple>
+                                @foreach($all_tags as $key=>$value)
+                                    <option value="{{ $value['id'] }}">{{ $value['tag_name'] }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        @if ($errors->first('tags'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('tags') }}</span>@endif
+                    </div>
+                    <div class="form-group">
                         <div class="col-md-4 col-md-offset-2">
                             <button type="submit" class="btn btn-sm btn-primary">Submit</button>
                             {{-- <button type="reset" class="btn btn-sm btn-default">Cancel</button> --}}
@@ -97,4 +109,13 @@
         <!-- end profile-container -->
     </div>
     <!-- end #content -->
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#tags").select2({
+                placeholder: 'Select Tags',
+            });
+        });
+        
+    </script>
 @endsection

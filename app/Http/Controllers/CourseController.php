@@ -8,6 +8,7 @@ use App\Category;
 use Validator;
 use Image;
 use App\Course;
+use App\Tag;
 
 class CourseController extends Controller
 {
@@ -24,7 +25,10 @@ class CourseController extends Controller
            $name = $category->generate_dropdown($value, $value['name']);
            $category_array[] = array('id'=>$value['id'], 'name' => $name);
         }
-    	return view('frontend.course.add')->with('all_categories',$category_array);
+
+        $all_tags = Tag::where('status','1')->get()->toArray();
+    	return view('frontend.course.add')->with('all_categories',$category_array)
+                                        ->with('all_tags',$all_tags);
     }
 
     public function course_save (Request $request) {
@@ -86,6 +90,9 @@ class CourseController extends Controller
         $add->status = 1;
 
         if($add->save()){
+            if(count($request->tags) > 0) {
+                $add->tags()->attach($request->tags);
+            }
         	$request->session()->flash("submit-status", "Course added successfully.");
             return redirect('/course');
         }
@@ -100,14 +107,25 @@ class CourseController extends Controller
            $name = $category->generate_dropdown($value, $value['name']);
            $category_array[] = array('id'=>$value['id'], 'name' => $name);
         }
-
+        $tags_array = array();
     	$path = $fetch_course['description_file'];
 		$file_extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+
+        $all_tags = Tag::where('status','1')->get()->toArray();
+
+        $course_tags = Course::with('tags')->where('id',$course_id)->get()->toArray();
+        
+
+        foreach ($course_tags[0]['tags'] as $key => $value) {
+          $tags_array[] = $value['id'];
+        }
 
     	if(count($fetch_course) > 0){
     		return view('frontend.course.edit')->with('fetch_course',$fetch_course)
     											->with('all_categories',$category_array)
-    											->with('file_extension',$file_extension);
+    											->with('file_extension',$file_extension)
+                                                ->with('all_tags', $all_tags)
+                                                ->with('tags_array', $tags_array);
     	}else{
     		return redirect('/course');
     	}
@@ -170,6 +188,12 @@ class CourseController extends Controller
         $edit->end_date = $request->end_date;
 
         if($edit->save()){
+            if(count($request->tags) > 0) {
+               $edit->tags()->wherePivot('course_id', '=', $course_id)->detach();
+               $edit->tags()->attach($request->tags);
+            }
+            
+
         	$request->session()->flash("submit-status", "Course edited successfully.");
             return redirect('/course');
         }

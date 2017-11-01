@@ -34,6 +34,9 @@
 	{!! Html::style('storage/admin_dashboard/assets/plugins/gritter/css/jquery.gritter.css') !!}
   {!! Html::style('storage/admin_dashboard/assets/plugins/DataTables/media/css/dataTables.bootstrap.min.css') !!}
   {!! Html::style('storage/admin_dashboard/assets/plugins/DataTables/extensions/Responsive/css/responsive.bootstrap.min.css') !!}
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
+
 	<!-- ================== END PAGE LEVEL STYLE ================== -->
 	
 	<!-- ================== BEGIN BASE JS ================== -->
@@ -94,10 +97,10 @@
 
 	{!! Html::script('storage/admin_dashboard/assets/plugins/bootstrap/js/bootstrap.min.js') !!}
 
-    {!! Html::script('storage/admin_dashboard/assets/plugins/DataTables/media/js/jquery.dataTables.js') !!}
-    {!! Html::script('storage/admin_dashboard/assets/plugins/DataTables/media/js/dataTables.bootstrap.min.js') !!}
-    {!! Html::script('storage/admin_dashboard/assets/plugins/DataTables/extensions/Responsive/js/dataTables.responsive.min.js') !!}
-    {!! Html::script('storage/admin_dashboard/assets/js/table-manage-default.demo.min.js') !!}
+  {!! Html::script('storage/admin_dashboard/assets/plugins/DataTables/media/js/jquery.dataTables.js') !!}
+  {!! Html::script('storage/admin_dashboard/assets/plugins/DataTables/media/js/dataTables.bootstrap.min.js') !!}
+  {!! Html::script('storage/admin_dashboard/assets/plugins/DataTables/extensions/Responsive/js/dataTables.responsive.min.js') !!}
+  {!! Html::script('storage/admin_dashboard/assets/js/table-manage-default.demo.min.js') !!}
 	
 	<!--[if lt IE 9]>
 		<script src="storage/admin_dashboard/assets/crossbrowserjs/html5shiv.js"></script>
@@ -110,7 +113,7 @@
 	<!-- ================== END BASE JS ================== -->
 	
 	<!-- ================== BEGIN PAGE LEVEL JS ================== -->
-    {!! Html::script('storage/admin_dashboard/assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js') !!}
+  {!! Html::script('storage/admin_dashboard/assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js') !!}
 	{!! Html::script('storage/admin_dashboard/assets/plugins/gritter/js/jquery.gritter.js') !!}
 	{!! Html::script('storage/admin_dashboard/assets/plugins/sparkline/jquery.sparkline.js') !!}
 
@@ -124,6 +127,8 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.js"></script>
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
 
     {!! Html::script('storage/admin_dashboard/assets/js/apps.min.js') !!}
 

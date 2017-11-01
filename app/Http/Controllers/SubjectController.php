@@ -9,6 +9,7 @@ use Image;
 use Validator;
 use App\Course;
 use App\Subject;
+use App\Tag;
 
 class SubjectController extends Controller
 {
@@ -19,7 +20,9 @@ class SubjectController extends Controller
 
     public function subject_add () {
     	$fetch_all_course = Course::where('status','1')->orderby('id','desc')->get()->toArray();
-    	return view('frontend.subject.add')->with('fetch_all_course',$fetch_all_course);
+        $all_tags = Tag::where('status','1')->get()->toArray();
+    	return view('frontend.subject.add')->with('fetch_all_course',$fetch_all_course)
+                                        ->with('all_tags',$all_tags);
     }
 
     public function subject_add_save (Request $request) {
@@ -74,6 +77,9 @@ class SubjectController extends Controller
         $add->status = 1;
 
         if($add->save()){
+            if(count($request->tags) > 0) {
+                $add->tags()->attach($request->tags);
+            }
         	$request->session()->flash("submit-status",'Subject added successfully.');
         	return redirect('/subject');
         }
@@ -89,9 +95,20 @@ class SubjectController extends Controller
 
 	    	$fetch_all_course = Course::where('status','1')->orderby('id','desc')->get()->toArray();
 
+            $all_tags = Tag::where('status','1')->get()->toArray();
+
+            $subject_tags = Subject::with('tags')->where('id',$subject_id)->get()->toArray();
+            
+
+            foreach ($subject_tags[0]['tags'] as $key => $value) {
+              $tags_array[] = $value['id'];
+            }
+
 	    	return view('frontend.subject.edit')->with('subject_details',$subject_details)
 	    										->with('fetch_all_course',$fetch_all_course)
-	    										->with('file_extension',$file_extension);
+	    										->with('file_extension',$file_extension)
+                                                ->with('all_tags', $all_tags)
+                                                ->with('tags_array', $tags_array);
     	}else{
     		return redirect('/subject');
     	}

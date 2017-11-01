@@ -49,4 +49,11 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::get('/topic/delete/{topic_id}', 'TopicController@topic_delete');
 	Route::get('/topic/edit/{topic_id}', 'TopicController@topic_edit');
 	Route::post('/topic/topic-edit-save/{topic_id}', 'TopicController@topic_edit_save');
+
+	Route::get('/tags', 'TagController@tags_listing');
+	Route::get('/tags/add', 'TagController@tags_add');
+	Route::post('/tags/tag-add-save', 'TagController@tags_add_save');
+	Route::get('/tags/edit/{tag_id}', 'TagController@tags_edit');
+	Route::post('/tags/tag-edit-save/{tag_id}', 'TagController@tags_edit_save');
+	Route::get('/tags/delete/{tag_id}', 'TagController@tags_delete');
 });
