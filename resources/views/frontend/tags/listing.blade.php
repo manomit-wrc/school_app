@@ -23,7 +23,7 @@
 	        <!-- begin panel -->
             <div class="panel panel-inverse">
                 <div class="panel-heading">
-                    <h4 class="panel-title">Subject</h4>
+                    <h4 class="panel-title">Tags</h4>
                 </div>
                 <div class="panel-body">
                     @if(Session::has('submit-status'))
