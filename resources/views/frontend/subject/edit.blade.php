@@ -123,4 +123,12 @@
         <!-- end profile-container -->
     </div>
     <!-- end #content -->
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#tags").select2({
+                placeholder: 'Select Tags',
+            });
+        });
+        
+    </script>
 @endsection

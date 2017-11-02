@@ -7,7 +7,8 @@ use Auth;
 use Image;
 use Validator;
 use App\Subject;
-USE App\Topic;
+use App\Topic;
+use App\Tag;
 
 class TopicController extends Controller
 {
@@ -18,7 +19,9 @@ class TopicController extends Controller
 
     public function topic_add(){
     	$fetch_all_subject = Subject::where('status','1')->get()->toArray();
-    	return view('frontend.topic.add')->with('fetch_all_subject',$fetch_all_subject);
+        $all_tags = Tag::where('status','1')->get()->toArray();
+    	return view('frontend.topic.add')->with('fetch_all_subject',$fetch_all_subject)
+                                        ->with('all_tags',$all_tags);
     }
 
     public function topic_add_save (Request $request) {
@@ -80,6 +83,10 @@ class TopicController extends Controller
         $add->status = 1;
 
         if($add->save()){
+            if(count($request->tags) > 0) {
+                $add->tags()->attach($request->tags);
+            }
+
         	$request->session()->flash("submit-status",'Topic added successfully.');
         	return redirect('/topic');
         }
@@ -95,6 +102,8 @@ class TopicController extends Controller
     }
 
     public function topic_edit ($topic_id){
+        $tags_array = array();
+        
     	$fetch_topic_details = Topic::with('subject_details')->where([['id',$topic_id],['status','1']])->get()->toArray();
     	if(empty($fetch_topic_details)){
     		return redirect('/topic');
@@ -103,9 +112,20 @@ class TopicController extends Controller
 
 	    	$fetch_all_subject = Subject::where('status','1')->get()->toArray();
 
+            $all_tags = Tag::where('status','1')->get()->toArray();
+
+            $topic_tags = Topic::with('tags')->where('id',$topic_id)->get()->toArray();
+            
+
+            foreach ($topic_tags[0]['tags'] as $key => $value) {
+              $tags_array[] = $value['id'];
+            }
+
 	    	return view('frontend.topic.edit')->with('fetch_topic_details',$fetch_topic_details[0])
     										->with('fetch_all_subject',$fetch_all_subject)
-    										->with('all_uploaded_file',$all_uploaded_file);
+    										->with('all_uploaded_file',$all_uploaded_file)
+                                            ->with('all_tags', $all_tags)
+                                            ->with('tags_array', $tags_array);
     	}
     }
 
@@ -165,6 +185,11 @@ class TopicController extends Controller
         $edit->upload_file = $fileName;
 
         if($edit->save()){
+            if(count($request->tags) > 0) {
+               $edit->tags()->wherePivot('topic_id', '=', $topic_id)->detach();
+               $edit->tags()->attach($request->tags);
+            }
+
         	$request->session()->flash("submit-status",'Topic edited successfully.');
         	return redirect('/topic');
         }

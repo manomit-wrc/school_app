@@ -166,6 +166,11 @@ class SubjectController extends Controller
         $edit->sub_file = $fileName;
 
         if($edit->save()){
+            if(count($request->tags) > 0) {
+               $edit->tags()->wherePivot('subject_id', '=', $subject_id)->detach();
+               $edit->tags()->attach($request->tags);
+            }
+            
         	$request->session()->flash("submit-status",'Subject edited successfully.');
         	return redirect('/subject');
         }
