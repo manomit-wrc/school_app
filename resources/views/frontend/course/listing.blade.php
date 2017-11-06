@@ -59,6 +59,8 @@
                                         <a title="Edit" href="/course/edit/{{$value['id']}}" class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i></a>
 
                                         <a title="Delete" href="/course/delete/{{$value['id']}}" onclick="return confirm('Do you really want to delete the current record ?');" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
+
+                                        <a title="Course Distribution" href="/course/distribution/{{$value['id']}}" class="btn btn-primary btn-sm"><i class="fa fa-calendar" aria-hidden="true"></i></a>                        
                                     </td>
                                 </tr>
                             @endforeach

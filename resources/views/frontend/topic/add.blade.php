@@ -67,7 +67,7 @@
                     <div class="form-group">
                         <label class="col-md-2 control-label">Tags</label>
                         <div class="col-md-10 {{ $errors->has('tags') ? 'has-error' : '' }}">
-                            <select name="tags[]" id="tags" class="form-control" multiple>
+                            <select name="tags[]" id="tags" class="form-control tagit-choice-editable" multiple>
                                 @foreach($all_tags as $key=>$value)
                                     <option value="{{ $value['id'] }}">{{ $value['tag_name'] }}</option>
                                 @endforeach
@@ -97,6 +97,32 @@
         <!-- end profile-container -->
     </div>
     <!-- end #content -->
+    <style type="text/css">
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: #49b6d6!important;
+            color: #fff!important;
+            border: 1px solid #aaa;
+            border-radius: 4px;
+            cursor: default;
+            float: left;
+            margin-right: 5px;
+            margin-top: 5px;
+            padding: 0 5px;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+            color: #fff!important;
+            cursor: pointer;
+            display: inline-block;
+            font-weight: bold;
+            margin-right: 2px;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
+            color: #333!important;
+        }
+        
+    </style>
     <script type="text/javascript">
         $(document).ready(function() {
             $("#tags").select2({
@@ -105,5 +131,6 @@
         });
         
     </script>
+
     
 @endsection

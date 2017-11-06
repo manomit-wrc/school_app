@@ -92,6 +92,32 @@
         <!-- end profile-container -->
     </div>
     <!-- end #content -->
+    <style type="text/css">
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: #49b6d6!important;
+            color: #fff!important;
+            border: 1px solid #aaa;
+            border-radius: 4px;
+            cursor: default;
+            float: left;
+            margin-right: 5px;
+            margin-top: 5px;
+            padding: 0 5px;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+            color: #fff!important;
+            cursor: pointer;
+            display: inline-block;
+            font-weight: bold;
+            margin-right: 2px;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
+            color: #333!important;
+        }
+        
+    </style>
     <script type="text/javascript">
         $(document).ready(function() {
             $("#tags").select2({

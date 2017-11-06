@@ -12,4 +12,8 @@ class Course extends Model
     public function tags() {
     	return $this->belongsToMany('\App\Tag', 'course_tags', 'course_id', 'tag_id');
     }
+
+    public function subjects() {
+    	return $this->hasMany('\App\Subject', 'course_id');
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 use Illuminate\Filesystem\Filesystem;
 use App\Category;
 use Validator;
@@ -207,5 +208,36 @@ class CourseController extends Controller
     		$request->session()->flash("submit-status", "Course deleted successfully.");
             return redirect('/course');
     	}
+    }
+
+    public function course_distribution ($course_id) {
+        $fetch_course_details = Course::with('subjects.topics')->where('id',$course_id)->get()->toArray();
+        $course_start_date = strtotime($fetch_course_details[0]['start_date']);
+        $course_end_date = strtotime($fetch_course_details[0]['end_date']);;
+
+        $min_date = min($course_start_date, $course_end_date);
+        $max_date = max($course_start_date, $course_end_date);
+        $i = 0;
+
+        while (($min_date = strtotime("+1 MONTH", $min_date)) <= $max_date) {
+            $i++;
+        }
+        $months = $i;
+
+        $date1=date_create($fetch_course_details[0]['start_date']);
+        $date2=date_create($fetch_course_details[0]['end_date']);
+        $diff=date_diff($date1,$date2);
+        $total_days = $diff->format("%R%a days");
+        $total_weeks = intval($total_days / 7);
+
+        $tempArray = array();
+        foreach($fetch_course_details[0]['subjects'] as $key => $value){
+            foreach($value['topics'] as $key1 => $value1){
+                $tempArray[$key1] = $value1;
+            }
+        }
+        echo "<pre>";
+        print_r($tempArray);
+        die();
     }
 }
