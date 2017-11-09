@@ -231,13 +231,15 @@ class CourseController extends Controller
         $total_weeks = intval($total_days / 7);
 
         $tempArray = array();
+        $i=0;
+
         foreach($fetch_course_details[0]['subjects'] as $key => $value){
             foreach($value['topics'] as $key1 => $value1){
-                $tempArray[$key1] = $value1;
+                $tempArray[] = $value1;
             }
         }
-        echo "<pre>";
-        print_r($tempArray);
-        die();
+
+        return view('frontend.course.course_distribution')->with('total_weeks',$total_weeks)
+                                                        ->with('tempArray', $tempArray);
     }
 }
