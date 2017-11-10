@@ -35,7 +35,6 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::get('/course/edit/{course_id}', 'CourseController@course_edit');
 	Route::post('/course/edit-submit/{course_id}', 'CourseController@course_edit_submit');
 	Route::get('/course/delete/{course_id}', 'CourseController@course_delete');
-	Route::get('/course/distribution/{course_id}', 'CourseController@course_distribution');
 
 	Route::get('/subject', 'SubjectController@index');
 	Route::get('/subject/add', 'SubjectController@subject_add');
@@ -43,6 +42,11 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::get('/subject/edit/{subject_id}', 'SubjectController@subject_edit');
 	Route::post('/subject/sub-edit/{subject_id}', 'SubjectController@subject_edit_save');
 	Route::get('/subject/delete/{subject_id}', 'SubjectController@subject_delete');
+	Route::get('/subject/topic-add/{subject_id}', 'SubjectController@topic');
+	Route::post('/subject/topic_add', 'SubjectController@topic_add');
+	Route::post('/subject/topic-upload-post', 'SubjectController@topic_upload_post');
+	Route::get('/subject/topic-file-delete/{topic_file_id}', 'SubjectController@topic_file_delete');
+
 
 	Route::get('/topic', 'TopicController@index');
 	Route::get('/topic/add', 'TopicController@topic_add');

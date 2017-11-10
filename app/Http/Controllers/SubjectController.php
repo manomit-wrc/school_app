@@ -10,6 +10,8 @@ use Validator;
 use App\Course;
 use App\Subject;
 use App\Tag;
+use App\Topic;
+use App\TopicAllFile;
 
 class SubjectController extends Controller
 {
@@ -184,5 +186,83 @@ class SubjectController extends Controller
     		$request->session()->flash("submit-status",'Subject deleted successfully.');
         	return redirect('/subject');
     	}
+    }
+
+    public function topic ($subject_id) {
+        $fetch_subject_details = Subject::find($subject_id)->toArray();
+
+        $fetch_all_topic = Topic::with('topic_files')->where([['status','1'],['subject_id',$subject_id]])->orderby('id','desc')->get()->toArray();
+
+        return view('frontend.subject.topic_distribution')->with('fetch_subject_details',$fetch_subject_details)
+                                                        ->with('fetch_all_topic',$fetch_all_topic);
+    }
+
+    public function topic_add (Request $request) {
+        $subject_id = $request->subject_id;
+        $topic_name = $request->topic_name;
+
+        $add = new Topic();
+        $add->topic_name = $topic_name;
+        $add->subject_id = $subject_id;
+        $add->status = 1;
+
+        if($add->save()){
+            // if(count($request->tags) > 0) {
+            //     $add->tags()->attach($request->tags);
+            // }
+
+            echo 1;
+            exit;
+        }
+    }
+
+    public function topic_upload_post (Request $request) {
+        $subject_id = $request->subject_id;
+        $topic_id = $request->topic_id;
+
+        $fileName = '';
+        $fileName1 = array();
+
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $file_ext = $file->extension();
+
+            if($file_ext=='jpeg' || $file_ext=='jpg' || $file_ext=='png'){
+                $fileName = time().'_'.$file->getClientOriginalName();
+            
+                //thumb destination path
+                $destinationPath_2 = public_path().'/upload/topic_file/resize/';
+                $img = Image::make($file->getRealPath());
+                $img->resize(175, 175, function ($constraint) {
+                  $constraint->aspectRatio();
+                })->save($destinationPath_2.'/'.$fileName);
+                //original destination path
+                $destinationPath = public_path().'/upload/topic_file/original/';
+                $file->move($destinationPath,$fileName);
+            }else{
+                $fileName = time().'_'.$file->getClientOriginalName();
+                $destinationPath = public_path().'/upload/topic_file/others/';
+                $file->move($destinationPath,$fileName);
+            }
+            $fileName1= $fileName;
+        }
+
+        $add = new TopicAllFile();
+        $add->topic_id = $topic_id;
+        $add->upload_file = $fileName1;
+
+        if($add->save()){
+            $request->session()->flash("submit-status",'File uplod successfully.');
+            return redirect('/subject/topic-add/'.$subject_id);
+        }
+    }
+
+    public function topic_file_delete (Request $request, $topic_file_id) {
+        $delete = TopicAllFile::find($topic_file_id);
+
+        if($delete->delete()){
+            $request->session()->flash("submit-status",'Topic deleted successfully.');
+            return redirect('/subject');
+        }
     }
 }

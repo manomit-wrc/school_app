@@ -13,4 +13,8 @@ class Topic extends Model
     public function tags() {
     	return $this->belongsToMany('\App\Tag', 'topic_tags', 'topic_id', 'tag_id');
     }
+
+    public function topic_files () {
+    	return $this->hasMany('\App\TopicAllFile', 'topic_id');
+    }
 }

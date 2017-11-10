@@ -209,37 +209,4 @@ class CourseController extends Controller
             return redirect('/course');
     	}
     }
-
-    public function course_distribution ($course_id) {
-        $fetch_course_details = Course::with('subjects.topics')->where('id',$course_id)->get()->toArray();
-        $course_start_date = strtotime($fetch_course_details[0]['start_date']);
-        $course_end_date = strtotime($fetch_course_details[0]['end_date']);;
-
-        $min_date = min($course_start_date, $course_end_date);
-        $max_date = max($course_start_date, $course_end_date);
-        $i = 0;
-
-        while (($min_date = strtotime("+1 MONTH", $min_date)) <= $max_date) {
-            $i++;
-        }
-        $months = $i;
-
-        $date1=date_create($fetch_course_details[0]['start_date']);
-        $date2=date_create($fetch_course_details[0]['end_date']);
-        $diff=date_diff($date1,$date2);
-        $total_days = $diff->format("%R%a days");
-        $total_weeks = intval($total_days / 7);
-
-        $tempArray = array();
-        $i=0;
-
-        foreach($fetch_course_details[0]['subjects'] as $key => $value){
-            foreach($value['topics'] as $key1 => $value1){
-                $tempArray[] = $value1;
-            }
-        }
-
-        return view('frontend.course.course_distribution')->with('total_weeks',$total_weeks)
-                                                        ->with('tempArray', $tempArray);
-    }
 }

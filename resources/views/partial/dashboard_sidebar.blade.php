@@ -49,11 +49,11 @@
 			    </a>
 			</li>
 
-			<li class="has-sub {{ (Request::segment(1) === "topic" ? 'active' : '') }}">
+			{{-- <li class="has-sub {{ (Request::segment(1) === "topic" ? 'active' : '') }}">
 				<a href="/topic">
 				    <span>Topic</span>
 			    </a>
-			</li>
+			</li> --}}
 
 			<li class="has-sub {{ (Request::segment(1) === "tags" ? 'active' : '') }}">
 				<a href="/tags">

@@ -34,6 +34,7 @@
 	{!! Html::style('storage/admin_dashboard/assets/plugins/gritter/css/jquery.gritter.css') !!}
   {!! Html::style('storage/admin_dashboard/assets/plugins/DataTables/media/css/dataTables.bootstrap.min.css') !!}
   {!! Html::style('storage/admin_dashboard/assets/plugins/DataTables/extensions/Responsive/css/responsive.bootstrap.min.css') !!}
+  {!! Html::style('storage/admin_dashboard/assets/plugins/dropzone/min/dropzone.min.css') !!}
 
   <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
 
@@ -55,12 +56,7 @@
   {!! Html::script('storage/admin_dashboard/assets/plugins/flot/jquery.flot.min.js') !!}
   {!! Html::script('storage/admin_dashboard/assets/plugins/flot/jquery.flot.time.min.js') !!}
   {!! Html::script('storage/admin_dashboard/assets/plugins/flot/jquery.flot.resize.min.js') !!}
-  {!! Html::script('storage/admin_dashboard/assets/plugins/flot/jquery.flot.pie.min.js') !!}
-
-  {!! Html::script('storage/admin_dashboard/assets/js/jquery.waterwheelCarousel.js') !!}
-
-  {!! Html::script('storage/admin_dashboard/assets/ckeditor/resources/libs/ckeditor/ckeditor.js') !!}
-  {!! Html::script('storage/admin_dashboard/assets/ckeditor/resources/libs/ckeditor/adapters/jquery.js') !!}
+  {!! Html::script('storage/admin_dashboard/assets/plugins/flot/jquery.flot.pie.min.js') !!} 
   {!! Html::script('storage/admin_dashboard/assets/ckeditor/resources/js/index.js') !!}
   
 	<!-- ================== END BASE JS ================== -->
@@ -122,7 +118,8 @@
 
 	{!! Html::script('storage/admin_dashboard/assets/js/dashboard.min.js') !!}
   {!! Html::script('storage/admin_dashboard/assets/js/form-plugins.demo.min.js') !!}
-	{!! Html::script('storage/admin_dashboard/assets/js/apps.min.js') !!}
+  {!! Html::script('storage/admin_dashboard/assets/plugins/dropzone/min/dropzone.min.js') !!}
+  {!! Html::script('storage/admin_dashboard/assets/js/apps.min.js') !!}
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
 
@@ -133,6 +130,20 @@
     {!! Html::script('storage/admin_dashboard/assets/js/apps.min.js') !!}
 
 	<!-- ================== END PAGE LEVEL JS ================== -->
+
+  @if((Request::segment(2) === 'add') || (Request::segment(2) === 'edit'))
+
+  {!! Html::script('storage/admin_dashboard/assets/ckeditor/resources/libs/ckeditor/ckeditor.js') !!}
+  {!! Html::script('storage/admin_dashboard/assets/ckeditor/resources/libs/ckeditor/adapters/jquery.js') !!}
+
+  <script type="text/javascript">
+    CKEDITOR.replace('course_description', {
+        height: 260,
+        width: 880,
+    } );
+  </script>
+         
+  @endif
 	
 	<script>
 		$(document).ready(function() {
@@ -142,10 +153,53 @@
   			Dashboard.init();
         TableManageDefault.init();
 
-        CKEDITOR.replace('course_description', {
-            height: 260,
-            width: 880,
-        } ); 
+        $('#topic_add_form').validate({
+            rules:{
+                topic_name:{
+                    required:true
+                }
+            },
+            messages:{
+                topic_name:{
+                    required:"<font color='red'>Please enter topic name.</font>"
+                }
+            }
+        });
+
+        $('#topic_add_submit1').on('click',function () {
+          var valid = $('#topic_add_form').valid();
+          if(valid){
+            $('#topic_add_submit1').prop('disabled', true);
+
+            var topic_name = $('#topic_name').val();
+            var subject_id = $('#subject_id').val();
+
+            $.ajax({
+              type: "POST",
+              url: '/subject/topic_add',
+              data:{
+                subject_id:subject_id,
+                topic_name:topic_name,
+                _token: "{{ csrf_token() }}"
+              },
+              success: function (data) {
+                if(data == 1){
+                  $('#topic_add_submit1').prop('disabled', false);
+
+                  $.confirm({
+                      title: 'Confirmation!',
+                      content: 'Topic added successfully',
+                      buttons: {
+                          OK: function () {
+                            window.location.reload();
+                          }
+                      }
+                  });
+                }
+              }
+            });
+          }
+        });
 
         $('#edit_profile_form').validate({
           rules:{
