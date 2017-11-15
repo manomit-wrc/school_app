@@ -265,4 +265,10 @@ class SubjectController extends Controller
             return redirect('/subject');
         }
     }
+
+    public function upload_file_view (Request $request,$topic_id){
+        $fetch_section_details = Topic::find($topic_id)->toArray();
+
+        return view('frontend.subject.upload_file')->with('fetch_section_details',$fetch_section_details);;
+    }
 }

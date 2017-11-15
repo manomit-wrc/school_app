@@ -144,8 +144,21 @@
   </script>
          
   @endif
+
+  <script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="yw02zsbtztzuj9h"></script>
 	
 	<script>
+    function getId(url) {
+        var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        var match = url.match(regExp);
+
+        if (match && match[2].length == 11) {
+            return match[2];
+        } else {
+            return 'error';
+        }
+    }
+
 		$(document).ready(function() {
         $('.date').datepicker();
         
@@ -248,6 +261,93 @@
         setTimeout(function() {
           $("#success-alert").hide('blind', {}, 500)
         }, 2000);
+
+        $('#embed_video_add_form').validate({
+          rules:{
+            embedUrl:{
+              required: true
+            }
+          },
+          messages:{
+            embedUrl:{
+              required: "Please enter youtube URL"
+            }
+          }
+        });
+
+        $('#embedd_video_submit').on('click',function(){
+          var valid = $('#embed_video_add_form').valid();
+          if(valid){
+            var myId;
+            var myUrl = $('#embedUrl').val();
+            myId = getId(myUrl); 
+            
+            $('#modal_embed_video').modal('hide');
+            $('#modal_embed_video').find("input").val('').end();
+            
+            $('#show_embed_video').append('<iframe width="200" height="175" src="//www.youtube.com/embed/' + myId + '" frameborder="0" allowfullscreen></iframe>');  
+          }
+        });
+
+
+        //dropbox start
+        $('.dropbox_file').on('click', function () {
+          Dropbox.choose('options');
+        });
+
+        options = {
+
+          // Required. Called when a user selects an item in the Chooser.
+          success: function(files) {
+              alert("Here's the file link: " + files[0].link)
+          },
+
+          // Optional. Called when the user closes the dialog without selecting a file
+          // and does not include any parameters.
+          cancel: function() {
+
+          },
+
+          // Optional. "preview" (default) is a preview link to the document for sharing,
+          // "direct" is an expiring link to download the contents of the file. For more
+          // information about link types, see Link types below.
+          linkType: "preview", // or "direct"
+
+          // Optional. A value of false (default) limits selection to a single file, while
+          // true enables multiple file selection.
+          multiselect: false, // or true
+
+          // Optional. This is a list of file extensions. If specified, the user will
+          // only be able to select files with these extensions. You may also specify
+          // file types, such as "video" or "images" in the list. For more information,
+          // see File types below. By default, all extensions are allowed.
+          extensions: ['.pdf', '.doc', '.docx'],
+      };
+      file = {
+        // Unique ID for the file, compatible with Dropbox API v2.
+        id: "id:...",
+
+        // Name of the file.
+        name: "filename.txt",
+
+        // URL to access the file, which varies depending on the linkType specified when the
+        // Chooser was triggered.
+        link: "https://...",
+
+        // Size of the file in bytes.
+        bytes: 464,
+
+        // URL to a 64x64px icon for the file based on the file's extension.
+        icon: "https://...",
+
+        // A thumbnail URL generated when the user selects images and videos.
+        // If the user didn't select an image or video, no thumbnail will be included.
+        thumbnailLink: "https://...?bounding_box=75&mode=fit",
+
+        // Boolean, whether or not the file is actually a directory
+        isDir: false,
+    };
+    //end dropbox
             
 		});
 	</script>

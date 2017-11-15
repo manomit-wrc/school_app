@@ -31,33 +31,37 @@
 			    </a>
 			</li>
 
-			<li class="has-sub {{ (Request::segment(1) === "category" ? 'active' : '') }}">
-				<a href="/category">
-				    <span>Category</span>
-			    </a>
-			</li>
+			@if(Request::segment(2) != "topic-add")
 
-			<li class="has-sub {{ (Request::segment(1) === "course" ? 'active' : '') }}">
-				<a href="/course">
-				    <span>Course</span>
-			    </a>
-			</li>
+				<li class="has-sub {{ (Request::segment(1) === "category" ? 'active' : '') }}">
+					<a href="/category">
+					    <span>Category</span>
+				    </a>
+				</li>
+
+				<li class="has-sub {{ (Request::segment(1) === "course" ? 'active' : '') }}">
+					<a href="/course">
+					    <span>Course</span>
+				    </a>
+				</li>
+
+				<li class="has-sub {{ (Request::segment(1) === "tags" ? 'active' : '') }}">
+					<a href="/tags">
+					    <span>Tags</span>
+				    </a>
+				</li>
+
+				{{-- <li class="has-sub {{ (Request::segment(1) === "topic" ? 'active' : '') }}">
+					<a href="/topic">
+					    <span>Topic</span>
+				    </a>
+				</li> --}}
+
+			@endif
 
 			<li class="has-sub {{ (Request::segment(1) === "subject" ? 'active' : '') }}">
 				<a href="/subject">
 				    <span>Subject</span>
-			    </a>
-			</li>
-
-			{{-- <li class="has-sub {{ (Request::segment(1) === "topic" ? 'active' : '') }}">
-				<a href="/topic">
-				    <span>Topic</span>
-			    </a>
-			</li> --}}
-
-			<li class="has-sub {{ (Request::segment(1) === "tags" ? 'active' : '') }}">
-				<a href="/tags">
-				    <span>Tags</span>
 			    </a>
 			</li>
 

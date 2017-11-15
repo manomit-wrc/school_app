@@ -9,11 +9,10 @@
 	<ol class="breadcrumb pull-right">
 		<li><a href="/dashboard">Dashboard</a></li>
         <li><a href="/subject">Subject</a></li>
-		<li><a href="javascript:;">Topic Distribution</a></li>
 	</ol>
 
     <div class="box-footer">
-      <a href="#modal-topic-add" class="btn btn-sm btn-success m-r-5 m-b-5" data-toggle="modal">Add Topic</a>
+      <a href="#modal-topic-add" class="btn btn-sm btn-success m-r-5 m-b-5" data-toggle="modal">Add Section</a>
     </div>
     <br>
 
@@ -44,77 +43,24 @@
                             <div class="panel-body">
                                 <div class="form-group">
                                     <div class="row">
-                                        <div class="table-responsive">
-                                            <table class="table">
-                                                <tbody>
-                                        <?php
-                                        if(!empty($fetch_all_topic[$i]['topic_files'])){
-                                            foreach ($fetch_all_topic[$i]['topic_files'] as $key => $value) {
-                                                $path = $value['upload_file'];
-                                                $file_extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
-                                        ?>
-                                                @if($file_extension == 'jpg' || $file_extension == 'jpeg' || $file_extension == 'png')
-
-                                                    <tr>
-                                                        <td>
-                                                            <a href="{{ url('/upload/topic_file/original/'.$value['upload_file']) }}" target="_blank">
-
-                                                                {{ $value['upload_file'] }}
-                                                            </a>
-
-                                                            <span class="pull-right">
-                                                                <a title="Delete" href="/subject/topic-file-delete/{{ $value['id'] }}" onclick="return confirm('Do you really want to delete the current record ?');" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
-                                                            </span>
-                                                        </td>
-                                                    </tr>
-
-                                                @else
-
-                                                    <tr>
-                                                        <td>
-                                                            <a href="{{ url('/upload/topic_file/others/'.$value['upload_file']) }}" target="_blank">
-
-                                                                {{ $value['upload_file'] }}
-                                                            </a>
-
-                                                            <span class="pull-right">
-                                                                <a title="Delete" href="/subject/topic-file-delete/{{ $value['id'] }}" onclick="return confirm('Do you really want to delete the current record ?');" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
-                                                            </span>
-                                                        </td>
-                                                    </tr>   
-
-                                                @endif
-                                                    
-                                                        
-                                            
-                                        <?php 
-                                            }
-                                        }
-                                        ?>
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                        <ul class="nav nav-pills">
+                                            <li class="active">
+                                                <a href="/subject/topic-add/upload-file/{{ $fetch_all_topic[$i]['id'] }}">
+                                                    <span class="hidden-xs">VIDEO | PPT | PDF</span>
+                                                </a>
+                                            </li>
+                                            <li class="active">
+                                                <a href="/subject/topic-add/html/{{ $fetch_all_topic[$i]['id'] }}">
+                                                    <span class="hidden-xs">HTML</span>
+                                                </a>
+                                            </li>
+                                            <li class="active">
+                                                <a href="/subject/topic-add/section-quiz/{{ $fetch_all_topic[$i]['id'] }}">
+                                                    <span class="hidden-xs">SECTION QUIZ</span>
+                                                </a>
+                                            </li>
+                                        </ul>
                                     </div>
-                                </div>
-
-                                <div class="form-group" id="dropzone">
-                                    <form action="/subject/topic-upload-post" class="dropzone needsclick" id="real-dropzone" enctype="multipart/form-data">
-
-                                        {{ csrf_field() }}
-                                        
-                                        <input type="hidden" name="topic_id" value="{{ $fetch_all_topic[$i]['id'] }}">
-
-                                        <input type="hidden" name="subject_id" value="{{ $fetch_subject_details['id'] }}">
-
-                                        <div class="fallback">
-                                            <input name="file" type="file" multiple />
-                                        </div>
-
-                                        <div class="dz-message needsclick">
-                                            Drop files here or click to upload.<br />
-                                        </div>
-
-                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -132,7 +78,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title">Add Topic</h4>
+                <h4 class="modal-title">Add Section</h4>
             </div>
             <div class="modal-body">
                 <div class="panel-body">
@@ -148,9 +94,9 @@
                             <br/>
                             <br/>
                             <div class="form-group">
-                                <label class="col-md-3 control-label">Topic Name</label>
+                                <label class="col-md-3 control-label">Section Name</label>
                                 <div class="col-md-9">
-                                    <input type="text" class="form-control" placeholder="Topic Name" name="topic_name" id="topic_name">
+                                    <input type="text" class="form-control" placeholder="Section Name" name="topic_name" id="topic_name">
                                 </div>
                             </div>
                             <br/>

@@ -56,7 +56,7 @@
 
                                         <a title="Delete" href="/subject/delete/{{$value['id']}}" onclick="return confirm('Do you really want to delete the current record ?');" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
 
-                                        <a title="Topic Add" href="/subject/topic-add/{{$value['id']}}" class="btn btn-primary btn-sm"><i class="fa fa-calendar" aria-hidden="true"></i></a>  
+                                        <a title="Add Section" href="/subject/topic-add/{{$value['id']}}" class="btn btn-primary btn-sm"><i class="fa fa-calendar" aria-hidden="true"></i></a>  
                                     </td>
                                 </tr>
                             @endforeach
