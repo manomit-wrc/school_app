@@ -47,6 +47,9 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::post('/subject/topic-upload-post', 'SubjectController@topic_upload_post');
 	Route::get('/subject/topic-file-delete/{topic_file_id}', 'SubjectController@topic_file_delete');
 	Route::get('/subject/topic-add/upload-file/{topic_id}', 'SubjectController@upload_file_view');
+	Route::post('/subject/upload_embed_video', 'SubjectController@upload_embed_video');
+	Route::post('/subject/upload_dropbox_file', 'SubjectController@upload_dropbox_file');
+	Route::post('/subject/topic-add-content', 'SubjectController@topic_add_content');
 
 
 	Route::get('/topic', 'TopicController@index');

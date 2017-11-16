@@ -45,7 +45,7 @@
                                     <div class="row">
                                         <ul class="nav nav-pills">
                                             <li class="active">
-                                                <a href="/subject/topic-add/upload-file/{{ $fetch_all_topic[$i]['id'] }}">
+                                                <a href="/subject/topic-add/upload-file/{{ $fetch_all_topic[$i]['id'] }}" class="topic_add_content" topic_id={{ $fetch_all_topic[$i]['id'] }}>
                                                     <span class="hidden-xs">VIDEO | PPT | PDF</span>
                                                 </a>
                                             </li>
@@ -114,11 +114,20 @@
     </div>
 </div>
 
-{{-- <script type="text/javascript">
-    $('.course_distribution_editor').ckeditor({ 
-        height: 250,
-        width: 700
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('.topic_add_content').on('click', function () {
+            var topic_id = $(this).attr('topic_id');
+            $.ajax({
+                type:"POST",
+                url: "/subject/topic-add-content",
+                data:{
+                    topic_id:topic_id,
+                    _token: "{{ csrf_token() }}"
+                }
+            });
+        });
     });
-</script> --}}
+</script>
 
 @endsection

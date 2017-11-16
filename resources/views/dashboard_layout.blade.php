@@ -166,6 +166,8 @@
   			Dashboard.init();
         TableManageDefault.init();
 
+        var topic_content_id;
+
         $('#topic_add_form').validate({
             rules:{
                 topic_name:{
@@ -285,21 +287,69 @@
             $('#modal_embed_video').modal('hide');
             $('#modal_embed_video').find("input").val('').end();
             
-            $('#show_embed_video').append('<iframe width="200" height="175" src="//www.youtube.com/embed/' + myId + '" frameborder="0" allowfullscreen></iframe>');  
+            // $('#show_embed_video').append('<iframe width="200" height="175" src="//www.youtube.com/embed/' + myId + '" frameborder="0" allowfullscreen></iframe>');
+
+            topic_content_id = $(this).attr('topic_content_id');
+
+            $.ajax({
+              type: "POST",
+              url:"/subject/upload_embed_video",
+              data:{
+                file_link:myUrl,
+                topic_content_id:topic_content_id,
+                _token:"{{ csrf_token() }}"
+              },
+              success: function (data){
+                if(data==1){
+                  $.confirm({
+                    title: 'Confirmation!',
+                    content: 'Embeded video added successfully',
+                    buttons: {
+                        OK: function () {
+                        }
+                    }
+                  });
+                }
+              }
+            });
           }
         });
 
 
         //dropbox start
         $('.dropbox_file').on('click', function () {
-          Dropbox.choose('options');
+          Dropbox.choose(options);
+
+          topic_content_id = $(this).attr('topic_content_id');
         });
 
         options = {
 
           // Required. Called when a user selects an item in the Chooser.
           success: function(files) {
-              alert("Here's the file link: " + files[0].link)
+              // alert("Here's the file link: " + files[0].link);
+              $.ajax({
+                type: "POST",
+                url:"/subject/upload_dropbox_file",
+                data:{
+                  file_link:files[0].link,
+                  topic_content_id:topic_content_id,
+                  _token:"{{ csrf_token() }}"
+                },
+                success: function (data){
+                  if(data==1){
+                    $.confirm({
+                      title: 'Confirmation!',
+                      content: 'Dropbox file added successfully',
+                      buttons: {
+                          OK: function () {
+                            // window.location.reload();
+                          }
+                      }
+                    });
+                  }
+                }
+              });
           },
 
           // Optional. Called when the user closes the dialog without selecting a file
@@ -311,7 +361,7 @@
           // Optional. "preview" (default) is a preview link to the document for sharing,
           // "direct" is an expiring link to download the contents of the file. For more
           // information about link types, see Link types below.
-          linkType: "preview", // or "direct"
+          linkType: "direct", // or "direct"
 
           // Optional. A value of false (default) limits selection to a single file, while
           // true enables multiple file selection.
@@ -322,7 +372,8 @@
           // file types, such as "video" or "images" in the list. For more information,
           // see File types below. By default, all extensions are allowed.
           extensions: ['.pdf', '.doc', '.docx'],
-      };
+        };
+
       file = {
         // Unique ID for the file, compatible with Dropbox API v2.
         id: "id:...",
@@ -346,10 +397,52 @@
 
         // Boolean, whether or not the file is actually a directory
         isDir: false,
-    };
+      };
     //end dropbox
+
+       /* $("#file_chooser").change(function() {
+          topic_content_id = $(this).attr('topic_content_id');
+
+          var form_data = new FormData($("#upload_section_file").get(0));
+
+          $.ajax({
+            type: "POST",
+            url:"/subject/topic-upload-post",
+            data: form_data,
+            processData: false, // Don't process the files
+            contentType: false,
+            success: function (data){
+              if(data==1){
+                $.confirm({
+                  title: 'Confirmation!',
+                  content: 'Files uploaded successfully',
+                  buttons: {
+                      OK: function () {
+                      }
+                  }
+                });
+              }
+            }
+          });
+        });*/
             
 		});
+
+  $(document).ready(function(e){
+    $("#file_chooser").change(function(){
+        var form = $('#upload_section_file')[0]; // You need to use standard javascript object here
+        var formData = new FormData(form);
+
+        $.ajax({
+          url: '/subject/topic-upload-post',
+          data: formData,
+          type: 'POST',
+          contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+          processData: false, // NEEDED, DON'T OMIT THIS
+          // ... Other options like success and etc
+      });
+    });
+  });
 	</script>
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

@@ -12,6 +12,9 @@ use App\Subject;
 use App\Tag;
 use App\Topic;
 use App\TopicAllFile;
+use App\TopicContent;
+use App\TopicDropboxFile;
+use App\TopicEmbedFile;
 
 class SubjectController extends Controller
 {
@@ -191,7 +194,7 @@ class SubjectController extends Controller
     public function topic ($subject_id) {
         $fetch_subject_details = Subject::find($subject_id)->toArray();
 
-        $fetch_all_topic = Topic::with('topic_files')->where([['status','1'],['subject_id',$subject_id]])->orderby('id','desc')->get()->toArray();
+        $fetch_all_topic = Topic::where([['status','1'],['subject_id',$subject_id]])->orderby('id','desc')->get()->toArray();
 
         return view('frontend.subject.topic_distribution')->with('fetch_subject_details',$fetch_subject_details)
                                                         ->with('fetch_all_topic',$fetch_all_topic);
@@ -217,43 +220,42 @@ class SubjectController extends Controller
     }
 
     public function topic_upload_post (Request $request) {
-        $subject_id = $request->subject_id;
-        $topic_id = $request->topic_id;
+        $file = $request->files;
+        echo "<pre>";
+        print_r($file);
+        die();
 
-        $fileName = '';
-        $fileName1 = array();
-
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            $file_ext = $file->extension();
+        foreach($file as $key => $value){
+            $file_ext = $value->extension();
 
             if($file_ext=='jpeg' || $file_ext=='jpg' || $file_ext=='png'){
-                $fileName = time().'_'.$file->getClientOriginalName();
+                $fileName = time().'_'.$value->getClientOriginalName();
             
                 //thumb destination path
-                $destinationPath_2 = public_path().'/upload/topic_file/resize/';
-                $img = Image::make($file->getRealPath());
+                $destinationPath_2 = public_path().'/upload/section_file/resize/';
+                $img = Image::make($value->getRealPath());
                 $img->resize(175, 175, function ($constraint) {
                   $constraint->aspectRatio();
                 })->save($destinationPath_2.'/'.$fileName);
                 //original destination path
-                $destinationPath = public_path().'/upload/topic_file/original/';
-                $file->move($destinationPath,$fileName);
+                $destinationPath = public_path().'/upload/section_file/original/';
+                $value->move($destinationPath,$fileName);
             }else{
-                $fileName = time().'_'.$file->getClientOriginalName();
-                $destinationPath = public_path().'/upload/topic_file/others/';
-                $file->move($destinationPath,$fileName);
+                $fileName = time().'_'.$value->getClientOriginalName();
+                $destinationPath = public_path().'/upload/section_file/others/';
+                $value->move($destinationPath,$fileName);
             }
-            $fileName1= $fileName;
+            $fileName1[$key] = $fileName;
+
+            $add = new TopicAllFile();
+            $add->topic_content_id = $request->topic_content_id;
+            $add->upload_file = $request->file_link;
+            $save = $add->save();
         }
 
-        $add = new TopicAllFile();
-        $add->topic_id = $topic_id;
-        $add->upload_file = $fileName1;
-
-        if($add->save()){
-            $request->session()->flash("submit-status",'File uplod successfully.');
-            return redirect('/subject/topic-add/'.$subject_id);
+        if($save){
+            echo 1;
+            exit;
         }
     }
 
@@ -269,6 +271,44 @@ class SubjectController extends Controller
     public function upload_file_view (Request $request,$topic_id){
         $fetch_section_details = Topic::find($topic_id)->toArray();
 
-        return view('frontend.subject.upload_file')->with('fetch_section_details',$fetch_section_details);;
+        $fetch_topic_content_details = TopicContent::where([['topic_id',$topic_id],['status','1']])->get()->toArray();
+
+        return view('frontend.subject.upload_file')->with('fetch_section_details',$fetch_section_details)
+                                                ->with('fetch_topic_content_details',$fetch_topic_content_details[0]);
+    }
+
+    public function upload_embed_video (Request $request) {
+        $add = new TopicEmbedFile();
+        $add->topic_content_id = $request->topic_content_id;
+        $add->link = $request->file_link;
+
+        if($add->save()){
+            echo 1;
+            exit();
+        }
+        
+    }
+
+    public function upload_dropbox_file (Request $request) {
+        $add = new TopicDropboxFile();
+        $add->topic_content_id = $request->topic_content_id;
+        $add->link = $request->file_link;
+
+        if($add->save()){
+            echo 1;
+            exit();
+        }
+    }
+
+    public function topic_add_content (Request $request){
+        $topic_id = $request->topic_id;
+
+        $add = new TopicContent();
+        $add->topic_id = $topic_id;
+        $add->title = 'VIDEO | PPT | PDF'.' '.$topic_id;
+        $add->service_type = 1;
+        $add->status = 1;
+
+        $add->save();
     }
 }

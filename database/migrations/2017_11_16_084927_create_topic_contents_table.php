@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTopicAllFilesTable extends Migration
+class CreateTopicContentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,12 @@ class CreateTopicAllFilesTable extends Migration
      */
     public function up()
     {
-        Schema::create('topic_all_files', function (Blueprint $table) {
+        Schema::create('topic_contents', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('topic_content_id',50);
-            $table->string('upload_file',255);
+            $table->string('topic_id',50);
+            $table->string('title',100)->nullable();
+            $table->string('service_type',50)->nullable();
+            $table->string('status',10)->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +30,6 @@ class CreateTopicAllFilesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('topic_all_files');
+        Schema::dropIfExists('topic_contents');
     }
 }

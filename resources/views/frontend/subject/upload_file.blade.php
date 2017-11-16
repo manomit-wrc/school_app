@@ -26,7 +26,7 @@
                         <div class="form-group">
                             <label class="col-md-3 control-label">Title</label>
                             <div class="col-md-4">
-                                <input type="text" class="form-control" placeholder="Title" name="title" id="title">
+                                <input type="text" class="form-control" placeholder="Title" name="title" id="title" value="{{ $fetch_topic_content_details['title'] }}">
                             </div>
                         </div>
 
@@ -34,24 +34,33 @@
                             <label class="col-md-3 control-label">Service</label>
                             <div class="col-md-4">
                                 <label class="radio-inline">
-                                    <input type="radio" name="optionService" value="1" checked="">
+                                    <input type="radio" name="optionService" value="1" @if($fetch_topic_content_details['service_type'] == 1) checked="" @endif>
                                     Paid
                                 </label>
                                 <label class="radio-inline">
-                                    <input type="radio" name="optionService" value="2">
+                                    <input type="radio" name="optionService" value="2" @if($fetch_topic_content_details['service_type'] == 2) checked="" @endif>
                                     Trail
                                 </label>
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"></label>
+                            <div class="col-md-9">
+                                <button type="submit" class="btn btn-sm btn-success">Save</button>
+                            </div>
+                        </div>
+                    </form>
 
                         <div class="form-group">
                             <div class="col-md-3" style="padding: 20px 10px 20px 35px;">
                                 <center>
-                                  <input type="file" style="display:none" id="file-chooser" accept="image/gif, image/jpeg, image/jpg, image/png, image/bmp, .mp4, .pdf" multiple="">
+                                <form id="upload_section_file" name="upload_section_file" method="POST" enctype="multipart/form-data">      
+                                  <input type="file" style="display:block" id="file_chooser" accept="image/gif, image/jpeg, image/jpg, image/png, image/bmp, .mp4, .pdf" multiple="multiple" name="file[]" >
                                   <div class="upload-item-panel" id="uploadFromComputer">
                                     <img class="upload-item-img" src="https://www.mathoratory.com/styles/images/upload-cloud.png">
                                     <p class="upload-item-lable">Upload video, pdf, images from your computer</p>
                                   </div>
+                              </form>
                                 </center>
                             </div>
                             <div class="col-md-3" style="padding: 20px 10px;">
@@ -70,25 +79,19 @@
                                   <div class="upload-item-panel" id="syncFromDropbox">
                                     <img class="upload-item-img" src="https://www.mathoratory.com/styles/images/upload-dropbox.png">
                                     <p class="upload-item-lable">
-                                        <a href="#" class="btn btn-sm btn-success m-r-5 m-b-5 dropbox_file">Sync video, pdf, images from Dropbox</a>
+                                        <a href="javascript:void(0)" class="btn btn-sm btn-success m-r-5 m-b-5 dropbox_file" topic_content_id="{{ $fetch_topic_content_details['id'] }}">Sync video, pdf, images from Dropbox</a>
                                         <br>
                                     </p>
                                   </div>
                                 </center>
                             </div>
                         </div>
-
+{{-- 
                         <div class="form-group" id="show_embed_video">
                             
-                        </div>
+                        </div> --}}
 
-                        <div class="form-group">
-                            <label class="col-md-3 control-label"></label>
-                            <div class="col-md-9">
-                                <button type="submit" class="btn btn-sm btn-success">Submit</button>
-                            </div>
-                        </div>
-                    </form>
+                    
                 </div>
             </div>
             <!-- end panel -->
@@ -128,7 +131,7 @@
                         </fieldset>
 
                         <div class="modal-footer"">
-                            <button type="submit" class="btn btn-sm btn-success" id="embedd_video_submit">Embed</button>
+                            <button type="submit" class="btn btn-sm btn-success" id="embedd_video_submit" topic_content_id="{{ $fetch_topic_content_details['id'] }}">Embed</button>
                             <button type="button" class="btn btn-sm btn-white" data-dismiss="modal">Close</button>
                         </div>
                     </form>
