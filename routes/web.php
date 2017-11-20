@@ -44,12 +44,17 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::get('/subject/delete/{subject_id}', 'SubjectController@subject_delete');
 	Route::get('/subject/topic-add/{subject_id}', 'SubjectController@topic');
 	Route::post('/subject/topic_add', 'SubjectController@topic_add');
-	Route::post('/subject/topic-upload-post', 'SubjectController@topic_upload_post');
+	Route::post('/subject/topic-upload-post/{subject_id}/{topic_id}/{topic_content_id}', 'SubjectController@topic_upload_post');
 	Route::get('/subject/topic-file-delete/{topic_file_id}', 'SubjectController@topic_file_delete');
-	Route::get('/subject/topic-add/upload-file/{topic_id}', 'SubjectController@upload_file_view');
+	Route::get('/subject/topic-add/upload-file/{topic_id}/{topic_content_id}', 'SubjectController@upload_file_view');
 	Route::post('/subject/upload_embed_video', 'SubjectController@upload_embed_video');
 	Route::post('/subject/upload_dropbox_file', 'SubjectController@upload_dropbox_file');
 	Route::post('/subject/topic-add-content', 'SubjectController@topic_add_content');
+	Route::get('/subject/topic-content-delete/{subject_id}/{topic_content_id}','SubjectController@topic_content_delete');
+	Route::get('/subject/topic-add/topic-content-details/{topic_id}/{topic_content_id}',"SubjectController@topic_content_details");
+	Route::get('/subject/content-embedVideo-file-delete/{subject_id}/{embed_video_id}', 'SubjectController@content_embedVideo_delete');
+	Route::get('/subject/content-dropbox-file-delete/{subject_id}/{dropbox_file_id}',"SubjectController@content_dropboxFile_delete");
+	Route::get('/subject/content-upload-file-delete/{subject_id}/{upload_file_id}',"SubjectController@content_uploadFile_delete");
 
 
 	Route::get('/topic', 'TopicController@index');

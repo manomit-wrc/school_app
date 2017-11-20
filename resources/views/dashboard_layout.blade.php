@@ -399,50 +399,8 @@
         isDir: false,
       };
     //end dropbox
-
-       /* $("#file_chooser").change(function() {
-          topic_content_id = $(this).attr('topic_content_id');
-
-          var form_data = new FormData($("#upload_section_file").get(0));
-
-          $.ajax({
-            type: "POST",
-            url:"/subject/topic-upload-post",
-            data: form_data,
-            processData: false, // Don't process the files
-            contentType: false,
-            success: function (data){
-              if(data==1){
-                $.confirm({
-                  title: 'Confirmation!',
-                  content: 'Files uploaded successfully',
-                  buttons: {
-                      OK: function () {
-                      }
-                  }
-                });
-              }
-            }
-          });
-        });*/
             
 		});
-
-  $(document).ready(function(e){
-    $("#file_chooser").change(function(){
-        var form = $('#upload_section_file')[0]; // You need to use standard javascript object here
-        var formData = new FormData(form);
-
-        $.ajax({
-          url: '/subject/topic-upload-post',
-          data: formData,
-          type: 'POST',
-          contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
-          processData: false, // NEEDED, DON'T OMIT THIS
-          // ... Other options like success and etc
-      });
-    });
-  });
 	</script>
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

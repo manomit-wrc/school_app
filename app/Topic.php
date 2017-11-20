@@ -17,4 +17,8 @@ class Topic extends Model
     public function topic_files () {
     	return $this->hasMany('\App\TopicAllFile', 'topic_id');
     }
+
+    public function topic_content () {
+    	return $this->hasMany('App\TopicContent', 'topic_id');
+    }
 }

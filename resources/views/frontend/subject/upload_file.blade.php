@@ -22,11 +22,16 @@
                     <h4 class="panel-title">Upload Files</h4>
                 </div>
                 <div class="panel-body">
-                    <form class="form-horizontal">
+                    <form class="form-horizontal" name="topic_contyect_add_form" method="POST" action="/subject/topic-upload-post/{{ $fetch_section_details['subject_id'] }}/{{ $fetch_topic_content_details['topic_id'] }}/{{ $fetch_topic_content_details['id'] }}" enctype="multipart/form-data">
+                        
+                        {{ csrf_field() }}
+
                         <div class="form-group">
                             <label class="col-md-3 control-label">Title</label>
-                            <div class="col-md-4">
+                            <div class="col-md-4 {{ $errors->has('title') ? 'has-error' : '' }}">
                                 <input type="text" class="form-control" placeholder="Title" name="title" id="title" value="{{ $fetch_topic_content_details['title'] }}">
+
+                                @if ($errors->first('title'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('title') }}</span>@endif
                             </div>
                         </div>
 
@@ -43,6 +48,14 @@
                                 </label>
                             </div>
                         </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">Upload File</label>
+                            <div class="col-md-4">
+                                <input type="file" class="form-control" name="file[]" id="file_chooser" accept="image/gif, image/jpeg, image/jpg, image/png, image/bmp, .mp4, .pdf" multiple="multiple" >
+                            </div>
+                        </div>
+
                         <div class="form-group">
                             <label class="col-md-3 control-label"></label>
                             <div class="col-md-9">
@@ -52,7 +65,7 @@
                     </form>
 
                         <div class="form-group">
-                            <div class="col-md-3" style="padding: 20px 10px 20px 35px;">
+                            {{-- <div class="col-md-3" style="padding: 20px 10px 20px 35px;">
                                 <center>
                                 <form id="upload_section_file" name="upload_section_file" method="POST" enctype="multipart/form-data">      
                                   <input type="file" style="display:block" id="file_chooser" accept="image/gif, image/jpeg, image/jpg, image/png, image/bmp, .mp4, .pdf" multiple="multiple" name="file[]" >
@@ -60,9 +73,9 @@
                                     <img class="upload-item-img" src="https://www.mathoratory.com/styles/images/upload-cloud.png">
                                     <p class="upload-item-lable">Upload video, pdf, images from your computer</p>
                                   </div>
-                              </form>
+                                </form>
                                 </center>
-                            </div>
+                            </div> --}}
                             <div class="col-md-3" style="padding: 20px 10px;">
                                 <center>
                                   <div class="upload-item-panel" id="uploadEmbedVideo">

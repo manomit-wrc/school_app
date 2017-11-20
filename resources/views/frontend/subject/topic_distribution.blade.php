@@ -45,7 +45,7 @@
                                     <div class="row">
                                         <ul class="nav nav-pills">
                                             <li class="active">
-                                                <a href="/subject/topic-add/upload-file/{{ $fetch_all_topic[$i]['id'] }}" class="topic_add_content" topic_id={{ $fetch_all_topic[$i]['id'] }}>
+                                                <a href="javascript:void(0)" class="topic_add_content" topic_id="{{ $fetch_all_topic[$i]['id'] }}">
                                                     <span class="hidden-xs">VIDEO | PPT | PDF</span>
                                                 </a>
                                             </li>
@@ -61,6 +61,67 @@
                                             </li>
                                         </ul>
                                     </div>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <tbody>
+                                <?php
+                                if(!empty($fetch_all_topic[$i]['topic_content'])){
+                                    foreach ($fetch_all_topic[$i]['topic_content'] as $key => $value) {
+                                        // $path = $value['upload_file'];
+                                        // $file_extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+                                ?>
+                                       {{--  @if($file_extension == 'jpg' || $file_extension == 'jpeg' || $file_extension == 'png')
+
+                                            <tr>
+                                                <td>
+                                                    <a href="{{ url('/upload/topic_file/original/'.$value['upload_file']) }}" target="_blank">
+
+                                                        {{ $value['upload_file'] }}
+                                                    </a>
+
+                                                    <span class="pull-right">
+                                                        <a title="Delete" href="/subject/topic-file-delete/{{ $value['id'] }}" onclick="return confirm('Do you really want to delete the current record ?');" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
+                                                    </span>
+                                                </td>
+                                            </tr>
+
+                                        @else
+
+                                            <tr>
+                                                <td>
+                                                    <a href="{{ url('/upload/topic_file/others/'.$value['upload_file']) }}" target="_blank">
+
+                                                        {{ $value['upload_file'] }}
+                                                    </a>
+
+                                                    <span class="pull-right">
+                                                        <a title="Delete" href="/subject/topic-file-delete/{{ $value['id'] }}" onclick="return confirm('Do you really want to delete the current record ?');" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
+                                                    </span>
+                                                </td>
+                                            </tr>   
+
+                                        @endif --}}
+
+                                        <tr>
+                                            <td>
+                                                <a href="/subject/topic-add/topic-content-details/{{ $fetch_all_topic[$i]['id'] }}/{{ $value['id'] }}">
+
+                                                    {{ $value['title'] }}
+                                                </a>
+
+                                                <span class="pull-right">
+                                                    <a title="Delete" href="/subject/topic-content-delete/{{ $fetch_all_topic[$i]['subject_id'] }}/{{ $value['id'] }}" onclick="return confirm('Do you really want to delete the current record ?');" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                <?php 
+                                    }
+                                }
+                                ?>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -124,6 +185,11 @@
                 data:{
                     topic_id:topic_id,
                     _token: "{{ csrf_token() }}"
+                },
+                success: function (response) {
+                    var current_topic_content_url = response;
+                    var new_url = "/subject/topic-add/upload-file/" + topic_id + "/" + current_topic_content_url;
+                    window.location.href = new_url;
                 }
             });
         });
