@@ -32,6 +32,10 @@
                 @for($i=0; $i<count($fetch_all_topic); $i++)
                     <div class="panel panel-inverse overflow-hidden">
                         <div class="panel-heading">
+                            <div class="panel-heading-btn">
+                                <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default section_name_edit" title="Section Edit" section_id="{{ $fetch_all_topic[$i]['id'] }}"><i class="fa fa-1x fa-pencil"></i></a>
+                            </div>
+
                             <h3 class="panel-title">
                                 <a class="accordion-toggle accordion-toggle-styled collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ $i }}">
                                     <i class="fa fa-plus-circle pull-right"></i> 
@@ -112,7 +116,11 @@
                                                 </a>
 
                                                 <span class="pull-right">
-                                                    <a title="Delete" href="/subject/topic-content-delete/{{ $fetch_all_topic[$i]['subject_id'] }}/{{ $value['id'] }}" onclick="return confirm('Do you really want to delete the current record ?');" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
+                                                    <a title="Edit" href="/subject/topic-add/upload-file/{{ $fetch_all_topic[$i]['id'] }}/{{ $value['id'] }}" class="btn btn-primary btn-sm m-r-5"><i class="fa fa-pencil"></i></a>
+                                                </span>
+
+                                                <span class="pull-right">
+                                                    <a title="Delete" href="/subject/topic-content-delete/{{ $fetch_all_topic[$i]['subject_id'] }}/{{ $value['id'] }}" onclick="return confirm('Do you really want to delete the current record ?');" class="btn btn-danger btn-sm m-r-5"><i class="fa fa-trash"></i></a>
                                                 </span>
                                             </td>
                                         </tr>
@@ -175,6 +183,40 @@
     </div>
 </div>
 
+{{-- //section name edit modal --}}
+<div class="modal fade" id="modal-section-name-edit" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">Edit Section Name</h4>
+            </div>
+            <div class="modal-body">
+                <div class="panel-body">
+                    <form action="javascript:void(0)" id="section_edit_form" name="section_edit_form">
+                    <input type="hidden" name="section_id" class="section_id">
+                        <fieldset>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">Section Name</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control section_name" placeholder="Section Name" name="topic_name">
+                                </div>
+                            </div>
+                            <br/>
+                            <br/>
+                        </fieldset>
+
+                        <div class="modal-footer"">
+                            <button type="submit" class="btn btn-sm btn-success" id="section_name_edit_submit1">Submit</button>
+                            <button type="button" class="btn btn-sm btn-white" data-dismiss="modal">Close</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script type="text/javascript">
     $(document).ready(function(){
         $('.topic_add_content').on('click', function () {
@@ -190,6 +232,60 @@
                     var current_topic_content_url = response;
                     var new_url = "/subject/topic-add/upload-file/" + topic_id + "/" + current_topic_content_url;
                     window.location.href = new_url;
+                }
+            });
+        });
+
+        $('.section_name_edit').on('click', function() {
+            var section_id = $(this).attr('section_id');
+
+            $.ajax({
+                type: "POST",
+                url : "/subject/fetch_section_name",
+                data:{
+                    section_id:section_id,
+                    _token: "{{ csrf_token() }}"
+                },
+                success: function (response){
+                    if(response){
+                        $section_name = response.section_name;
+                        $('.section_name').val($section_name); 
+                        $('.section_id').val(response.section_id);
+
+                        $('#modal-section-name-edit').modal();
+                    }
+                    
+                }
+            });
+        });
+
+        $('#section_name_edit_submit1').on('click',function(){
+            var $section_id = $('.section_id').val();
+            var $section_name = $('.section_name').val();
+
+            $('.btn').prop('disabled',true);
+
+            $.ajax({
+                type:"POST",
+                url:"/subject/section-name-edit",
+                data:{
+                    section_id:$section_id,
+                    section_name:$section_name,
+                    _token:'{{ csrf_token() }}'
+                },
+                success: function (data){
+                    if(data == 1){
+                        $('.btn').prop('disabled',false);
+                        $.confirm({
+                            title: 'Confirmation!',
+                            content: 'Section name edit successfully',
+                            buttons: {
+                                OK: function () {
+                                    window.location.reload();
+                                }
+                            }
+                        });            
+                    }
                 }
             });
         });

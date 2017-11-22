@@ -381,4 +381,24 @@ class SubjectController extends Controller
             return redirect('/subject/topic-add/'.$subject_id);
         }
     }
+
+    public function fetch_section_name (Request $request) {
+        $section_id = $request->section_id;
+
+        $fetch_section_details = Topic::find($section_id)->toArray();
+        $section_name = $fetch_section_details['topic_name'];
+        $section_id = $fetch_section_details['id'];
+
+        return response()->json(['section_name'=>$section_name,'section_id'=>$section_id]);
+    }
+
+    public function section_name_edit (Request $request) {
+        $edit = Topic::find($request->section_id);
+        $edit->topic_name = ucwords($request->section_name);
+
+        if($edit->save()){
+            echo 1;
+            exit;
+        }
+    }
 }
