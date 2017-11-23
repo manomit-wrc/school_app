@@ -195,7 +195,7 @@ class SubjectController extends Controller
     public function topic ($subject_id) {
         $fetch_subject_details = Subject::find($subject_id)->toArray();
 
-        $fetch_all_topic = Topic::with('topic_content')->where([['status','1'],['subject_id',$subject_id]])->orderby('id','desc')->get()->toArray(); 
+        $fetch_all_topic = Topic::with('topic_content')->where([['status','1'],['subject_id',$subject_id]])->orderby('id','desc')->get()->toArray();
 
         return view('frontend.subject.topic_distribution')->with('fetch_subject_details',$fetch_subject_details)
                                                         ->with('fetch_all_topic',$fetch_all_topic);
@@ -399,6 +399,16 @@ class SubjectController extends Controller
         if($edit->save()){
             echo 1;
             exit;
+        }
+    }
+
+    public function section_delete (Request $request) {
+        $delete = Topic::find($request->section_id);
+        $delete->status = 5;
+
+        if($delete->save()){
+            echo 1;
+            exit();
         }
     }
 }

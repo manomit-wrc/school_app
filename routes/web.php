@@ -57,6 +57,7 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::get('/subject/content-upload-file-delete/{subject_id}/{upload_file_id}',"SubjectController@content_uploadFile_delete");
 	Route::post('/subject/fetch_section_name', "SubjectController@fetch_section_name");
 	Route::post('/subject/section-name-edit', "SubjectController@section_name_edit");
+	Route::post('/subject/section-delete', "SubjectController@section_delete");
 
 
 	Route::get('/topic', 'TopicController@index');

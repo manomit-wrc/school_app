@@ -34,6 +34,11 @@
                         <div class="panel-heading">
                             <div class="panel-heading-btn">
                                 <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default section_name_edit" title="Section Edit" section_id="{{ $fetch_all_topic[$i]['id'] }}"><i class="fa fa-1x fa-pencil"></i></a>
+
+                                @if(count($fetch_all_topic[$i]['topic_content']) == 0)
+                                    <a title="Delete" href="javascript:void(0)"class="btn btn-xs btn-icon btn-circle btn-default section_name_delete" section_id="{{ $fetch_all_topic[$i]['id'] }}"><i class="fa fa-trash"></i></a>
+                                @endif
+
                             </div>
 
                             <h3 class="panel-title">
@@ -285,6 +290,41 @@
                                 }
                             }
                         });            
+                    }
+                }
+            });
+        });
+
+        $('.section_name_delete').on('click',function () {
+            var section_id = $(this).attr('section_id');
+
+            $.confirm({
+                title: 'Alert!',
+                content: 'Do you want to delete this record ?',
+                buttons: {
+                    Yes: function () {
+                        $.ajax({
+                            type: "POST",
+                            url : "/subject/section-delete",
+                            data:{
+                                section_id:section_id,
+                                _token : "{{ csrf_token() }}"
+                            },
+                            success : function (data){
+                                $.confirm({
+                                    title: 'Confirmation!',
+                                    content: 'Section deleted successfully',
+                                    buttons: {
+                                        OK: function () {
+                                            window.location.reload();
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    },
+                    No: function () {
+
                     }
                 }
             });
