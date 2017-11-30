@@ -9,7 +9,7 @@
         <!-- begin breadcrumb -->
         <ol class="breadcrumb pull-right">
             <li><a href="/dashboard">Dashboard</a></li>
-            <li><a href="/subject">Subject</a></li>
+            <li><a href="/exam">Exam</a></li>
             <li class="active">Add</li>
         </ol>
         <!-- end breadcrumb -->
@@ -23,36 +23,26 @@
                 <p class="login-box-msg" style="color: red;">{{ Session::get('submit-status') }}</p>
             @endif
             <div class="row">
-                <form name="sub_form" method="POST" action="/subject/sub-add" class="form-horizontal" enctype="multipart/form-data">
+                <form name="frmExam" method="POST" action="/exam/save" class="form-horizontal" enctype="multipart/form-data">
                     {{ csrf_field() }}
                     <div class="form-group">
-                        <label class="col-md-2 control-label">Subject Full Name</label>
-                        <div class="col-md-10 {{ $errors->has('sub_full_name') ? 'has-error' : '' }}">
-                            <input class="form-control" placeholder="Subject Full Name" type="text" name="sub_full_name" id="sub_full_name" value="{{ old('sub_full_name') }}">
+                        <label class="col-md-2 control-label">Code</label>
+                        <div class="col-md-10 {{ $errors->has('code') ? 'has-error' : '' }}">
+                            <input class="form-control" placeholder="Exam Code" type="text" name="code" id="code" value="{{ old('code') }}">
                         </div>
-                        @if ($errors->first('sub_full_name'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('sub_full_name') }}</span>@endif
+                        @if ($errors->first('code'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('code') }}</span>@endif
                     </div>
+
                     <div class="form-group">
-                        <label class="col-md-2 control-label">Subject Short Name</label>
-                        <div class="col-md-10 {{ $errors->has('sub_short_name') ? 'has-error' : '' }}">
-                            <input class="form-control" name="sub_short_name" id="sub_short_name" placeholder="Subject Short Name" type="text" value="{{ old('sub_short_name') }}">
+                        <label class="col-md-2 control-label">Name</label>
+                        <div class="col-md-10 {{ $errors->has('name') ? 'has-error' : '' }}">
+                            <input class="form-control" placeholder="Exam Name" type="text" name="name" id="name" value="{{ old('name') }}">
                         </div>
-                        @if ($errors->first('sub_short_name'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('sub_short_name') }}</span>@endif
+                        @if ($errors->first('name'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('name') }}</span>@endif
                     </div>
+                    
                     <div class="form-group">
-                        <label class="col-md-2 control-label">Exam</label>
-                        <div class="col-md-10 {{ $errors->has('exam_id') ? 'has-error' : '' }}">
-                            <select name="exam_id" id="exam_id" class="form-control">
-                                <option value="">Select Exam</option>
-                                @foreach($fetch_all_course as $key=> $value )
-                                    <option value="{{ $value['id'] }}">{{ ucwords($value['name']).' ('.($value['code']).')' }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        @if ($errors->first('exam_id'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('exam_id') }}</span>@endif
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">Subject Description</label>
+                        <label class="col-md-2 control-label">Description</label>
                         <div class="col-md-10 {{ $errors->has('description') ? 'has-error' : '' }}">
                             <textarea rows="12" cols="200" id="description" name="description" placeholder="Write your message here..." class="editor form-control">
                                 {{ old('description') }}
@@ -61,13 +51,23 @@
                         </div>
                         @if ($errors->first('description'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('description') }}</span>@endif
                     </div>
-                    {{-- <div class="form-group">
-                        <label class="col-md-2 control-label">Upload File</label>
-                        <div class="col-md-10 {{ $errors->has('sub_file') ? 'has-error' : '' }}">
-                            <input type="file" name="sub_file" id="sub_file" class="form-control">
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Start Date</label>
+                        <div class="input-group col-md-10 date {{ $errors->has('start_date') ? 'has-error' : '' }}" id="datepicker-disabled-past" data-date-format="dd-mm-yyyy" data-date-start-date="Date.default">
+                            <input type="text" name="start_date" id="start_date" class="form-control" placeholder="Select Date" value="{{ old('start_date') }}">
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                         </div>
-                        @if ($errors->first('sub_file'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('sub_file') }}</span>@endif
-                    </div> --}}
+                        @if ($errors->first('start_date'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('start_date') }}</span>@endif
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">End Date</label>
+                        <div class="input-group col-md-10 date {{ $errors->has('end_date') ? 'has-error' : '' }}" id="datepicker-disabled-past" data-date-format="dd-mm-yyyy" data-date-start-date="Date.default">
+                            <input type="text" name="end_date" id="end_date" class="form-control" placeholder="End Date" value="{{ old('end_date') }}">
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        </div>
+
+                        @if ($errors->first('end_date'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('end_date') }}</span>@endif
+                    </div>
                     <div class="form-group">
                         <label class="col-md-2 control-label">Tags</label>
                         <div class="col-md-10 {{ $errors->has('tags') ? 'has-error' : '' }}">
@@ -118,6 +118,7 @@
         }
         
     </style>
+
     <script type="text/javascript">
         $(document).ready(function() {
             $("#tags").select2({

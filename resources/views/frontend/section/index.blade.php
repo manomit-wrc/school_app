@@ -8,11 +8,12 @@
 	<!-- begin breadcrumb -->
 	<ol class="breadcrumb pull-right">
 		<li><a href="/dashboard">Dashboard</a></li>
-		<li><a href="javascript:;">Subject</a></li>
+        <li><a href="/area">Area</a></li>
+		<li><a href="javascript:;">Section</a></li>
 	</ol>
 	
 	<div class="box-footer">
-      <a href="/subject/add"><button type="button" class="btn btn-success m-r-5 m-b-5">Add Subject</button></a>
+      <a href="/area/section/{{ $area_id }}/add"><button type="button" class="btn btn-success m-r-5 m-b-5">Add Section</button></a>
     </div>
     <br>
 
@@ -23,7 +24,7 @@
 	        <!-- begin panel -->
             <div class="panel panel-inverse">
                 <div class="panel-heading">
-                    <h4 class="panel-title">Subject</h4>
+                    <h4 class="panel-title">Section</h4>
                 </div>
                 <div class="panel-body">
                     @if(Session::has('submit-status'))
@@ -38,23 +39,21 @@
                         <thead>
                             <tr>
                                 <th>SL NO</th>
-                                <th>Subject Full Name</th>
-                                <th>Subject Short Name</th>
-                                <th>Exam Name</th>
+                                <th>Code</th>
+                                <th>Name</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($fetch_all_subject as $key => $value)
+                            @foreach($sections as $key => $value)
                                 <tr class="odd gradeX">
                                     <td>{{ ++$key }}</td>
-                                    <td>{{ $value['sub_full_name'] }}</td>
-                                    <td>{{ $value['sub_short_name'] }}</td>
-                                    <td>{{ ucwords($value['exams']['code']) }}</td>
+                                    <td>{{ $value['code'] }}</td>
+                                    <td>{{ $value['name'] }}</td>
                                     <td>
-                                        <a title="Edit" href="/subject/edit/{{$value['id']}}" class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i></a>
+                                        <a title="Edit" href="/area/section/{{ $area_id }}/edit/{{$value['id']}}" class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i></a>
 
-                                        <a title="Delete" href="/subject/delete/{{$value['id']}}" onclick="return confirm('Do you really want to delete the current record ?');" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
+                                        <a title="Delete" href="/area/section/{{ $area_id }}/delete/{{$value['id']}}" onclick="return confirm('Do you really want to delete the current record ?');" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -68,6 +67,4 @@
     </div>
     <!-- end row -->
 </div>
-
-
 @endsection

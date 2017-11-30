@@ -9,7 +9,7 @@
         <!-- begin breadcrumb -->
         <ol class="breadcrumb pull-right">
             <li><a href="/dashboard">Dashboard</a></li>
-            <li><a href="/subject">Subject</a></li>
+            <li><a href="/area">Area</a></li>
             <li class="active">Add</li>
         </ol>
         <!-- end breadcrumb -->
@@ -23,36 +23,48 @@
                 <p class="login-box-msg" style="color: red;">{{ Session::get('submit-status') }}</p>
             @endif
             <div class="row">
-                <form name="sub_form" method="POST" action="/subject/sub-add" class="form-horizontal" enctype="multipart/form-data">
+                <form name="frmArea" method="POST" action="/area/save" class="form-horizontal" enctype="multipart/form-data">
                     {{ csrf_field() }}
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">Subject Full Name</label>
-                        <div class="col-md-10 {{ $errors->has('sub_full_name') ? 'has-error' : '' }}">
-                            <input class="form-control" placeholder="Subject Full Name" type="text" name="sub_full_name" id="sub_full_name" value="{{ old('sub_full_name') }}">
-                        </div>
-                        @if ($errors->first('sub_full_name'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('sub_full_name') }}</span>@endif
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">Subject Short Name</label>
-                        <div class="col-md-10 {{ $errors->has('sub_short_name') ? 'has-error' : '' }}">
-                            <input class="form-control" name="sub_short_name" id="sub_short_name" placeholder="Subject Short Name" type="text" value="{{ old('sub_short_name') }}">
-                        </div>
-                        @if ($errors->first('sub_short_name'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('sub_short_name') }}</span>@endif
-                    </div>
                     <div class="form-group">
                         <label class="col-md-2 control-label">Exam</label>
                         <div class="col-md-10 {{ $errors->has('exam_id') ? 'has-error' : '' }}">
                             <select name="exam_id" id="exam_id" class="form-control">
                                 <option value="">Select Exam</option>
-                                @foreach($fetch_all_course as $key=> $value )
-                                    <option value="{{ $value['id'] }}">{{ ucwords($value['name']).' ('.($value['code']).')' }}</option>
+                                @foreach($exams as $key=> $value )
+                                    <option value="{{ $key }}">{{ $value }}</option>
                                 @endforeach
                             </select>
                         </div>
                         @if ($errors->first('exam_id'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('exam_id') }}</span>@endif
                     </div>
                     <div class="form-group">
-                        <label class="col-md-2 control-label">Subject Description</label>
+                        <label class="col-md-2 control-label">Subject</label>
+                        <div class="col-md-10 {{ $errors->has('subject_id') ? 'has-error' : '' }}">
+                            <select name="subject_id" id="subject_id" class="form-control">
+                                <option value="">Select Subject</option>
+                                
+                            </select>
+                        </div>
+                        @if ($errors->first('subject_id'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('subject_id') }}</span>@endif
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Code</label>
+                        <div class="col-md-10 {{ $errors->has('code') ? 'has-error' : '' }}">
+                            <input class="form-control" placeholder="Area Code" type="text" name="code" id="code" value="{{ old('code') }}">
+                        </div>
+                        @if ($errors->first('code'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('code') }}</span>@endif
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Name</label>
+                        <div class="col-md-10 {{ $errors->has('name') ? 'has-error' : '' }}">
+                            <input class="form-control" placeholder="Area Name" type="text" name="name" id="name" value="{{ old('name') }}">
+                        </div>
+                        @if ($errors->first('name'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('name') }}</span>@endif
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Description</label>
                         <div class="col-md-10 {{ $errors->has('description') ? 'has-error' : '' }}">
                             <textarea rows="12" cols="200" id="description" name="description" placeholder="Write your message here..." class="editor form-control">
                                 {{ old('description') }}
@@ -60,25 +72,6 @@
 
                         </div>
                         @if ($errors->first('description'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('description') }}</span>@endif
-                    </div>
-                    {{-- <div class="form-group">
-                        <label class="col-md-2 control-label">Upload File</label>
-                        <div class="col-md-10 {{ $errors->has('sub_file') ? 'has-error' : '' }}">
-                            <input type="file" name="sub_file" id="sub_file" class="form-control">
-                        </div>
-                        @if ($errors->first('sub_file'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('sub_file') }}</span>@endif
-                    </div> --}}
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">Tags</label>
-                        <div class="col-md-10 {{ $errors->has('tags') ? 'has-error' : '' }}">
-                            <select name="tags[]" id="tags" class="form-control" multiple>
-                                @foreach($all_tags as $key=>$value)
-                                    <option value="{{ $value['id'] }}">{{ $value['tag_name'] }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        @if ($errors->first('tags'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('tags') }}</span>@endif
                     </div>
                     <div class="form-group">
                         <div class="col-md-4 col-md-offset-2">
@@ -118,10 +111,33 @@
         }
         
     </style>
+
     <script type="text/javascript">
         $(document).ready(function() {
             $("#tags").select2({
                 placeholder: 'Select Tags',
+            });
+
+            $("#exam_id").change(function(e) {
+                if($(this).val()) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/area/get-subject-by-exam',
+                        data: {exam_id:$(this).val(), _token: "{{ csrf_token() }}"},
+                        success:function(response) {
+                            $("#subject_id").find('option').not(':first').remove();
+                            for(var i=0; i<response.subjects.length;i++) {
+                                $("#subject_id").append('<option value="'+response.subjects[i].id+'">'+response.subjects[i].sub_short_name+'</option>');
+                            }
+                        },
+                        error: function(err) {
+
+                        }
+                    });
+                }
+                else {
+                    $("#subject_id").find('option').not(':first').remove();
+                }
             });
         });
         

@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Subject extends Model
 {
-    public function course_details(){
-    	return $this->belongsTo('\App\Course', 'course_id');
+    public function exams(){
+    	return $this->belongsTo('\App\Exam', 'exam_id');
     }
 
     public function tags() {

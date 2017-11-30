@@ -73,4 +73,26 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::get('/tags/edit/{tag_id}', 'TagController@tags_edit');
 	Route::post('/tags/tag-edit-save/{tag_id}', 'TagController@tags_edit_save');
 	Route::get('/tags/delete/{tag_id}', 'TagController@tags_delete');
+
+	Route::get('/exam','ExamController@index');
+	Route::get('/exam/add','ExamController@add');
+	Route::post('/exam/save', 'ExamController@save');
+	Route::get('/exam/edit/{id}','ExamController@edit');
+	Route::post('/exam/update/{id}', 'ExamController@update');
+	Route::get('/exam/delete/{id}','ExamController@delete');
+
+	Route::get('/area','AreaController@index');
+	Route::get('/area/add','AreaController@add');
+	Route::post('/area/get-subject-by-exam', 'AreaController@get_subject_by_exam');
+	Route::post('/area/save','AreaController@save');
+	Route::get('/area/edit/{id}','AreaController@edit');
+	Route::post('/area/update/{id}','AreaController@update');
+	Route::get('/area/delete/{id}','AreaController@delete');
+
+	Route::get('/area/section/{area_id}','SectionController@index');
+	Route::get('/area/section/{area_id}/add','SectionController@add');
+	Route::post('/area/section/{area_id}/save','SectionController@save');
+	Route::get('/area/section/{area_id}/edit/{id}','SectionController@edit');
+	Route::post('/area/section/{area_id}/update/{id}','SectionController@update');
+	Route::get('/area/section/{area_id}/delete/{id}','SectionController@delete');
 });

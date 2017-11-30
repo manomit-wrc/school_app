@@ -40,65 +40,28 @@
                         @if ($errors->first('sub_short_name'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('sub_short_name') }}</span>@endif
                     </div>
                     <div class="form-group">
-                        <label class="col-md-2 control-label">Course</label>
-                        <div class="col-md-10 {{ $errors->has('course') ? 'has-error' : '' }}">
-                            <select name="course" id="course" class="form-control">
-                                <option value="">Select Course</option>
+                        <label class="col-md-2 control-label">Exam</label>
+                        <div class="col-md-10 {{ $errors->has('exam_id') ? 'has-error' : '' }}">
+                            <select name="exam_id" id="exam_id" class="form-control">
+                                <option value="">Select Exam</option>
                                 @foreach($fetch_all_course as $key=> $value )
-                                    <option value="{{ $value['id'] }}" @if($value['id'] == $subject_details['course_id']) selected="" @endif >{{ ucwords($value['full_name']).' ('.($value['short_name']).')' }}</option>
+                                    <option value="{{ $value['id'] }}" @if($value['id'] == $subject_details['exam_id']) selected="" @endif >{{ ucwords($value['name']).' ('.($value['code']).')' }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        @if ($errors->first('course'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('course') }}</span>@endif
+                        @if ($errors->first('exam_id'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('exam_id') }}</span>@endif
                     </div>
                     <div class="form-group">
                         <label class="col-md-2 control-label">Subject Description</label>
-                        <div class="col-md-10 {{ $errors->has('sub_description') ? 'has-error' : '' }}">
-                            <textarea rows="12" cols="200" id="course_description" name="sub_description" placeholder="Write your message here..." class="editor form-control">
+                        <div class="col-md-10 {{ $errors->has('description') ? 'has-error' : '' }}">
+                            <textarea rows="12" cols="200" id="description" name="description" placeholder="Write your message here..." class="editor form-control">
                                 {{$subject_details['sub_desc']}}
                             </textarea>
 
                         </div>
-                        @if ($errors->first('sub_description'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('sub_description') }}</span>@endif
+                        @if ($errors->first('description'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('description') }}</span>@endif
                     </div>
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">Upload File</label>
-                        <div class="col-md-10 {{ $errors->has('sub_file') ? 'has-error' : '' }}">
-                             @if($file_extension == 'jpg' || $file_extension == 'jpeg' || $file_extension == 'png')
-                                <a href="{{ url('/upload/subject_file/original/'.$subject_details['sub_file']) }}" target="_blank">
-
-                                    <img src="{{ url('/upload/subject_file/resize/'.$subject_details['sub_file']) }}" class="" style="width: 75px;height: 75px">
-                                </a>
-                                <br>
-                                <br>
-                            @elseif($file_extension == 'pdf')
-                                <a href="{{ url('/upload/subject_file/others/'.$subject_details['sub_file']) }}" target="_blank">
-                                    <i class="fa fa-file-pdf-o" style="font-size:48px;color:red"></i>
-                                </a>
-                                <br>
-                                <br>
-
-                            @elseif($file_extension == 'zip')
-                                <a href="{{ url('/upload/subject_file/others/'.$subject_details['sub_file']) }}" target="_blank">
-                                    <i class="fa fa-file-zip-o" style="font-size:48px;color:red"></i>
-                                </a>
-                                <br>
-                                <br>
-
-                            @elseif($file_extension == 'mp4')
-                                <a href="{{ url('/upload/subject_file/others/'.$subject_details['sub_file']) }}" target="_blank">
-                                    <i class="fa fa-video-camera" aria-hidden="true" style="font-size:48px;color:red" title="{{ $subject_details['sub_file'] }}"></i>
-                                </a>
-                            @endif
-
-                            <input type="hidden" name="existing_file" id="existing_file" class="form-control" value="{{ $subject_details['sub_file'] }}" style="width: 100px;height: 100px">
-
-
-
-                            <input type="file" name="sub_file" id="sub_file" class="form-control">
-                        </div>
-                        @if ($errors->first('sub_file'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('sub_file') }}</span>@endif
-                    </div>
+                    
                     <div class="form-group">
                         <label class="col-md-2 control-label">Tags</label>
                         <div class="col-md-10 {{ $errors->has('tags') ? 'has-error' : '' }}">

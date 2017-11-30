@@ -131,13 +131,13 @@
 
 	<!-- ================== END PAGE LEVEL JS ================== -->
 
-  @if((Request::segment(2) === 'add') || (Request::segment(2) === 'edit'))
+  @if((Request::segment(2) === 'add') || (Request::segment(2) === 'edit') || (Request::segment(4) === 'add') || (Request::segment(4) === 'edit'))
 
   {!! Html::script('storage/admin_dashboard/assets/ckeditor/resources/libs/ckeditor/ckeditor.js') !!}
   {!! Html::script('storage/admin_dashboard/assets/ckeditor/resources/libs/ckeditor/adapters/jquery.js') !!}
 
   <script type="text/javascript">
-    CKEDITOR.replace('course_description', {
+    CKEDITOR.replace('description', {
         height: 260,
         width: 880,
     } );
