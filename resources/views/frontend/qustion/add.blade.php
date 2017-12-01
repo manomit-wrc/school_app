@@ -75,7 +75,7 @@
                     <div class="form-group">
                         <label class="col-md-2 control-label">Question</label>
                         <div class="col-md-10 {{ $errors->has('question') ? 'has-error' : '' }}">
-                            <textarea rows="12" cols="200" id="description" exam="description" placeholder="Write your message here..." class="editor form-control">
+                            <textarea rows="12" cols="200" id="question" name="question" placeholder="Write your message here..." class="editor form-control">
                                 {{ old('question') }}
                             </textarea>
 
