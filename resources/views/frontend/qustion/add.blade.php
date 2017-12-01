@@ -138,6 +138,9 @@
                             $('#exam').attr('subject_id',subject_id);
 
                             $("#exam").find('option').not(':first').remove();
+                            $("#section").find('option').not(':first').remove();
+                            $("#area").find('option').not(':first').remove();
+
                             for(var i=0; i<response.tempArray.length;i++) {
                                 $("#exam").append('<option value="'+response.tempArray[i].exam_id+'">'+response.tempArray[i].exam_name+'</option>');
                             }
