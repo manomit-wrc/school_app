@@ -48,6 +48,12 @@
 			    </a>
 			</li>
 
+			<li class="has-sub {{ (Request::segment(1) === "qustion" ? 'active' : '') }}">
+				<a href="/question">
+				    <span>Add Qustion</span>
+			    </a>
+			</li>
+
 			<li class="has-sub {{ (Request::segment(1) === "tags" ? 'active' : '') }}">
 				<a href="/tags">
 				    <span>Tags</span>

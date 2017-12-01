@@ -95,4 +95,10 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::get('/area/section/{area_id}/edit/{id}','SectionController@edit');
 	Route::post('/area/section/{area_id}/update/{id}','SectionController@update');
 	Route::get('/area/section/{area_id}/delete/{id}','SectionController@delete');
+
+	Route::get('/question', 'AddQuestionController@index');
+	Route::match(array('GET', 'POST'), '/question/add','AddQuestionController@add_qustion_view');
+	Route::post('/question/fetch-exam-subject-wise', 'AddQuestionController@fetch_exam_subject_wise');
+	Route::post('/question/fetch-area-exam-wise', 'AddQuestionController@fetch_area_exam_wise');
+	Route::post('/question/fetch-section-area-wise', 'AddQuestionController@fetch_section_area_wise');
 });
