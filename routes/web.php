@@ -101,4 +101,5 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::post('/question/fetch-exam-subject-wise', 'AddQuestionController@fetch_exam_subject_wise');
 	Route::post('/question/fetch-area-exam-wise', 'AddQuestionController@fetch_area_exam_wise');
 	Route::post('/question/fetch-section-area-wise', 'AddQuestionController@fetch_section_area_wise');
+	Route::post('/question/add-question-submit', 'AddQuestionController@add_qustion_submit');
 });

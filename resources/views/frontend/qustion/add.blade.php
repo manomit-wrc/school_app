@@ -23,7 +23,7 @@
                 <p class="login-box-msg" style="color: red;">{{ Session::get('submit-status') }}</p>
             @endif
             <div class="row">
-                <form exam="frmArea" method="POST" action="#" class="form-horizontal" enctype="multipart/form-data">
+                <form exam="frmArea" method="POST" action="/question/add-question-submit" class="form-horizontal" enctype="multipart/form-data">
                     {{ csrf_field() }}
                     
                     <div class="form-group">
@@ -71,21 +71,103 @@
                         </div>
                         @if ($errors->first('section'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('section') }}</span>@endif
                     </div>
+
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Level</label>
+                        <div class="col-md-10 {{ $errors->has('level') ? 'has-error' : '' }}">
+                            <select class="form-control" placeholder="Level exam" name="level" id="level">
+                                <option value="">Select Level</option>
+                                <option value="1">Level 1</option>
+                                <option value="2">Level 2</option>
+                                <option value="3">Level 3</option>
+                                <option value="4">Level 4</option>
+                                <option value="5">Level 5</option>
+                            </select>
+                        </div>
+                        @if ($errors->first('level'))<span class="input-group col-md-offset-2 level-danger">{{ $errors->first('level') }}</span>@endif
+                    </div>
                     
                     <div class="form-group">
                         <label class="col-md-2 control-label">Question</label>
                         <div class="col-md-10 {{ $errors->has('question') ? 'has-error' : '' }}">
-                            <textarea rows="12" cols="200" id="question" name="question" placeholder="Write your message here..." class="editor form-control">
-                                {{ old('question') }}
-                            </textarea>
+                            <label class="radio-inline">
+                                <input type="radio" name="question_type" value="" id="question_type_text">
+                                Text
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="question_type" value="" id="question_type_file">
+                                Image
+                            </label>
 
+                            <div id="text_div">
+                                <textarea rows="12" cols="200" id="question" name="question" placeholder="Write your message here..." class="editor form-control">
+                                {{ old('question') }}
+                                </textarea>
+                            </div>
+
+                            <div id="image_div">
+                                <input type="file" name="question_image" id="question_image" class="form-control">
+                            </div>
                         </div>
+
                         @if ($errors->first('question'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('question') }}</span>@endif
                     </div>
+
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Option A</label>
+                        <div class="col-md-10 {{ $errors->has('optionA') ? 'has-error' : '' }}">
+                            <textarea class="form-control" cols="" rows="" name="optionA" id="optionA"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Option B</label>
+                        <div class="col-md-10 {{ $errors->has('optionB') ? 'has-error' : '' }}">
+                            <textarea class="form-control" cols="" rows="" name="optionB" id="optionB"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Option C</label>
+                        <div class="col-md-10 {{ $errors->has('optionC') ? 'has-error' : '' }}">
+                            <textarea class="form-control" cols="" rows="" name="optionC" id="optionC"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Option D</label>
+                        <div class="col-md-10 {{ $errors->has('optionD') ? 'has-error' : '' }}">
+                            <textarea class="form-control" cols="" rows="" name="optionD" id="optionD"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Correct Answer</label>
+                        <div class="col-md-10">
+                            <label class="radio-inline">
+                                <input type="radio" name="answer" value="1">
+                                A
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="answer" value="2">
+                                B
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="answer" value="3">
+                                C
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="answer" value="4">
+                                D
+                            </label>
+                        </div>
+                        @if ($errors->first('answer'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('answer') }}</span>@endif
+                    </div>
+
                     <div class="form-group">
                         <div class="col-md-4 col-md-offset-2">
                             <button type="submit" class="btn btn-sm btn-primary">Submit</button>
-                            {{-- <button type="reset" class="btn btn-sm btn-default">Cancel</button> --}}
+                            <button type="reset" class="btn btn-sm btn-default">Reset</button>
                         </div>
                     </div>
                 </form>
@@ -123,6 +205,20 @@
 
     <script type="text/javascript">
         $(document).ready(function(){
+            $('#image_div').hide();
+            $('#text_div').hide();
+
+            $('#question_type_text').on('click', function () {
+                $('#text_div').show();
+                CKEDITOR.replace('question');
+                $('#image_div').hide();
+            });
+
+            $('#question_type_file').on('click', function () {
+                $('#text_div').hide();
+                $('#image_div').show();
+            });
+
             $('#subject').on('change', function () {
                 var subject_id = $(this).val();
 
