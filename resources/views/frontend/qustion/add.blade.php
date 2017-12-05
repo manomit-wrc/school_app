@@ -302,9 +302,10 @@
             $('#question_type_text').on('click', function () {
                 $('#text_div').show();
                 CKEDITOR.replace('question',{
-                    filebrowserBrowseUrl: '/browser/browse.php',
-                    filebrowserUploadUrl: '/uploader/upload.php'
+                    filebrowserBrowseUrl : '/browser/browse.php',
+                    filebrowserUploadUrl : '/uploader/upload.php'
                 });
+                
                 $('#image_div').hide();
             });
 
