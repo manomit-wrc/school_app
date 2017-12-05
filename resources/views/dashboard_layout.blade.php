@@ -60,6 +60,64 @@
   {!! Html::script('storage/admin_dashboard/assets/ckeditor/resources/js/index.js') !!}
   
 	<!-- ================== END BASE JS ================== -->
+
+  <!-- ================== BEGIN BASE JS ================== -->
+
+  {!! Html::script('storage/admin_dashboard/assets/plugins/bootstrap/js/bootstrap.min.js') !!}
+
+  {!! Html::script('storage/admin_dashboard/assets/plugins/DataTables/media/js/jquery.dataTables.js') !!}
+  {!! Html::script('storage/admin_dashboard/assets/plugins/DataTables/media/js/dataTables.bootstrap.min.js') !!}
+  {!! Html::script('storage/admin_dashboard/assets/plugins/DataTables/extensions/Responsive/js/dataTables.responsive.min.js') !!}
+  {!! Html::script('storage/admin_dashboard/assets/js/table-manage-default.demo.min.js') !!}
+  
+  <!--[if lt IE 9]>
+    <script src="storage/admin_dashboard/assets/crossbrowserjs/html5shiv.js"></script>
+    <script src="storage/admin_dashboard/assets/crossbrowserjs/respond.min.js"></script>
+    <script src="storage/admin_dashboard/assets/crossbrowserjs/excanvas.min.js"></script>
+  <![endif]-->
+  {!! Html::script('storage/admin_dashboard/assets/plugins/slimscroll/jquery.slimscroll.min.js') !!}
+  {!! Html::script('storage/admin_dashboard/assets/plugins/jquery-cookie/jquery.cookie.js') !!}
+  
+  <!-- ================== END BASE JS ================== -->
+  
+  <!-- ================== BEGIN PAGE LEVEL JS ================== -->
+  {!! Html::script('storage/admin_dashboard/assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js') !!}
+  {!! Html::script('storage/admin_dashboard/assets/plugins/gritter/js/jquery.gritter.js') !!}
+  {!! Html::script('storage/admin_dashboard/assets/plugins/sparkline/jquery.sparkline.js') !!}
+
+  {!! Html::script('storage/admin_dashboard/assets/plugins/jquery-jvectormap/jquery-jvectormap.min.js') !!}
+  {!! Html::script('storage/admin_dashboard/assets/plugins/jquery-jvectormap/jquery-jvectormap-world-mill-en.js') !!}
+
+  {!! Html::script('storage/admin_dashboard/assets/js/dashboard.min.js') !!}
+  {!! Html::script('storage/admin_dashboard/assets/js/form-plugins.demo.min.js') !!}
+  {!! Html::script('storage/admin_dashboard/assets/plugins/dropzone/min/dropzone.min.js') !!}
+  {!! Html::script('storage/admin_dashboard/assets/js/apps.min.js') !!}
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.js"></script>
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+
+    {!! Html::script('storage/admin_dashboard/assets/js/apps.min.js') !!}
+
+  <!-- ================== END PAGE LEVEL JS ================== -->
+
+  @if((Request::segment(2) === 'add') || (Request::segment(2) === 'edit') || (Request::segment(4) === 'add') || (Request::segment(4) === 'edit'))
+
+  {!! Html::script('storage/admin_dashboard/assets/ckeditor/resources/libs/ckeditor/ckeditor.js') !!}
+  {!! Html::script('storage/admin_dashboard/assets/ckeditor/resources/libs/ckeditor/adapters/jquery.js') !!}
+
+  <script type="text/javascript">
+    /*CKEDITOR.replace('description', {
+        height: 260,
+        width: 880,
+    } );*/
+  </script>
+         
+  @endif
+
+  <script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="yw02zsbtztzuj9h"></script>
 </head>
 <body>
 	<!-- begin #page-loader -->
@@ -86,66 +144,6 @@
 		<!-- end scroll to top btn -->
 	</div>
 	<!-- end page container -->
-
-
-	
-	<!-- ================== BEGIN BASE JS ================== -->
-
-	{!! Html::script('storage/admin_dashboard/assets/plugins/bootstrap/js/bootstrap.min.js') !!}
-
-  {!! Html::script('storage/admin_dashboard/assets/plugins/DataTables/media/js/jquery.dataTables.js') !!}
-  {!! Html::script('storage/admin_dashboard/assets/plugins/DataTables/media/js/dataTables.bootstrap.min.js') !!}
-  {!! Html::script('storage/admin_dashboard/assets/plugins/DataTables/extensions/Responsive/js/dataTables.responsive.min.js') !!}
-  {!! Html::script('storage/admin_dashboard/assets/js/table-manage-default.demo.min.js') !!}
-	
-	<!--[if lt IE 9]>
-		<script src="storage/admin_dashboard/assets/crossbrowserjs/html5shiv.js"></script>
-		<script src="storage/admin_dashboard/assets/crossbrowserjs/respond.min.js"></script>
-		<script src="storage/admin_dashboard/assets/crossbrowserjs/excanvas.min.js"></script>
-	<![endif]-->
-	{!! Html::script('storage/admin_dashboard/assets/plugins/slimscroll/jquery.slimscroll.min.js') !!}
-	{!! Html::script('storage/admin_dashboard/assets/plugins/jquery-cookie/jquery.cookie.js') !!}
-	
-	<!-- ================== END BASE JS ================== -->
-	
-	<!-- ================== BEGIN PAGE LEVEL JS ================== -->
-  {!! Html::script('storage/admin_dashboard/assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js') !!}
-	{!! Html::script('storage/admin_dashboard/assets/plugins/gritter/js/jquery.gritter.js') !!}
-	{!! Html::script('storage/admin_dashboard/assets/plugins/sparkline/jquery.sparkline.js') !!}
-
-	{!! Html::script('storage/admin_dashboard/assets/plugins/jquery-jvectormap/jquery-jvectormap.min.js') !!}
-	{!! Html::script('storage/admin_dashboard/assets/plugins/jquery-jvectormap/jquery-jvectormap-world-mill-en.js') !!}
-
-	{!! Html::script('storage/admin_dashboard/assets/js/dashboard.min.js') !!}
-  {!! Html::script('storage/admin_dashboard/assets/js/form-plugins.demo.min.js') !!}
-  {!! Html::script('storage/admin_dashboard/assets/plugins/dropzone/min/dropzone.min.js') !!}
-  {!! Html::script('storage/admin_dashboard/assets/js/apps.min.js') !!}
-
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.js"></script>
-  
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
-
-    {!! Html::script('storage/admin_dashboard/assets/js/apps.min.js') !!}
-
-	<!-- ================== END PAGE LEVEL JS ================== -->
-
-  @if((Request::segment(2) === 'add') || (Request::segment(2) === 'edit') || (Request::segment(4) === 'add') || (Request::segment(4) === 'edit'))
-
-  {!! Html::script('storage/admin_dashboard/assets/ckeditor/resources/libs/ckeditor/ckeditor.js') !!}
-  {!! Html::script('storage/admin_dashboard/assets/ckeditor/resources/libs/ckeditor/adapters/jquery.js') !!}
-
-  <script type="text/javascript">
-    CKEDITOR.replace('description', {
-        height: 260,
-        width: 880,
-    } );
-  </script>
-         
-  @endif
-
-  <script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="yw02zsbtztzuj9h"></script>
 	
 	<script>
     function getId(url) {
@@ -455,6 +453,8 @@
           }
           return true;
      });
+
+     
 
 </script>
 

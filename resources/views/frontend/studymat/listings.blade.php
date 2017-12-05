@@ -38,13 +38,31 @@
                         <thead>
                             <tr>
                                 <th>SL NO</th>
-                                <th>Code</th>
-                                <th>Name</th>
+                                <th>Subject</th>
+                                <th>Area</th>
+                                <th>Section</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            
+                            @if(count($fetch_all_study_mat) > 0)
+                                <?php $i = 1; ?>
+                                @foreach($fetch_all_study_mat as $study_mat)
+                                <tr>
+                                    <td>{{$i++}}</td>
+                                    <td>{{$study_mat['subject']}}</td>
+                                    <td>{{$study_mat['area']}}</td>
+                                    <td>{{$study_mat['section']}}</td>
+                                    <td>
+                                        <a title="Edit" href="/study_mat/edit/{{$study_mat['id']}}" class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i></a>
+
+                                        <a title="Delete" href="/study_mat/delete/{{$study_mat['id']}}" onclick="return confirm('Do you really want to delete the current record ?');" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            @else
+                            <tr><td colspan="5">There is no data available</td></tr>
+                            @endif
                         </tbody>
                     </table>
                 </div>

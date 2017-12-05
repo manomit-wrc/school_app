@@ -14,7 +14,7 @@
         <ol class="breadcrumb pull-right">
             <li><a href="/dashboard">Dashboard</a></li>
             <li><a href="/stydy_mat">Study Material</a></li>
-            <li class="active">Add</li>
+            <li class="active">Edit</li>
         </ol>
         <!-- end breadcrumb -->
         <!-- begin page-header -->
@@ -31,16 +31,16 @@
             @endif
 
             <div class="row">
-                <form name="frmStudyMat" id="frmStudyMat" method="POST" action="/study_mat/add-study-mat-submit" class="form-horizontal" enctype="multipart/form-data">
+                <form name="frmStudyMat" id="frmStudyMat" method="POST" action="/study_mat/study-mat-update" class="form-horizontal" enctype="multipart/form-data">
                     {{ csrf_field() }}
-                    
+                    <input type="hidden" name="study_id" value="{{$fetch_study_mat['id']}}" />
                     <div class="form-group">
                         <label class="col-md-2 control-label">Subject</label>
                         <div class="col-md-10">
                             <select class="form-control" placeholder="Subject" type="text" name="subject" id="subject">
                                 <option value="">Select Subject</option>
                                 @foreach($fetch_all_subject as $key => $value)
-                                    <option value="{{ $key }}">{{ $value }}</option>
+                                    <option value="{{ $key }}" @if($fetch_study_mat['subject_id'] == $key) selected="selected"@endif>{{ $value }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -52,6 +52,9 @@
                         <div class="col-md-10">
                             <select class="form-control" placeholder="Area" type="text" name="area" id="area">
                                 <option value="">Select Area</option>
+                                @foreach($fetch_all_area as $key => $value)
+                                    <option value="{{ $key }}" @if($fetch_study_mat['area_id'] == $key) selected="selected"@endif>{{ $value }}</option>
+                                @endforeach
                             </select>
                         </div>
                         @if ($errors->first('area'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('area') }}</span>@endif
@@ -62,6 +65,9 @@
                         <div class="col-md-10">
                             <select class="form-control" placeholder="Section" type="text" name="section" id="section">
                                 <option value="">Select Section</option>
+                                @foreach($fetch_all_section as $key => $value)
+                                    <option value="{{ $key }}" @if($fetch_study_mat['section_id'] == $key) selected="selected"@endif>{{ $value }}</option>
+                                @endforeach
                             </select>
                         </div>
                         @if ($errors->first('section'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('section') }}</span>@endif
@@ -72,7 +78,13 @@
                         <div class="col-md-10">
                             <input type="file" name="video_files[]" id="video_files" class="form-control" onchange="handleVideos();" accept=".mp4,.mpeg,.avi,.wmv" multiple />
                         </div>
-                        <ul id="video_sortable" class="ui-sortable"></ul>
+                        <ul id="video_sortable" class="ui-sortable">
+                            @if(count($fetch_study_videos) > 0)
+                                @foreach($fetch_study_videos as $study_video)
+                                    <li class="ui-state-default li-video" id="video_{{$study_video['video_order']}}">{{$study_video['video']}}</li><a id="vlink_{{$study_video['video_order']}}" href="javascript:void(0);" onclick="del_video({{$study_video['video_order']}})"><i class="fa fa-trash"></i></a>
+                                @endforeach
+                            @endif
+                        </ul>
                     </div>
 
                     <div class="form-group">
@@ -80,7 +92,13 @@
                         <div class="col-md-10">
                             <input type="file" name="pdf_files[]" id="pdf_files" class="form-control" onchange="handlePdfs();" accept=".pdf" multiple />
                         </div>
-                        <ul id="pdf_sortable" class="ui-sortable"></ul>
+                        <ul id="pdf_sortable" class="ui-sortable">
+                            @if(count($fetch_study_pdfs) > 0)
+                                @foreach($fetch_study_pdfs as $study_pdf)
+                                    <li class="ui-state-default li-pdf" id="pdf_{{$study_pdf['pdf_order']}}">{{$study_pdf['pdf']}}</li><a id="plink_{{$study_pdf['pdf_order']}}" href="javascript:void(0);" onclick="del_pdf({{$study_pdf['pdf_order']}})"><i class="fa fa-trash"></i></a>
+                                @endforeach
+                            @endif
+                        </ul>
                     </div>
 
                     <div class="form-group">
@@ -88,13 +106,19 @@
                         <div class="col-md-10">
                             <input type="file" name="doc_files[]" id="doc_files" class="form-control" onchange="handleDocs();" accept=".doc, .docx, .txt" multiple />
                         </div>
-                        <ul id="doc_sortable" class="ui-sortable"></ul>
+                        <ul id="doc_sortable" class="ui-sortable">
+                            @if(count($fetch_study_documents) > 0)
+                                @foreach($fetch_study_documents as $study_doc)
+                                    <li class="ui-state-default li-doc" id="doc_{{$study_doc['doc_order']}}">{{$study_doc['doc']}}</li><a id="dlink_{{$study_doc['doc_order']}}" href="javascript:void(0);" onclick="del_doc({{$study_doc['doc_order']}})"><i class="fa fa-trash"></i></a>
+                                @endforeach
+                            @endif
+                        </ul>
                     </div>
 
                     <div class="form-group">
                         <label class="col-md-2 control-label">Add Description</label>
                         <div class="col-md-10">
-                            <textarea name="description" id="description" class="form-control"></textarea>
+                            <textarea name="description" id="description" class="form-control">{{$fetch_study_mat['description']}}</textarea>
                         </div>
                     </div>
 
@@ -188,7 +212,7 @@
         function handleVideos() {
             var names = $.map(this.files, function(val) {
                 var stat = findPropertyWithValue(video_files, val.name);
-                if(!stat) {
+                if (!stat) {
                     formdata.append('video_files[]', val);
                     $('#video_sortable').append('<li class="ui-state-default li-video">'+val.name+'</li>');
                 }
@@ -201,7 +225,7 @@
         function handlePdfs() {
             var names = $.map(this.files, function(val) {
                 var stat = findPropertyWithValue(pdf_files, val.name);
-                if(!stat) {
+                if (!stat) {
                     formdata.append('pdf_files[]', val);
                     $('#pdf_sortable').append('<li class="ui-state-default li-pdf">'+val.name+'</li>');
                 }
@@ -214,7 +238,7 @@
         function handleDocs() {
             var names = $.map(this.files, function(val) {
                 var stat = findPropertyWithValue(doc_files, val.name);
-                if(!stat) {
+                if (!stat) {
                     formdata.append('doc_files[]', val);
                     $('#doc_sortable').append('<li class="ui-state-default li-doc">'+val.name+'</li>');
                 }
@@ -277,7 +301,7 @@
                     });
                     $.ajax({
                         type: "POST",
-                        url: '/study_mat/add-study-mat-submit',
+                        url: '/study_mat/study-mat-update',
                         processData: false,
                         contentType: false,
                         data: formdata,
@@ -292,5 +316,20 @@
                 }
             });
         });
+
+        function del_video(video_id) {
+            $('#video_'+video_id).remove();
+            $('#vlink_'+video_id).remove();
+        }
+
+        function del_pdf(pdf_id) {
+            $('#pdf_'+pdf_id).remove();
+            $('#plink_'+pdf_id).remove();
+        }
+
+        function del_doc(doc_id) {
+            $('#doc_'+doc_id).remove();
+            $('#dlink_'+doc_id).remove();
+        }
     </script>
 @endsection

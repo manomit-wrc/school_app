@@ -12,12 +12,21 @@ use Illuminate\Http\Request;
 class StudyMatController extends Controller
 {
     public function index() {
-    	return view ('frontend.studymat.listings');
+        $fetch_all_study_mat = StudyMat::get()->toArray();
+        foreach ($fetch_all_study_mat as $key => $value) {
+            $fetch_subject = Subject::where('id', $value['subject_id'])->get()->toArray();
+            $fetch_area = Area::where('id', $value['area_id'])->get()->toArray();
+            $fetch_section = Section::where('id', $value['section_id'])->get()->toArray();
+            $fetch_all_study_mat[$key]['subject'] = $fetch_subject[0]['sub_full_name'];
+            $fetch_all_study_mat[$key]['area'] = $fetch_area[0]['name'];
+            $fetch_all_study_mat[$key]['section'] = $fetch_section[0]['name'];
+        }
+    	return view('frontend.studymat.listings')->with('fetch_all_study_mat', $fetch_all_study_mat);
     }
 
     public function add_study_mat_view() {
     	$fetch_all_subject = Subject::where('status', '1')->pluck('sub_full_name', 'id')->toArray();
-    	return view ('frontend.studymat.add')->with('fetch_all_subject', $fetch_all_subject);
+    	return view('frontend.studymat.add')->with('fetch_all_subject', $fetch_all_subject);
     }
 
     public function fetch_subject_wise_area(Request $request) {
@@ -58,50 +67,50 @@ class StudyMatController extends Controller
     	$video_arr = array();
     	$pdf_arr = array();
     	$doc_arr = array();
-    	$i = 1;
+
     	if ($request->hasFile('video_files')) {
     		foreach ($request->file('video_files') as $file) {
     			$videoName = time().'_'.$file->getClientOriginalName();
 				//original destination path
 				$destinationPath = public_path().'/upload/study_video/';
 				$file->move($destinationPath, $videoName);
+                $key = array_search($file->getClientOriginalName(), $request->video_order);
 				$video_arr[] = array(
 					'video' => $videoName,
-					'video_order' => $i
+					'video_order' => $key
 		     	);
-				$i++;
     		}
 		} else {
 			$video_arr = array();
 		}
-		$i = 1;
+
 		if ($request->hasFile('pdf_files')) {
     		foreach ($request->file('pdf_files') as $file) {
     			$pdfName = time().'_'.$file->getClientOriginalName();
 				//original destination path
 				$destinationPath = public_path().'/upload/study_pdf/';
 				$file->move($destinationPath, $pdfName);
+                $key = array_search($file->getClientOriginalName(), $request->pdf_order);
 				$pdf_arr[] = array(
 					'pdf' => $pdfName,
-					'pdf_order' => $i
+					'pdf_order' => $key
 		     	);
-				$i++;
     		}
 		} else {
 			$pdf_arr = array();
 		}
-		$i = 1;
+
 		if ($request->hasFile('doc_files')) {
     		foreach ($request->file('doc_files') as $file) {
     			$docName = time().'_'.$file->getClientOriginalName();
 				//original destination path
 				$destinationPath = public_path().'/upload/study_doc/';
 				$file->move($destinationPath, $docName);
+                $key = array_search($file->getClientOriginalName(), $request->doc_order);
 				$doc_arr[] = array(
 					'doc' => $docName,
-					'doc_order' => $i
+					'doc_order' => $key
 		     	);
-				$i++;
     		}
 		} else {
 			$doc_arr = array();
@@ -117,11 +126,35 @@ class StudyMatController extends Controller
 		$add->description = $request->description;
 
 		if ($add->save()) {
-            $request->session()->flash("submit-status", "Study Material added successfully.");
-            return redirect('/study_mat');
+            return 1;
         } else {
-            $request->session()->flash("error-status", "Study Material addition failed.");
-            return redirect('/study_mat/add');
+            return 0;
         }
+    }
+
+    public function edit_study_mat_view($id) {
+        $fetch_study_mat = StudyMat::find($id)->toArray();
+        $fetch_study_videos = unserialize($fetch_study_mat['video']);
+        usort($fetch_study_videos, function($a, $b) {
+            $t1 = $a['video_order'];
+            $t2 = $b['video_order'];
+            return $t1 - $t2;
+        });
+        $fetch_study_pdfs = unserialize($fetch_study_mat['pdf']);
+        usort($fetch_study_pdfs, function($a, $b) {
+            $t1 = $a['pdf_order'];
+            $t2 = $b['pdf_order'];
+            return $t1 - $t2;
+        });
+        $fetch_study_documents = unserialize($fetch_study_mat['document']);
+        usort($fetch_study_documents, function($a, $b) {
+            $t1 = $a['doc_order'];
+            $t2 = $b['doc_order'];
+            return $t1 - $t2;
+        });
+        $fetch_all_subject = Subject::where('status', '1')->pluck('sub_full_name', 'id')->toArray();
+        $fetch_all_area = Area::where('status', '1')->pluck('name', 'id')->toArray();
+        $fetch_all_section = Section::pluck('name', 'id')->toArray();
+        return view('frontend.studymat.edit')->with(['fetch_study_mat' => $fetch_study_mat,'fetch_study_videos' => $fetch_study_videos,'fetch_study_pdfs' => $fetch_study_pdfs,'fetch_study_documents' => $fetch_study_documents,'fetch_all_subject' => $fetch_all_subject,'fetch_all_area' => $fetch_all_area,'fetch_all_section' => $fetch_all_section]);
     }
 }
