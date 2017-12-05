@@ -59,7 +59,6 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::post('/subject/section-name-edit', "SubjectController@section_name_edit");
 	Route::post('/subject/section-delete', "SubjectController@section_delete");
 
-
 	Route::get('/topic', 'TopicController@index');
 	Route::get('/topic/add', 'TopicController@topic_add');
 	Route::post('/topic/topic-add', 'TopicController@topic_add_save');
@@ -102,6 +101,8 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::post('/question/fetch-area-exam-wise', 'AddQuestionController@fetch_area_exam_wise');
 	Route::post('/question/fetch-section-area-wise', 'AddQuestionController@fetch_section_area_wise');
 	Route::post('/question/add-question-submit', 'AddQuestionController@add_qustion_submit');
+	Route::get('/question/edit/{question_id}', 'AddQuestionController@edit');
+	Route::get('/question/delete/{question_id}', 'AddQuestionController@delete');
 
 	Route::get('/study_mat', 'StudyMatController@index');
 	Route::match(array('GET', 'POST'), '/study_mat/add', 'StudyMatController@add_study_mat_view');

@@ -23,7 +23,7 @@
 	        <!-- begin panel -->
             <div class="panel panel-inverse">
                 <div class="panel-heading">
-                    <h4 class="panel-title">Section</h4>
+                    <h4 class="panel-title">Question</h4>
                 </div>
                 <div class="panel-body">
                     @if(Session::has('submit-status'))
@@ -38,24 +38,40 @@
                         <thead>
                             <tr>
                                 <th>SL NO</th>
-                                <th>Code</th>
-                                <th>Name</th>
+                                <th>Exam</th>
+                                <th>Subject</th>
+                                <th>Question</th>
+                                <th>Level</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {{-- @foreach($sections as $key => $value)
+                            @foreach($fetch_all_question as $key => $value)
                                 <tr class="odd gradeX">
                                     <td>{{ ++$key }}</td>
-                                    <td>{{ $value['code'] }}</td>
-                                    <td>{{ $value['name'] }}</td>
+                                    <td>{{ $value['exams']['name']  }}</td>
+                                    <td>{{ $value['subject']['sub_full_name'] }}</td>
+                                    <td>{{ strip_tags($value['question']) }}</td>
                                     <td>
-                                        <a title="Edit" href="/area/section/{{ $area_id }}/edit/{{$value['id']}}" class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i></a>
+                                        @if($value['level'] == '1')
+                                            {{ 'Level 1' }}
+                                        @elseif($value['level'] == '2')
+                                            {{ 'Level 2' }}
+                                        @elseif($value['level'] == '3')
+                                            {{ 'Level 3' }}
+                                        @elseif($value['level'] == '4')
+                                            {{ 'Level 4' }}
+                                        @elseif($value['level'] == '5')
+                                            {{ 'Level 5' }}
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <a title="Edit" href="/question/edit/{{ $value['id'] }}" class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i></a>
 
-                                        <a title="Delete" href="/area/section/{{ $area_id }}/delete/{{$value['id']}}" onclick="return confirm('Do you really want to delete the current record ?');" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
+                                        <a title="Delete" href="/question/delete/{{ $value['id'] }}" onclick="return confirm('Do you really want to delete the current record ?');" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
                                     </td>
                                 </tr>
-                            @endforeach --}}
+                            @endforeach
                         </tbody>
                     </table>
                 </div>

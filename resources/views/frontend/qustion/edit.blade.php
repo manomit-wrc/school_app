@@ -10,7 +10,7 @@
         <ol class="breadcrumb pull-right">
             <li><a href="/dashboard">Dashboard</a></li>
             <li><a href="/question">Question</a></li>
-            <li class="active">Add</li>
+            <li class="active">Edit</li>
         </ol>
         <!-- end breadcrumb -->
         <!-- begin page-header -->
@@ -33,7 +33,7 @@
                                 <option value="">Select Subject</option>
 
                                 @foreach($fetch_all_subject as $key => $value)
-                                    <option value="{{ $key }}">{{ $value }}</option>
+                                    <option value="{{ $key }}" @if($fetch_question_details['subject_id'] == $key) selected="selected" @endif>{{ $value }}</option>
                                 @endforeach
 
                             </select>
@@ -77,11 +77,11 @@
                         <div class="col-md-10 {{ $errors->has('level') ? 'has-error' : '' }}">
                             <select class="form-control" placeholder="Level exam" name="level" id="level">
                                 <option value="">Select Level</option>
-                                <option value="1">Level 1</option>
-                                <option value="2">Level 2</option>
-                                <option value="3">Level 3</option>
-                                <option value="4">Level 4</option>
-                                <option value="5">Level 5</option>
+                                <option value="1" @if($fetch_question_details['level'] == 1) selected="selected" @endif>Level 1</option>
+                                <option value="2" @if($fetch_question_details['level'] == 2) selected="selected" @endif>Level 2</option>
+                                <option value="3" @if($fetch_question_details['level'] == 3) selected="selected" @endif>Level 3</option>
+                                <option value="4" @if($fetch_question_details['level'] == 4) selected="selected" @endif>Level 4</option>
+                                <option value="5" @if($fetch_question_details['level'] == 5) selected="selected" @endif>Level 5</option>
                             </select>
                         </div>
                         @if ($errors->first('level'))<span class="input-group col-md-offset-2 level-danger">{{ $errors->first('level') }}</span>@endif
@@ -91,17 +91,17 @@
                         <label class="col-md-2 control-label">Question</label>
                         <div class="col-md-10 {{ $errors->has('question') ? 'has-error' : '' }}">
                             <label class="radio-inline">
-                                <input type="radio" name="question_type" value="text" id="question_type_text">
+                                <input type="radio" name="question_type" value="text" id="question_type_text" @if($fetch_question_details['question_type'] == 'text') checked="checked" @endif>
                                 Text
                             </label>
                             <label class="radio-inline">
-                                <input type="radio" name="question_type" value="image" id="question_type_file">
+                                <input type="radio" name="question_type" value="image" id="question_type_file" @if($fetch_question_details['question_type'] == 'image') checked="checked" @endif>
                                 Image
                             </label>
 
                             <div id="text_div">
                                 <textarea rows="12" cols="200" id="question" name="question" placeholder="Write your message here..." class="editor form-control">
-                                {{ old('question') }}
+                                {{ $fetch_question_details['question'] }}
                                 </textarea>
                             </div>
 
@@ -117,16 +117,18 @@
                         <label class="col-md-2 control-label">Option A</label>
                         <div class="col-md-10 {{ $errors->has('optionA') ? 'has-error' : '' }}">
                             <label class="radio-inline">
-                                <input type="radio" name="option_type_A" value="text" id="question_typeA_text">
+                                <input type="radio" name="option_type_A" value="text" id="question_typeA_text" @if($option['optionA_type'] == 'text') checked="checked" @endif>
                                 Text
                             </label>
                             <label class="radio-inline">
-                                <input type="radio" name="option_type_A" value="image" id="question_typeA_file">
+                                <input type="radio" name="option_type_A" value="image" id="question_typeA_file" @if($option['optionA_type'] == 'image') checked="checked" @endif>
                                 Image
                             </label>
 
                             <div id="option_A_text_div">
-                                <textarea class="form-control" cols="" rows="" name="optionA" id="optionA"></textarea>
+                                <textarea class="form-control" cols="" rows="" name="optionA" id="optionA">
+                                    {{ $option['optionA'] }}
+                                </textarea>
                             </div>
 
                             <div id="option_A_image_div">
@@ -384,6 +386,8 @@
                 $('#option_E_text_div').hide();
                 $('#option_E_image_div').hide();
             });
+
+            $('input[type="radio"]').attr('checked')
 
             $('#subject').on('change', function () {
                 var subject_id = $(this).val();
