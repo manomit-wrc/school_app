@@ -23,7 +23,7 @@
                 <p class="login-box-msg" style="color: red;">{{ Session::get('submit-status') }}</p>
             @endif
             <div class="row">
-                <form exam="frmArea" method="POST" action="/question/add-question-submit" class="form-horizontal" enctype="multipart/form-data">
+                <form exam="frmArea" method="POST" action="/question/add-question-edit/{{ $fetch_question_details['id'] }}" class="form-horizontal" enctype="multipart/form-data">
                     {{ csrf_field() }}
                     
                     <div class="form-group">
@@ -47,6 +47,10 @@
                             <select class="form-control" placeholder="Section exam" type="text" name="exam" id="exam" subject_id=''>
                                 <option value="">Select Exam</option>
 
+                                @foreach($fetch_exam as $key => $value)
+                                    <option value="{{ $key }}" @if($fetch_question_details['exam_id'] == $key) selected="selected" @endif>{{ $value }}</option>
+                                @endforeach
+
                             </select>
                         </div>
                         @if ($errors->first('exam'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('exam') }}</span>@endif
@@ -57,6 +61,11 @@
                         <div class="col-md-10 {{ $errors->has('area') ? 'has-error' : '' }}">
                             <select class="form-control" placeholder="Section exam" type="text" name="area" id="area">
                                 <option value="">Select Area</option>
+
+                                @foreach($fetch_area as $key => $value)
+                                    <option value="{{ $key }}" @if($fetch_question_details['area_id']==$key) selected="selected" @endif>{{ $value }}</option>
+                                @endforeach
+
                             </select>
                         </div>
                         @if ($errors->first('area'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('area') }}</span>@endif
@@ -67,6 +76,11 @@
                         <div class="col-md-10 {{ $errors->has('section') ? 'has-error' : '' }}">
                             <select class="form-control" placeholder="Section exam" type="text" name="section" id="section">
                                 <option value="">Select Section</option>
+
+                                @foreach($fetch_section as $key => $value)
+                                    <option value="{{ $key }}" @if($fetch_question_details['section_id']==$key) selected="selected" @endif>{{ $value }}</option>
+                                @endforeach
+
                             </select>
                         </div>
                         @if ($errors->first('section'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('section') }}</span>@endif
@@ -100,13 +114,24 @@
                             </label>
 
                             <div id="text_div">
-                                <textarea rows="12" cols="200" id="question" name="question" placeholder="Write your message here..." class="editor form-control">
-                                {{ $fetch_question_details['question'] }}
-                                </textarea>
+                                    @if($fetch_question_details['question_type'] == 'text')
+                                        <textarea rows="12" cols="200" id="question" name="question" placeholder="Write your message here..." class="editor form-control">
+                                            {{ $fetch_question_details['question'] }}
+                                        </textarea>
+                                    @else
+                                        <textarea rows="12" cols="200" id="question" name="question" placeholder="Write your message here..." class="editor form-control">
+                                        </textarea>
+                                    @endif
                             </div>
 
                             <div id="image_div">
                                 <input type="file" name="question_image" id="question_image" class="form-control">
+
+                                @if($fetch_question_details['question_type'] == 'image')
+                                    <br>
+                                    <img src="{{ url('upload/question_file/resize/'.$fetch_question_details['question']) }}" style="width: 50px;height: 50px;">
+                                    <input type="hidden" name="exit_question_image" id="exit_question_image" value="{{ $fetch_question_details['question'] }}">
+                                @endif
                             </div>
                         </div>
 
@@ -125,14 +150,27 @@
                                 Image
                             </label>
 
-                            <div id="option_A_text_div">
-                                <textarea class="form-control" cols="" rows="" name="optionA" id="optionA">
-                                    {{ $option['optionA'] }}
-                                </textarea>
+                            <div id="option_A_text_div">                               
+                                    @if($option['optionA_type'] == 'text')
+                                        <textarea class="form-control" cols="" rows="" name="optionA" id="optionA">
+                                            {{ $option['optionA'] }}
+                                        </textarea>
+                                    @else
+                                        <textarea class="form-control" cols="" rows="" name="optionA" id="optionA">
+                                        </textarea>
+                                    @endif
+                                    
+                                
                             </div>
 
                             <div id="option_A_image_div">
                                 <input type="file" name="optionA_file" id="optionA_file" class="form-control">
+
+                                @if($option['optionA_type'] == 'image')
+                                    <br>
+                                    <img src="{{ url('upload/answers_file/resize/'.$option['optionA']) }}" style="width: 50px;height: 50px;">
+                                    <input type="hidden" name="exit_optionA_image" id="exit_optionA_image" value="{{ $option['optionA'] }}">
+                                @endif
                             </div>
                             
                         </div>
@@ -142,20 +180,30 @@
                         <label class="col-md-2 control-label">Option B</label>
                         <div class="col-md-10 {{ $errors->has('optionA') ? 'has-error' : '' }}">
                             <label class="radio-inline">
-                                <input type="radio" name="option_type_B" value="text" id="question_typeB_text">
+                                <input type="radio" name="option_type_B" value="text" id="question_typeB_text" @if($option['optionB_type'] == 'text') checked="checked" @endif>
                                 Text
                             </label>
                             <label class="radio-inline">
-                                <input type="radio" name="option_type_B" value="image" id="question_typeB_file">
+                                <input type="radio" name="option_type_B" value="image" id="question_typeB_file" @if($option['optionB_type'] == 'image') checked="checked" @endif>
                                 Image
                             </label>
 
                             <div id="option_B_text_div">
-                                <textarea class="form-control" cols="" rows="" name="optionB" id="optionB"></textarea>
+                                <textarea class="form-control" cols="" rows="" name="optionB" id="optionB">
+                                    @if($option['optionB_type'] == 'text')
+                                        {{ $option['optionB'] }}
+                                    @endif  
+                                </textarea>
                             </div>
 
                             <div id="option_B_image_div">
                                 <input type="file" name="optionB_file" id="optionB_file" class="form-control">
+
+                                @if($option['optionB_type'] == 'image')
+                                    <br>
+                                    <img src="{{ url('upload/answers_file/resize/'.$option['optionB']) }}" style="width: 50px;height: 50px;">
+                                    <input type="hidden" name="exit_optionB_image" id="exit_optionB_image" value="{{ $option['optionB'] }}">
+                                @endif
                             </div>
                             
                         </div>
@@ -165,20 +213,31 @@
                         <label class="col-md-2 control-label">Option C</label>
                         <div class="col-md-10 {{ $errors->has('optionA') ? 'has-error' : '' }}">
                             <label class="radio-inline">
-                                <input type="radio" name="option_type_C" value="text" id="question_typeC_text">
+                                <input type="radio" name="option_type_C" value="text" id="question_typeC_text" @if($option['optionC_type'] == 'text') checked="checked" @endif>
                                 Text
                             </label>
                             <label class="radio-inline">
-                                <input type="radio" name="option_type_C" value="image" id="question_typeC_file">
+                                <input type="radio" name="option_type_C" value="image" id="question_typeC_file" @if($option['optionC_type'] == 'image') checked="checked" @endif>
                                 Image
                             </label>
 
                             <div id="option_C_text_div">
-                                <textarea class="form-control" cols="" rows="" name="optionC" id="optionC"></textarea>
+                                <textarea class="form-control" cols="" rows="" name="optionC" id="optionC">
+                                    @if($option['optionC_type'] == 'text')
+                                        {{ $option['optionC'] }}
+                                    @endif
+                                    
+                                </textarea>
                             </div>
 
                             <div id="option_C_image_div">
                                 <input type="file" name="optionC_file" id="optionC_file" class="form-control">
+
+                                @if($option['optionC_type'] == 'image')
+                                    <br>
+                                    <img src="{{ url('upload/answers_file/resize/'.$option['optionC']) }}" style="width: 50px;height: 50px;">
+                                    <input type="hidden" name="exit_optionC_image" id="exit_optionC_image" value="{{ $option['optionC'] }}">
+                                @endif
                             </div>
                             
                         </div>
@@ -188,20 +247,31 @@
                         <label class="col-md-2 control-label">Option D</label>
                         <div class="col-md-10 {{ $errors->has('optionA') ? 'has-error' : '' }}">
                             <label class="radio-inline">
-                                <input type="radio" name="option_type_D" value="text" id="question_typeD_text">
+                                <input type="radio" name="option_type_D" value="text" id="question_typeD_text" @if($option['optionD_type'] == 'text') checked="checked" @endif>
                                 Text
                             </label>
                             <label class="radio-inline">
-                                <input type="radio" name="option_type_D" value="image" id="question_typeD_file">
+                                <input type="radio" name="option_type_D" value="image" id="question_typeD_file" @if($option['optionD_type'] == 'image') checked="checked" @endif>
                                 Image
                             </label>
 
                             <div id="option_D_text_div">
-                                <textarea class="form-control" cols="" rows="" name="optionD" id="optionD"></textarea>
+                                <textarea class="form-control" cols="" rows="" name="optionD" id="optionD">
+                                    @if($option['optionD_type'] == 'text')
+                                        {{ $option['optionD'] }}
+                                    @endif()
+                                    
+                                </textarea>
                             </div>
 
                             <div id="option_D_image_div">
                                 <input type="file" name="optionD_file" id="optionD_file" class="form-control">
+
+                                @if($option['optionD_type'] == 'image')
+                                    <br>
+                                    <img src="{{ url('upload/answers_file/resize/'.$option['optionD']) }}" style="width: 50px;height: 50px;">
+                                    <input type="hidden" name="exit_optionD_image" id="exit_optionD_image" value="{{ $option['optionD'] }}">
+                                @endif
                             </div>
                             
                         </div>
@@ -211,20 +281,28 @@
                         <label class="col-md-2 control-label">Option E</label>
                         <div class="col-md-10 {{ $errors->has('optionA') ? 'has-error' : '' }}">
                             <label class="radio-inline">
-                                <input type="radio" name="option_type_E" value="text" id="question_typeE_text">
+                                <input type="radio" name="option_type_E" value="text" id="question_typeE_text" @if($option['optionE_type'] == 'text') checked="checked" @endif>
                                 Text
                             </label>
                             <label class="radio-inline">
-                                <input type="radio" name="option_type_E" value="image" id="question_typeE_file">
+                                <input type="radio" name="option_type_E" value="image" id="question_typeE_file" @if($option['optionE_type'] == 'image') checked="checked" @endif>
                                 Image
                             </label>
 
                             <div id="option_E_text_div">
-                                <textarea class="form-control" cols="" rows="" name="optionE" id="optionE"></textarea>
+                                <textarea class="form-control" cols="" rows="" name="optionE" id="optionE">
+                                    {{ $option['optionE'] }}
+                                </textarea>
                             </div>
 
                             <div id="option_E_image_div">
                                 <input type="file" name="optionE_file" id="optionE_file" class="form-control">
+
+                                @if($option['optionE_type'] == 'image')
+                                    <br>
+                                    <img src="{{ url('upload/answers_file/resize/'.$option['optionE']) }}" style="width: 50px;height: 50px;">
+                                    <input type="hidden" name="exit_optionE_image" id="exit_optionE_image" value="{{ $option['optionE'] }}">
+                                @endif
                             </div>
                             
                         </div>
@@ -233,26 +311,26 @@
                     <div class="form-group">
                         <label class="col-md-2 control-label">Correct Answer</label>
                         <div class="col-md-10">
-                            <label class="checkbox-inline">
-                                <input type="checkbox" name="answer[]" value="1">
-                                A
-                            </label>
-                            <label class="checkbox-inline">
-                                <input type="checkbox" name="answer[]" value="2">
-                                B
-                            </label>
-                            <label class="checkbox-inline">
-                                <input type="checkbox" name="answer[]" value="3">
-                                C
-                            </label>
-                            <label class="checkbox-inline">
-                                <input type="checkbox" name="answer[]" value="4">
-                                D
-                            </label>
-                            <label class="checkbox-inline">
-                                <input type="checkbox" name="answer[]" value="5">
-                                E
-                            </label>
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" name="answer[]" value="1" @if(in_array(1, $correct_answer)) checked="checked" @endif>
+                                    A
+                                </label>
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" name="answer[]" value="2" @if(in_array(2, $correct_answer)) checked="checked" @endif>
+                                    B
+                                </label>
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" name="answer[]" value="3" @if(in_array(3, $correct_answer)) checked="checked" @endif>
+                                    C
+                                </label>
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" name="answer[]" value="4" @if(in_array(4, $correct_answer)) checked="checked" @endif>
+                                    D
+                                </label>
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" name="answer[]" value="5" @if(in_array(5, $correct_answer)) checked="checked" @endif>
+                                    E
+                                </label>
                         </div>
                         @if ($errors->first('answer'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('answer') }}</span>@endif
                     </div>
@@ -367,27 +445,68 @@
                 $('#option_E_image_div').show();
             });
 
-            $('#reset_form').on('click',function () {
-                $('#image_div').hide();
-                $('#text_div').hide();
+            // $('#reset_form').on('click',function () {
+            //     $('#image_div').hide();
+            //     $('#text_div').hide();
 
-                $('#option_A_text_div').hide();
-                $('#option_A_image_div').hide();
+            //     $('#option_A_text_div').hide();
+            //     $('#option_A_image_div').hide();
 
-                $('#option_B_text_div').hide();
-                $('#option_B_image_div').hide();
+            //     $('#option_B_text_div').hide();
+            //     $('#option_B_image_div').hide();
 
-                $('#option_C_text_div').hide();
-                $('#option_C_image_div').hide();
+            //     $('#option_C_text_div').hide();
+            //     $('#option_C_image_div').hide();
 
-                $('#option_D_text_div').hide();
-                $('#option_D_image_div').hide();
+            //     $('#option_D_text_div').hide();
+            //     $('#option_D_image_div').hide();
 
-                $('#option_E_text_div').hide();
-                $('#option_E_image_div').hide();
-            });
+            //     $('#option_E_text_div').hide();
+            //     $('#option_E_image_div').hide();
+            // });
 
-            $('input[type="radio"]').attr('checked')
+            if($('#question_type_text').attr('checked')){
+                CKEDITOR.replace('question');
+                $('#text_div').show();
+            }
+            if($('#question_type_file').attr('checked')){
+                $('#image_div').show();
+            }
+
+            if($('#question_typeA_text').attr('checked')){
+                $('#option_A_text_div').show();
+            }
+            if($('#question_typeA_file').attr('checked')){
+                $('#option_A_image_div').show();
+            }
+
+            if($('#question_typeB_text').attr('checked')){
+                $('#option_B_text_div').show();
+            }
+            if($('#question_typeB_file').attr('checked')){
+                $('#option_B_image_div').show();
+            }
+
+            if($('#question_typeC_text').attr('checked')){
+                $('#option_C_text_div').show();
+            }
+            if($('#question_typeC_file').attr('checked')){
+                $('#option_C_image_div').show();
+            }
+
+            if($('#question_typeD_text').attr('checked')){
+                $('#option_D_text_div').show();
+            }
+            if($('#question_typeD_file').attr('checked')){
+                $('#option_D_image_div').show();
+            }
+
+            if($('#question_typeE_text').attr('checked')){
+                $('#option_E_text_div').show();
+            }
+            if($('#question_typeE_file').attr('checked')){
+                $('#option_E_image_div').show();
+            }
 
             $('#subject').on('change', function () {
                 var subject_id = $(this).val();
