@@ -48,9 +48,15 @@
 			    </a>
 			</li>
 
-			<li class="has-sub {{ (Request::segment(1) === "qustion" ? 'active' : '') }}">
+			<li class="has-sub {{ (Request::segment(1) === "question" ? 'active' : '') }}">
 				<a href="/question">
-				    <span>Add Qustion</span>
+				    <span>Question</span>
+			    </a>
+			</li>
+
+			<li class="has-sub {{ (Request::segment(1) === "study_mat" ? 'active' : '') }}">
+				<a href="/study_mat">
+				    <span>Study Material</span>
 			    </a>
 			</li>
 
@@ -61,7 +67,7 @@
 			</li>
 
 	        <!-- begin sidebar minify button -->
-			<li><a href="javascript:;" class="sidebar-minify-btn" data-click="sidebar-minify"><i class="fa fa-angle-double-left"></i></a></li>
+			<!-- <li><a href="javascript:;" class="sidebar-minify-btn" data-click="sidebar-minify"><i class="fa fa-angle-double-left"></i></a></li> -->
 	        <!-- end sidebar minify button -->
 		</ul>
 		<!-- end sidebar nav -->

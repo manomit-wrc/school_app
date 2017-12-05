@@ -102,4 +102,10 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::post('/question/fetch-area-exam-wise', 'AddQuestionController@fetch_area_exam_wise');
 	Route::post('/question/fetch-section-area-wise', 'AddQuestionController@fetch_section_area_wise');
 	Route::post('/question/add-question-submit', 'AddQuestionController@add_qustion_submit');
+
+	Route::get('/study_mat', 'StudyMatController@index');
+	Route::match(array('GET', 'POST'), '/study_mat/add', 'StudyMatController@add_study_mat_view');
+	Route::post('/study_mat/fetch-subject-wise-area', 'StudyMatController@fetch_subject_wise_area');
+	Route::post('/study_mat/fetch-area-wise-section', 'StudyMatController@fetch_area_wise_section');
+	Route::post('/study_mat/add-study-mat-submit', 'StudyMatController@study_mat_submit');
 });
