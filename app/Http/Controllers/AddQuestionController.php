@@ -78,22 +78,22 @@ class AddQuestionController extends Controller
 
     	if ($request->hasFile('question_image')) {
             $file = $request->file('question_image');
-        	$fileName = time().'_'.$file->getClientOriginalName();
+        	$fileName1 = time().'_'.$file->getClientOriginalName();
         
             //thumb destination path
             $destinationPath_2 = public_path().'/upload/question_file/resize/';
             $img = Image::make($file->getRealPath());
             $img->resize(175, 175, function ($constraint) {
               $constraint->aspectRatio();
-            })->save($destinationPath_2.'/'.$fileName);
+            })->save($destinationPath_2.'/'.$fileName1);
             //original destination path
             $destinationPath = public_path().'/upload/question_file/original/';
-            $file->move($destinationPath,$fileName);
+            $file->move($destinationPath,$fileName1);
         }
 
     	if(isset($request->option_type_A) && $request->option_type_A == 'text'){
 			$optionA_type = $request->option_type_A;
-			$optionA = $request->option;
+			$optionA = $request->optionA;
 		}else{
 			$optionA_type = '';
 			$optionA = '';
@@ -258,7 +258,7 @@ class AddQuestionController extends Controller
     	}
     	if($request->question_type == 'image'){
     		$add->question_type = $request->question_type;
-    		$add->question = $fileName;
+    		$add->question = $fileName1;
     	}
 
     	$add->answer = serialize($tempArray);
