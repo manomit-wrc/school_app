@@ -104,4 +104,5 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::post('/question/add-question-submit', 'AddQuestionController@add_qustion_submit');
 	Route::get('/question/edit/{question_id}', 'AddQuestionController@edit');
 	Route::get('/question/delete/{question_id}', 'AddQuestionController@delete');
+	Route::post('/question/add-question-edit/{question_id}', 'AddQuestionController@edit_submit');
 });

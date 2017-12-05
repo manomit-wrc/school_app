@@ -117,9 +117,6 @@ class AddQuestionController extends Controller
 	            $file->move($destinationPath,$fileName);
 	        }
 			$optionA = $fileName;
-		}else{
-			$optionA_type = '';
-			$optionA = '';
 		}
 
 		if(isset($request->option_type_B) && $request->option_type_B == 'text'){
@@ -148,9 +145,6 @@ class AddQuestionController extends Controller
 	            $file->move($destinationPath,$fileName);
 	        }
 			$optionB = $fileName;
-		}else{
-			$optionB_type = '';
-			$optionB = '';
 		}
 
 		if(isset($request->option_type_C) && $request->option_type_C == 'text'){
@@ -179,9 +173,6 @@ class AddQuestionController extends Controller
 	            $file->move($destinationPath,$fileName);
 	        }
 			$optionC = $fileName;
-		}else{
-			$optionC_type = '';
-			$optionC = '';
 		}
 
 
@@ -211,9 +202,6 @@ class AddQuestionController extends Controller
 	            $file->move($destinationPath,$fileName);
 	        }
 			$optionD = $fileName;
-		}else{
-			$optionD_type = '';
-			$optionD = '';
 		}
 
 		if(isset($request->option_type_E) && $request->option_type_E == 'text'){
@@ -242,9 +230,6 @@ class AddQuestionController extends Controller
 	            $file->move($destinationPath,$fileName);
 	        }
 			$optionE = $fileName;
-		}else{
-			$optionE_type = '';
-			$optionE = '';
 		}
 
     	$tempArray = array(
@@ -291,15 +276,17 @@ class AddQuestionController extends Controller
     	$fetch_all_subject = Subject::where('status','1')->pluck('sub_full_name','id')->toArray();
     	$option = unserialize($fetch_question_details['answer']);
     	$correct_answer = unserialize($fetch_question_details['correct_answer']);
-    	// echo "<pre>";
-    	// print_r($fetch_question_details);
-    	// print_r($option);
-    	// print_r($correct_answer);
-    	// die();
+    	$fetch_exam = Exam::where('status','1')->pluck('name','id')->toArray();
+    	$fetch_area = Area::where('status','1')->pluck('name','id')->toArray();
+    	$fetch_section = Section::pluck('name','id')->toArray();
+
     	return view('frontend.qustion.edit')->with('fetch_question_details',$fetch_question_details)
     										->with('option',$option)
     										->with('correct_answer',$correct_answer)
-    										->with('fetch_all_subject', $fetch_all_subject);
+    										->with('fetch_all_subject', $fetch_all_subject)
+    										->with('fetch_exam',$fetch_exam)
+    										->with('fetch_area',$fetch_area)
+    										->with('fetch_section',$fetch_section);
     }
 
     public function delete (Request $request,$question_id) {
@@ -308,6 +295,229 @@ class AddQuestionController extends Controller
 
     	if($fetch_question->save()){
     		$request->session()->flash("submit-status", "Question deleted successfully.");
+            return redirect('/question');
+    	}
+    }
+
+    public function edit_submit (Request $request,$question_id) {
+    	Validator::make($request->all(),[
+    		'subject' => 'required',
+    		'exam' => 'required',
+    		'area' => 'required',
+    		'section' => 'required',
+    		'level' => 'required',
+    		'answer' => 'required'
+    	],[
+    		'subject.required' => 'Please select subject.',
+    		'exam.required' => 'Please select exam type.',
+    		'area.required' => 'Please select area.',
+    		'section.required' => 'Please select section.',
+    		'level.required' => 'Please select question level.',
+    		'answer.required' => 'Please select correct answer.'
+    	])->validate();
+
+    	if ($request->hasFile('question_image')) {
+            $file = $request->file('question_image');
+        	$fileName1 = time().'_'.$file->getClientOriginalName();
+        
+            //thumb destination path
+            $destinationPath_2 = public_path().'/upload/question_file/resize/';
+            $img = Image::make($file->getRealPath());
+            $img->resize(175, 175, function ($constraint) {
+              $constraint->aspectRatio();
+            })->save($destinationPath_2.'/'.$fileName1);
+            //original destination path
+            $destinationPath = public_path().'/upload/question_file/original/';
+            $file->move($destinationPath,$fileName1);
+        }else{
+        	$fileName1 = $request->exit_question_image;
+        }
+
+    	if(isset($request->option_type_A) && $request->option_type_A == 'text'){
+			$optionA_type = $request->option_type_A;
+			$optionA = $request->optionA;
+		}else{
+			$optionA_type = '';
+			$optionA = '';
+		}
+
+		if(isset($request->option_type_A) && $request->option_type_A == 'image'){
+			$optionA_type = $request->option_type_A;
+
+			if ($request->hasFile('optionA_file')) {
+	            $file = $request->file('optionA_file');
+	        	$fileName = time().'_'.$file->getClientOriginalName();
+	        
+	            //thumb destination path
+	            $destinationPath_2 = public_path().'/upload/answers_file/resize/';
+	            $img = Image::make($file->getRealPath());
+	            $img->resize(175, 175, function ($constraint) {
+	              $constraint->aspectRatio();
+	            })->save($destinationPath_2.'/'.$fileName);
+	            //original destination path
+	            $destinationPath = public_path().'/upload/answers_file/original/';
+	            $file->move($destinationPath,$fileName);
+	        }else{
+	        	$fileName = $request->exit_optionA_image;
+	        }
+			$optionA = $fileName;
+		}
+
+		if(isset($request->option_type_B) && $request->option_type_B == 'text'){
+			$optionB_type = $request->option_type_B;
+			$optionB = $request->optionB;
+		}else{
+			$optionB_type = '';
+			$optionB = '';
+		}
+
+		if(isset($request->option_type_B) && $request->option_type_B == 'image'){
+			$optionB_type = $request->option_type_B;
+
+			if ($request->hasFile('optionB_file')) {
+	            $file = $request->file('optionB_file');
+	        	$fileName = time().'_'.$file->getClientOriginalName();
+	        
+	            //thumb destination path
+	            $destinationPath_2 = public_path().'/upload/answers_file/resize/';
+	            $img = Image::make($file->getRealPath());
+	            $img->resize(175, 175, function ($constraint) {
+	              $constraint->aspectRatio();
+	            })->save($destinationPath_2.'/'.$fileName);
+	            //original destination path
+	            $destinationPath = public_path().'/upload/answers_file/original/';
+	            $file->move($destinationPath,$fileName);
+	        }else{
+	        	$fileName = $request->exit_optionB_image;
+	        }
+			$optionB = $fileName;
+		}
+
+		if(isset($request->option_type_C) && $request->option_type_C == 'text'){
+			$optionC_type = $request->option_type_C;
+			$optionC = $request->optionC;
+		}else{
+			$optionC_type = '';
+			$optionC = '';
+		}
+
+		if(isset($request->option_type_C) && $request->option_type_C == 'image'){
+			$optionC_type = $request->option_type_C;
+
+			if ($request->hasFile('optionC_file')) {
+	            $file = $request->file('optionC_file');
+	        	$fileName = time().'_'.$file->getClientOriginalName();
+	        
+	            //thumb destination path
+	            $destinationPath_2 = public_path().'/upload/answers_file/resize/';
+	            $img = Image::make($file->getRealPath());
+	            $img->resize(175, 175, function ($constraint) {
+	              $constraint->aspectRatio();
+	            })->save($destinationPath_2.'/'.$fileName);
+	            //original destination path
+	            $destinationPath = public_path().'/upload/answers_file/original/';
+	            $file->move($destinationPath,$fileName);
+	        }else{
+	        	$fileName = $request->exit_optionC_image;
+	        }
+			$optionC = $fileName;
+		}
+
+
+		if(isset($request->option_type_D) && $request->option_type_D == 'text'){
+			$optionD_type = $request->option_type_D;
+			$optionD = $request->optionD;
+		}else{
+			$optionD_type = '';
+			$optionD = '';
+		}
+
+		if(isset($request->option_type_D) && $request->option_type_D == 'image'){
+			$optionD_type = $request->option_type_D;
+
+			if ($request->hasFile('optionD_file')) {
+	            $file = $request->file('optionD_file');
+	        	$fileName = time().'_'.$file->getClientOriginalName();
+	        
+	            //thumb destination path
+	            $destinationPath_2 = public_path().'/upload/answers_file/resize/';
+	            $img = Image::make($file->getRealPath());
+	            $img->resize(175, 175, function ($constraint) {
+	              $constraint->aspectRatio();
+	            })->save($destinationPath_2.'/'.$fileName);
+	            //original destination path
+	            $destinationPath = public_path().'/upload/answers_file/original/';
+	            $file->move($destinationPath,$fileName);
+	        }else{
+	        	$fileName = $request->exit_optionD_image;
+	        }
+			$optionD = $fileName;
+		}
+
+		if(isset($request->option_type_E) && $request->option_type_E == 'text'){
+			$optionE_type = $request->option_type_E;
+			$optionE = $request->optionE;
+		}else{
+			$optionE_type = '';
+			$optionE = '';
+		}
+
+		if(isset($request->option_type_E) && $request->option_type_E == 'image'){
+			$optionE_type = $request->option_type_E;
+
+			if ($request->hasFile('optionE_file')) {
+	            $file = $request->file('optionE_file');
+	        	$fileName = time().'_'.$file->getClientOriginalName();
+	        
+	            //thumb destination path
+	            $destinationPath_2 = public_path().'/upload/answers_file/resize/';
+	            $img = Image::make($file->getRealPath());
+	            $img->resize(175, 175, function ($constraint) {
+	              $constraint->aspectRatio();
+	            })->save($destinationPath_2.'/'.$fileName);
+	            //original destination path
+	            $destinationPath = public_path().'/upload/answers_file/original/';
+	            $file->move($destinationPath,$fileName);
+	        }else{
+	        	$fileName = $request->exit_optionE_image;
+	        }
+			$optionE = $fileName;
+		}
+
+    	$tempArray = array(
+    		'optionA_type' => $optionA_type,
+    		'optionA' => $optionA,
+    		'optionB_type' => $optionB_type,
+    		'optionB' => $optionB,
+    		'optionC_type' => $optionC_type,
+    		'optionC' => $optionC,
+    		'optionD_type' => $optionD_type,
+    		'optionD' => $optionD,
+    		'optionE_type' => $optionE_type,
+    		'optionE' => $optionE
+    	);
+
+    	$edit = QuestionAnswer::find($question_id);
+    	$edit->subject_id = $request->subject;
+    	$edit->exam_id = $request->exam;
+    	$edit->area_id = $request->area;
+    	$edit->section_id = $request->section;
+    	$edit->level = $request->level;
+    	
+    	if($request->question_type == 'text'){
+    		$edit->question_type = $request->question_type;
+    		$edit->question = $request->question;
+    	}
+    	if($request->question_type == 'image'){
+    		$edit->question_type = $request->question_type;
+    		$edit->question = $fileName1;
+    	}
+
+    	$edit->answer = serialize($tempArray);
+    	$edit->correct_answer = serialize($request->answer);
+
+    	if($edit->save()){
+    		$request->session()->flash("submit-status", "Question edit successfully.");
             return redirect('/question');
     	}
     }
