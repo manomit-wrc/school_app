@@ -33,7 +33,7 @@
             <div class="row">
                 <form name="frmStudyMat" id="frmStudyMat" method="POST" action="/study_mat/study-mat-update" class="form-horizontal" enctype="multipart/form-data">
                     {{ csrf_field() }}
-                    <input type="hidden" name="study_id" value="{{$fetch_study_mat['id']}}" />
+                    <input type="hidden" name="study_id" id="study_id" value="{{$fetch_study_mat['id']}}" />
                     <div class="form-group">
                         <label class="col-md-2 control-label">Subject</label>
                         <div class="col-md-10">
@@ -81,7 +81,7 @@
                         <ul id="video_sortable" class="ui-sortable">
                             @if(count($fetch_study_videos) > 0)
                                 @foreach($fetch_study_videos as $study_video)
-                                    <li class="ui-state-default li-video" id="video_{{$study_video['video_order']}}">{{$study_video['video']}}</li><a id="vlink_{{$study_video['video_order']}}" href="javascript:void(0);" onclick="del_video({{$study_video['video_order']}})"><i class="fa fa-trash"></i></a>
+                                    <li class="ui-state-default li-video" id="video_{{$study_video['video_order']}}">{{$study_video['video']}}<a class="pull-right" id="vlink_{{$study_video['video_order']}}" href="javascript:void(0);" onclick="del_video({{$study_video['video_order']}}, {{$fetch_study_mat['id']}})"><i class="fa fa-trash"></i></a></li>
                                 @endforeach
                             @endif
                         </ul>
@@ -95,7 +95,7 @@
                         <ul id="pdf_sortable" class="ui-sortable">
                             @if(count($fetch_study_pdfs) > 0)
                                 @foreach($fetch_study_pdfs as $study_pdf)
-                                    <li class="ui-state-default li-pdf" id="pdf_{{$study_pdf['pdf_order']}}">{{$study_pdf['pdf']}}</li><a id="plink_{{$study_pdf['pdf_order']}}" href="javascript:void(0);" onclick="del_pdf({{$study_pdf['pdf_order']}})"><i class="fa fa-trash"></i></a>
+                                    <li class="ui-state-default li-pdf" id="pdf_{{$study_pdf['pdf_order']}}">{{$study_pdf['pdf']}}<a class="pull-right" id="plink_{{$study_pdf['pdf_order']}}" href="javascript:void(0);" onclick="del_pdf({{$study_pdf['pdf_order']}}, {{$fetch_study_mat['id']}})"><i class="fa fa-trash"></i></a></li>
                                 @endforeach
                             @endif
                         </ul>
@@ -109,7 +109,7 @@
                         <ul id="doc_sortable" class="ui-sortable">
                             @if(count($fetch_study_documents) > 0)
                                 @foreach($fetch_study_documents as $study_doc)
-                                    <li class="ui-state-default li-doc" id="doc_{{$study_doc['doc_order']}}">{{$study_doc['doc']}}</li><a id="dlink_{{$study_doc['doc_order']}}" href="javascript:void(0);" onclick="del_doc({{$study_doc['doc_order']}})"><i class="fa fa-trash"></i></a>
+                                    <li class="ui-state-default li-doc" id="doc_{{$study_doc['doc_order']}}">{{$study_doc['doc']}}<a class="pull-right" id="dlink_{{$study_doc['doc_order']}}" href="javascript:void(0);" onclick="del_doc({{$study_doc['doc_order']}}, {{$fetch_study_mat['id']}})"><i class="fa fa-trash"></i></a></li>
                                 @endforeach
                             @endif
                         </ul>
@@ -286,9 +286,11 @@
                 if (valid) {
                     $('#study_mat_submit').prop('disabled', true);
 
+                    formdata.append('study_id', $("#study_id").val());
                     formdata.append('subject', $("#subject").val());
                     formdata.append('area', $("#area").val());
                     formdata.append('section', $("#section").val());
+                    formdata.append('description', $("#description").val());
                     formdata.append('_token', '{{csrf_token()}}');
                     $(".li-video").each(function(index) {
                         formdata.append('video_order[]', $(this).text());
@@ -306,10 +308,11 @@
                         contentType: false,
                         data: formdata,
                         success: function (data) {
+                            //alert(data);
                             if (data == 1) {
                                 window.location.href = '/study_mat';
                             } else if (data == 0) {
-                                window.location.href = '/study_mat/add';
+                                window.location.href = '/study_mat/edit/';
                             }
                         }
                     });
@@ -317,19 +320,64 @@
             });
         });
 
-        function del_video(video_id) {
-            $('#video_'+video_id).remove();
-            $('#vlink_'+video_id).remove();
+        function del_video(video_id, study_id) {
+            var r = confirm('Do you really want to delete the current record ?');
+            if (r == true) {
+                $.ajax({
+                    type: "GET",
+                    url: '/study_mat/del_video/' + study_id + '/' + video_id,
+                    success: function (data) {
+                        if (data == 1) {
+                            $('#video_' + video_id).remove();
+                            $('#vlink_' + video_id).remove();
+                        } else if (data == 0) {
+                            alert('error');
+                        }
+                    }
+                });
+            } else {
+                return false;
+            }
         }
 
-        function del_pdf(pdf_id) {
-            $('#pdf_'+pdf_id).remove();
-            $('#plink_'+pdf_id).remove();
+        function del_pdf(pdf_id, study_id) {
+            var r = confirm('Do you really want to delete the current record ?');
+            if (r == true) {
+                $.ajax({
+                    type: "GET",
+                    url: '/study_mat/del_pdf/' + study_id + '/' + pdf_id,
+                    success: function (data) {
+                        if (data == 1) {
+                            $('#pdf_' + pdf_id).remove();
+                            $('#plink_' + pdf_id).remove();
+                        } else if (data == 0) {
+                            alert('error');
+                        }
+                    }
+                });
+            } else {
+                return false;
+            }
         }
 
-        function del_doc(doc_id) {
-            $('#doc_'+doc_id).remove();
-            $('#dlink_'+doc_id).remove();
+        function del_doc(doc_id, study_id) {
+            var r = confirm('Do you really want to delete the current record ?');
+            if (r == true) {
+                $.ajax({
+                    type: "GET",
+                    url: '/study_mat/del_doc/' + study_id + '/' + doc_id,
+                    success: function (data) {
+                        if (data == 1) {
+                            $('#doc_' + doc_id).remove();
+                            $('#dlink_' + doc_id).remove();
+                        } else if (data == 0) {
+                            alert('error');
+                        }
+                    }
+                });
+            } else {
+                return false;
+            }
         }
     </script>
 @endsection

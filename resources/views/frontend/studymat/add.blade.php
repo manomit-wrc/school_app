@@ -265,6 +265,7 @@
                     formdata.append('subject', $("#subject").val());
                     formdata.append('area', $("#area").val());
                     formdata.append('section', $("#section").val());
+                    formdata.append('description', $("#description").val());
                     formdata.append('_token', '{{csrf_token()}}');
                     $(".li-video").each(function(index) {
                         formdata.append('video_order[]', $(this).text());

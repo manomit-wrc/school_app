@@ -113,4 +113,8 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::get('/study_mat/edit/{id}','StudyMatController@edit_study_mat_view');
 	Route::post('/study_mat/study-mat-update','StudyMatController@study_mat_update');
 	Route::get('/study_mat/delete/{id}','StudyMatController@study_mat_delete');
+	Route::get('/study_mat/del_video/{study_id}/{video_id}','StudyMatController@video_delete');
+	Route::get('/study_mat/del_pdf/{study_id}/{pdf_id}','StudyMatController@pdf_delete');
+	Route::get('/study_mat/del_doc/{study_id}/{doc_id}','StudyMatController@doc_delete');
+
 });

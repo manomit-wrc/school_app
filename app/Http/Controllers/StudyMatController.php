@@ -53,7 +53,7 @@ class StudyMatController extends Controller
     	return response()->json(['tempArray' => $tempArray]);
     }
 
-    public function study_mat_submit (Request $request) {
+    public function study_mat_submit(Request $request) {
     	Validator::make($request->all(),[
     		'subject' => 'required',
     		'area' => 'required',
@@ -156,5 +156,161 @@ class StudyMatController extends Controller
         $fetch_all_area = Area::where('status', '1')->pluck('name', 'id')->toArray();
         $fetch_all_section = Section::pluck('name', 'id')->toArray();
         return view('frontend.studymat.edit')->with(['fetch_study_mat' => $fetch_study_mat,'fetch_study_videos' => $fetch_study_videos,'fetch_study_pdfs' => $fetch_study_pdfs,'fetch_study_documents' => $fetch_study_documents,'fetch_all_subject' => $fetch_all_subject,'fetch_all_area' => $fetch_all_area,'fetch_all_section' => $fetch_all_section]);
+    }
+
+    public function study_mat_update(Request $request) {
+        $id = $request->study_id;
+        Validator::make($request->all(),[
+            'subject' => 'required',
+            'area' => 'required',
+            'section' => 'required'
+        ],[
+            'subject.required' => 'Please select subject',
+            'area.required' => 'Please select area',
+            'section.required' => 'Please select section'
+        ])->validate();
+
+        $studymat = StudyMat::find($id);
+
+        $video_arr = array();
+        $pdf_arr = array();
+        $doc_arr = array();
+
+        $video_arr = unserialize($studymat['video']);
+        $pdf_arr = unserialize($studymat['pdf']);
+        $doc_arr = unserialize($studymat['document']);
+
+        if ($request->hasFile('video_files')) {
+            foreach ($request->file('video_files') as $file) {
+                $videoName = time().'_'.$file->getClientOriginalName();
+                //original destination path
+                $destinationPath = public_path().'/upload/study_video/';
+                $file->move($destinationPath, $videoName);
+                $key = array_search($file->getClientOriginalName(), $request->video_order);
+                $video_arr[] = array(
+                    'video' => $videoName,
+                    'video_order' => $key
+                );
+            }
+        } else {
+            $temp_video_arr = array();
+            foreach ($video_arr as $file) {
+                $key = array_search($file['video'], $request->video_order);
+                $temp_video_arr[] = array(
+                    'video' => $file['video'],
+                    'video_order' => $key
+                );
+            }
+            $video_arr = $temp_video_arr;
+        }
+
+        if ($request->hasFile('pdf_files')) {
+            foreach ($request->file('pdf_files') as $file) {
+                $pdfName = time().'_'.$file->getClientOriginalName();
+                //original destination path
+                $destinationPath = public_path().'/upload/study_pdf/';
+                $file->move($destinationPath, $pdfName);
+                $key = array_search($file->getClientOriginalName(), $request->pdf_order);
+                $pdf_arr[] = array(
+                    'pdf' => $pdfName,
+                    'pdf_order' => $key
+                );
+            }
+        } else {
+            $temp_pdf_arr = array();
+            foreach ($pdf_arr as $file) {
+                $key = array_search($file['pdf'], $request->pdf_order);
+                $temp_pdf_arr[] = array(
+                    'pdf' => $file['pdf'],
+                    'pdf_order' => $key
+                );
+            }
+            $pdf_arr = $temp_pdf_arr;
+        }
+
+        if ($request->hasFile('doc_files')) {
+            foreach ($request->file('doc_files') as $file) {
+                $docName = time().'_'.$file->getClientOriginalName();
+                //original destination path
+                $destinationPath = public_path().'/upload/study_doc/';
+                $file->move($destinationPath, $docName);
+                $key = array_search($file->getClientOriginalName(), $request->doc_order);
+                $doc_arr[] = array(
+                    'doc' => $docName,
+                    'doc_order' => $key
+                );
+            }
+        } else {
+            $temp_doc_arr = array();
+            foreach ($doc_arr as $file) {
+                $key = array_search($file['doc'], $request->doc_order);
+                $temp_doc_arr[] = array(
+                    'doc' => $file['doc'],
+                    'doc_order' => $key
+                );
+            }
+            $doc_arr = $temp_doc_arr;
+        }
+
+        $studymat->subject_id = $request->subject;
+        $studymat->area_id = $request->area;
+        $studymat->section_id = $request->section;
+        $studymat->video = serialize($video_arr);
+        $studymat->pdf = serialize($pdf_arr);
+        $studymat->document = serialize($doc_arr);
+        $studymat->description = $request->description;
+
+        if ($studymat->save()) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    public function study_mat_delete(Request $request, $study_id) {
+        $study_mat = StudyMat::find($study_id);
+        if ($study_mat->delete()) {
+            $request->session()->flash("submit-status",'Study Material deleted successfully.');
+            return redirect('/study_mat/');
+        } else {
+            $request->session()->flash("error-status",'Study Material deletion failed!');
+            return redirect('/study_mat/');
+        }
+    }
+
+    public function video_delete($study_id, $video_id) {
+        $studymat = StudyMat::find($study_id);
+        $video_arr = unserialize($studymat['video']);
+        unset($video_arr[$video_id]);
+        $studymat->video = serialize($video_arr);
+        if ($studymat->save()) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    public function pdf_delete($study_id, $pdf_id) {
+        $studymat = StudyMat::find($study_id);
+        $pdf_arr = unserialize($studymat['pdf']);
+        unset($pdf_arr[$pdf_id]);
+        $studymat->pdf = serialize($pdf_arr);
+        if ($studymat->save()) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    public function doc_delete($study_id, $doc_id) {
+        $studymat = StudyMat::find($study_id);
+        $doc_arr = unserialize($studymat['document']);
+        unset($doc_arr[$doc_id]);
+        $studymat->document = serialize($doc_arr);
+        if ($studymat->save()) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 }
