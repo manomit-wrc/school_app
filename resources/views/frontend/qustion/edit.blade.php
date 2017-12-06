@@ -44,11 +44,11 @@
                     <div class="form-group">
                         <label class="col-md-2 control-label">Exam</label>
                         <div class="col-md-10 {{ $errors->has('exam') ? 'has-error' : '' }}">
-                            <select class="form-control" placeholder="Section exam" type="text" name="exam" id="exam" subject_id=''>
+                            <select class="form-control" placeholder="Section exam" type="text" name="exam" id="exam" subject_id='' multiple>
                                 <option value="">Select Exam</option>
 
                                 @foreach($fetch_exam as $key => $value)
-                                    <option value="{{ $key }}" @if($fetch_question_details['exam_id'] == $key) selected="selected" @endif>{{ $value }}</option>
+                                    <option value="{{ $key }}" @if(in_array($key, $fetch_question_details['exam_id'])) selected="selected" @endif>{{ $value }}</option>
                                 @endforeach
 
                             </select>
@@ -376,6 +376,10 @@
 
     <script type="text/javascript">
         $(document).ready(function(){
+            $("#exam").select2({
+                placeholder: 'Select Exams',
+            });
+
             $('#image_div').hide();
             $('#text_div').hide();
 

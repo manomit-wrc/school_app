@@ -57,8 +57,7 @@ class StudentController extends Controller
         $user = JWTAuth::toUser($token);
         if($user->status == 0) {
             return response()->json(['msg' => 'Account Not Activated.','status_code'=>404]);
-        }
-        else {
+        }else {
             return response()->json(['msg' => 'Successfully Login','status_code'=>200,'token'=>$token]);
         }
         
