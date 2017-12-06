@@ -106,6 +106,7 @@
   @if((Request::segment(2) === 'add') || (Request::segment(2) === 'edit') || (Request::segment(4) === 'add') || (Request::segment(4) === 'edit'))
 
   {!! Html::script('storage/admin_dashboard/assets/ckeditor/resources/libs/ckeditor/ckeditor.js') !!}
+  {{-- <script src="https://cdn.ckeditor.com/4.7.3/standard-all/ckeditor.js"></script> --}}
   {!! Html::script('storage/admin_dashboard/assets/ckeditor/resources/libs/ckeditor/adapters/jquery.js') !!}
 
   <script type="text/javascript">

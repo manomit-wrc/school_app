@@ -44,7 +44,7 @@
                     <div class="form-group">
                         <label class="col-md-2 control-label">Exam</label>
                         <div class="col-md-10 {{ $errors->has('exam') ? 'has-error' : '' }}">
-                            <select class="form-control" placeholder="Section exam" type="text" name="exam" id="exam" subject_id=''>
+                            <select class="form-control" placeholder="Section exam" type="text" name="exam" id="exam" subject_id='' multiple>
                                 <option value="">Select Exam</option>
 
                             </select>
@@ -296,15 +296,26 @@
 
     <script type="text/javascript">
         $(document).ready(function(){
+
+            $("#exam").select2({
+                placeholder: 'Select Exams',
+            });
+
             $('#image_div').hide();
             $('#text_div').hide();
 
             $('#question_type_text').on('click', function () {
                 $('#text_div').show();
-                CKEDITOR.replace('question',{
-                    filebrowserBrowseUrl : '/browser/browse.php',
-                    filebrowserUploadUrl : '/uploader/upload.php'
-                });
+                CKEDITOR.replace( 'question', {
+
+                    height: 300,
+
+                    // Configure your file manager integration. This example uses CKFinder 3 for PHP.
+                    filebrowserBrowseUrl: '/ckfinder/ckfinder.html',
+                    filebrowserImageBrowseUrl: '/ckfinder/ckfinder.html?type=Images',
+                    filebrowserUploadUrl: '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files',
+                    filebrowserImageUploadUrl: '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images'
+                } );
                 
                 $('#image_div').hide();
             });
