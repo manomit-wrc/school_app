@@ -21,13 +21,14 @@ class AddQuestionController extends Controller
 
     public function add_qustion_view () {
     	$fetch_all_subject = Subject::where('status','1')->pluck('sub_full_name','id')->toArray();
-    	return view ('frontend.qustion.add')->with('fetch_all_subject',$fetch_all_subject);
+
+    	return view ('frontend.qustion.add')->with('fetch_all_subject',array_unique($fetch_all_subject));
     }
 
     public function fetch_exam_subject_wise (Request $request) {
     	$tempArray = array();
     	$subject_id = $request->subject_id;
-    	$fetch_exam_id = Subject::where([['status','1'],['id',$subject_id]])->get()->toArray();
+    	$fetch_exam_id = Subject::where([['status','1'],['sub_full_name',$subject_id]])->get()->toArray();
     	foreach($fetch_exam_id as $key => $value){
     		$exam_id = $value['exam_id'];
     		$fetch_exam_details = Exam::where('id',$exam_id)->get()->toArray();
@@ -47,7 +48,9 @@ class AddQuestionController extends Controller
     	$exam_id = $request->exam_id;
     	$subject_id = $request->subject_id;
 
-    	$fetch_area = Area::where([['exam_id',$exam_id],['subject_id',$subject_id],['status','1']])->get()->toArray();
+    	$fetch_subject_details = Subject::where('sub_full_name',$subject_id)->get()->toArray();
+
+    	$fetch_area = Area::where([['subject_id',$fetch_subject_details[0]['id']],['status','1']])->get()->toArray();
 
     	return response()->json(['fetch_area'=>$fetch_area]);
     }
@@ -245,9 +248,12 @@ class AddQuestionController extends Controller
     		'optionE' => $optionE
     	);
 
+    	$exam_ids = $request->exam;
+    	$new_ids = implode(",",$exam_ids);
+
     	$add = new QuestionAnswer();
     	$add->subject_id = $request->subject;
-    	$add->exam_id = $request->exam;
+    	$add->exam_id = $new_ids;
     	$add->area_id = $request->area;
     	$add->section_id = $request->section;
     	$add->level = $request->level;
@@ -280,13 +286,16 @@ class AddQuestionController extends Controller
     	$fetch_area = Area::where('status','1')->pluck('name','id')->toArray();
     	$fetch_section = Section::pluck('name','id')->toArray();
 
+    	$exam_ids = explode(",", $fetch_question_details['exam_id']);
+
     	return view('frontend.qustion.edit')->with('fetch_question_details',$fetch_question_details)
     										->with('option',$option)
     										->with('correct_answer',$correct_answer)
     										->with('fetch_all_subject', $fetch_all_subject)
     										->with('fetch_exam',$fetch_exam)
     										->with('fetch_area',$fetch_area)
-    										->with('fetch_section',$fetch_section);
+    										->with('fetch_section',$fetch_section)
+    										->with('exam_ids',$exam_ids);
     }
 
     public function delete (Request $request,$question_id) {

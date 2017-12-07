@@ -32,16 +32,33 @@ class SubjectController extends Controller
     }
 
     public function subject_add_save (Request $request) {
+        $fecth_subject_exit = Subject::where([['exam_id',$request->exam_id],['sub_full_name', trim(ucwords($request->sub_full_name))],['sub_short_name',trim(ucwords($request->sub_short_name))]])->get()->toArray();
+
+        if(count($fecth_subject_exit) > 0){
+            Validator::make($request->all(),[
+                'sub_full_name' => 'required|unique:subjects,sub_full_name',
+                'sub_short_name' => 'required|unique:subjects,sub_short_name',
+                'exam_id' => 'required',
+                'description' => 'required'
+            ],[
+                'sub_full_name.required' => 'Please enter subject full name.',
+                'sub_full_name.unique' => 'Subject name already taken for the exam you have select',
+                'sub_short_name.required' => 'Please enter subject short name.',
+                'sub_short_name.unique' => 'Subject short name already taken for the exam you have select',
+                'exam_id.required' => 'Please select exam.',
+                'description.required' => 'Please enter subject description.',
+                'sub_file.mimes' => 'Please upload correct file.'
+            ])->validate();
+        }
+
     	Validator::make($request->all(),[
-    		'sub_full_name' => 'required|unique:subjects,sub_full_name',
-    		'sub_short_name' => 'required|unique:subjects,sub_short_name',
+    		'sub_full_name' => 'required',
+    		'sub_short_name' => 'required',
     		'exam_id' => 'required',
     		'description' => 'required'
     	],[
     		'sub_full_name.required' => 'Please enter subject full name.',
-    		'sub_full_name.unique' => 'Subject name already taken',
     		'sub_short_name.required' => 'Please enter subject short name.',
-    		'sub_short_name.unique' => 'Subject short name already taken',
     		'exam_id.required' => 'Please select exam.',
     		'description.required' => 'Please enter subject description.',
     		'sub_file.mimes' => 'Please upload correct file.'
@@ -73,8 +90,8 @@ class SubjectController extends Controller
         }
 
         $add = new Subject();
-        $add->sub_full_name = $request->sub_full_name;
-        $add->sub_short_name = $request->sub_short_name;
+        $add->sub_full_name = trim(ucwords($request->sub_full_name));
+        $add->sub_short_name = trim(ucwords($request->sub_short_name));
         $add->exam_id = $request->exam_id;
         $add->sub_desc = $request->description;
         $add->sub_file = $fileName;
@@ -91,6 +108,7 @@ class SubjectController extends Controller
 
     public function subject_edit($subject_id) {
     	$fetch = Subject::where([['id',$subject_id],['status','1']])->get()->toArray();
+        $tags_array = array();
 
     	if(count($fetch) > 0){
     		$subject_details = Subject::with('exams')->find($subject_id)->toArray();
@@ -103,10 +121,12 @@ class SubjectController extends Controller
 
             $subject_tags = Subject::with('tags')->where('id',$subject_id)->get()->toArray();
             
-
-            foreach ($subject_tags[0]['tags'] as $key => $value) {
-              $tags_array[] = $value['id'];
+            if($subject_tags[0]['tags']){
+                foreach ($subject_tags[0]['tags'] as $key => $value) {
+                  $tags_array[] = $value['id'];
+                }
             }
+            
 
 	    	return view('frontend.subject.edit')->with('subject_details',$subject_details)
 	    										->with('fetch_all_course',$fetch_all_course)
@@ -119,6 +139,7 @@ class SubjectController extends Controller
 
     public function subject_edit_save (Request $request,$subject_id) {
         $edit = Subject::find($subject_id);
+
     	Validator::make($request->all(),[
     		'sub_full_name' => 'required|unique:subjects,sub_full_name,'.$subject_id,
     		'sub_short_name' => 'required|unique:subjects,sub_short_name,'.$subject_id,
@@ -159,8 +180,8 @@ class SubjectController extends Controller
         }
 
         
-        $edit->sub_full_name = $request->sub_full_name;
-        $edit->sub_short_name = $request->sub_short_name;
+        $edit->sub_full_name = trim(ucwords($request->sub_full_name));
+        $edit->sub_short_name = trim(ucwords($request->sub_short_name));
         $edit->exam_id = $request->exam_id;
         $edit->sub_desc = $request->description;
         $edit->sub_file = $fileName;

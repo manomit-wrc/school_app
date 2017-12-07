@@ -33,7 +33,7 @@
                                 <option value="">Select Subject</option>
 
                                 @foreach($fetch_all_subject as $key => $value)
-                                    <option value="{{ $key }}">{{ $value }}</option>
+                                    <option value="{{ $value }}">{{ $value }}</option>
                                 @endforeach
 
                             </select>
@@ -44,7 +44,7 @@
                     <div class="form-group">
                         <label class="col-md-2 control-label">Exam</label>
                         <div class="col-md-10 {{ $errors->has('exam') ? 'has-error' : '' }}">
-                            <select class="form-control" placeholder="Section exam" type="text" name="exam" id="exam" subject_id='' multiple>
+                            <select class="form-control" placeholder="Section exam" type="text" name="exam[]" id="exam" subject_id='' multiple>
                                 <option value="">Select Exam</option>
 
                             </select>

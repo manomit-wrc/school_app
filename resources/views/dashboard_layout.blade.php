@@ -10,8 +10,8 @@
   
 	<title>LMS Admin | Dashboard</title>
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
-	<meta content="" name="description" />
-	<meta content="" name="author" />
+	{{-- <meta content="" name="description" /> --}}
+	{{-- <meta content="" name="author" /> --}}
 	
 	<!-- ================== BEGIN BASE CSS STYLE ================== -->
 	<link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -103,20 +103,6 @@
 
   <!-- ================== END PAGE LEVEL JS ================== -->
 
-  @if((Request::segment(2) === 'add') || (Request::segment(2) === 'edit') || (Request::segment(4) === 'add') || (Request::segment(4) === 'edit'))
-
-  {!! Html::script('storage/admin_dashboard/assets/ckeditor/resources/libs/ckeditor/ckeditor.js') !!}
-  {{-- <script src="https://cdn.ckeditor.com/4.7.3/standard-all/ckeditor.js"></script> --}}
-  {!! Html::script('storage/admin_dashboard/assets/ckeditor/resources/libs/ckeditor/adapters/jquery.js') !!}
-
-  <script type="text/javascript">
-    /*CKEDITOR.replace('description', {
-        height: 260,
-        width: 880,
-    } );*/
-  </script>
-         
-  @endif
 
   <script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="yw02zsbtztzuj9h"></script>
 </head>
@@ -401,6 +387,23 @@
             
 		});
 	</script>
+
+
+@if((Request::segment(2) === 'add') || (Request::segment(2) === 'edit') || (Request::segment(4) === 'add') || (Request::segment(4) === 'edit'))
+
+  {!! Html::script('storage/admin_dashboard/assets/ckeditor/resources/libs/ckeditor/ckeditor.js') !!}
+  {!! Html::script('storage/admin_dashboard/assets/ckeditor/resources/libs/ckeditor/adapters/jquery.js') !!}
+
+  <script type="text/javascript">
+    CKEDITOR.replace( 'description', {
+        height: 260,
+        width: 880,
+    } );
+  </script>
+         
+@endif
+
+
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
