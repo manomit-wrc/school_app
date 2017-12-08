@@ -19,3 +19,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::post('/registration', 'StudentController@registration');
 Route::post('/login', 'StudentController@login');
+
+Route::group(['middleware' => ['jwt.auth']], function (){
+	Route::get('/profile', 'ProfileController@index');
+	Route::post('/profile-edit', 'ProfileController@profile_edit');
+});
