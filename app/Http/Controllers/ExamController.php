@@ -116,4 +116,10 @@ class ExamController extends Controller
             return redirect('/exam');
     	}
     }
+
+    public function get_all_exam(Request $request) {
+        $exam_list = Exam::all();
+        return response()->json(['msg' => 'Success', 'status_code' => 200, 'data' => $exam_list]);
+    }
+
 }

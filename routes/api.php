@@ -19,3 +19,11 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::post('/registration', 'StudentController@registration');
 Route::post('/login', 'StudentController@login');
+Route::group(['middleware' => ['jwt.auth']], function () {
+	Route::post('/changepass', 'StudentController@changepass');
+	Route::post('/getallexam', 'ExamController@get_all_exam');
+	Route::post('/getsubject', 'SubjectController@get_subject');
+	Route::post('/getarea', 'AreaController@get_area');
+	Route::post('/getsection', 'SectionController@get_section');
+	Route::post('/getstudymats', 'StudyMatController@get_studymat');
+});

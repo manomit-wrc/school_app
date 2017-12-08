@@ -126,7 +126,6 @@ class SubjectController extends Controller
                   $tags_array[] = $value['id'];
                 }
             }
-            
 
 	    	return view('frontend.subject.edit')->with('subject_details',$subject_details)
 	    										->with('fetch_all_course',$fetch_all_course)
@@ -423,6 +422,17 @@ class SubjectController extends Controller
         if($delete->save()){
             echo 1;
             exit();
+        }
+    }
+
+
+    public function get_subject(Request $request) {
+        $exam_id = $request->exam_id;
+        $subject = Subject::where('exam_id', $exam_id)->get()->toArray();
+        if ($subject) {
+            return response()->json(['msg' => 'Success', 'status_code' => 200, 'data' => $subject]);
+        } else {
+            return response()->json(['msg' => 'No subject available', 'status_code' => 404]);
         }
     }
 }

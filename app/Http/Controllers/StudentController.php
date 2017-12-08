@@ -33,7 +33,7 @@ class StudentController extends Controller
         	$student->password = bcrypt($request->password);
         	$student->mobile_no = $request->mobile_no;
 
-        	if($student->save()) {
+        	if ($student->save()) {
         		return response()->json(['error' => false,
                 'message' => 'Registration has been successfully completed',
                 'code' => 200]);
@@ -41,26 +41,33 @@ class StudentController extends Controller
         }
     }
 
-    public function login(Request $request){
+    public function login(Request $request) {
         Config::set('tymon.jwt.provider.jwt', '\App\Student');
         $credentials = $request->only('username', 'password');
         $token = null;
         try {
-
-           if (!$token = JWTAuth::attempt($credentials)) {
-            
-            return response()->json(['msg' => 'Invalid Email Or Password','status_code'=>404]);
-           }
+            if (!$token = JWTAuth::attempt($credentials)) {
+                return response()->json(['msg' => 'Invalid email or password', 'status_code' => 404]);
+            }
         } catch (JWTAuthException $e) {
-            return response()->json(['msg' => 'Failed to create token','status_code'=>500]);
+            return response()->json(['msg' => 'Failed to create token', 'status_code' => 500]);
         }
         $user = JWTAuth::toUser($token);
-        if($user->status == 0) {
-            return response()->json(['msg' => 'Account Not Activated.','status_code'=>404]);
-        }else {
-            return response()->json(['msg' => 'Successfully Login','status_code'=>200,'token'=>$token]);
+        if ($user->status == 0) {
+            return response()->json(['msg' => 'Account not activated.', 'status_code' => 404]);
+        } else {
+            return response()->json(['msg' => 'Successfully login', 'status_code' => 200, 'token' => $token]);
         }
-        
-        
+    }
+
+    public function changepass(Request $request) {
+        $user = JWTAuth::toUser($request->header('token'));
+        $student = Student::find($user['id']);
+        $student->password = bcrypt($request->password);
+        if ($student->save()) {
+            return response()->json(['msg' => 'Success', 'status_code' => 200]);
+        } else {
+            return response()->json(['msg' => 'Failure', 'status_code' => 500]);
+        }
     }
 }

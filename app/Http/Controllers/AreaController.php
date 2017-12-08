@@ -13,7 +13,6 @@ class AreaController extends Controller
 {
     public function index() {
     	$areas = Area::with('subjects.exams')->get()->toArray();
-
     	return view('frontend.area.index')->with('areas', $areas);
     }
 
@@ -100,6 +99,17 @@ class AreaController extends Controller
     	if($request->ajax()){
             $subjects = Subject::select('id','sub_short_name')->where('exam_id',$request->exam_id)->get()->toArray();
             return response()->json(['subjects' => $subjects]);
+        }
+    }
+
+    public function get_area(Request $request) {
+        $exam_id = $request->exam_id;
+        $subject_id = $request->subject_id;
+        $area_details = Area::where([['exam_id', '=', $exam_id],['subject_id', '=', $subject_id]])->get()->toArray();
+        if ($area_details) {
+            return response()->json(['msg' => 'Success', 'status_code' => 200, 'data' => $area_details]);
+        } else {
+            return response()->json(['msg' => 'No area available', 'status_code' => 404]);
         }
     }
 }

@@ -313,4 +313,50 @@ class StudyMatController extends Controller
             return 0;
         }
     }
+
+    public function get_studymat(Request $request) {
+        $studymat_arr = array();
+        $subject_id = $request->subject_id;
+        $area_id = $request->area_id;
+        $section_id = $request->section_id;
+        $studymat_details = StudyMat::where([['subject_id', '=', $subject_id],['area_id', '=', $area_id],['section_id', '=', $section_id]])->get()->toArray();
+        if ($studymat_details) {
+            foreach ($studymat_details as $key => $value) {
+                $fetch_subject = Subject::where('id', $value['subject_id'])->get()->toArray();
+                $fetch_area = Area::where('id', $value['area_id'])->get()->toArray();
+                $fetch_section = Section::where('id', $value['section_id'])->get()->toArray();
+
+                $video = array();
+                $video_lists = unserialize($value['video']);
+                foreach ($video_lists as $v) {
+                    $video[] = url('/') .'/upload/study_video/'. $v['video'];
+                }
+
+                $pdf = array();
+                $pdf_lists = unserialize($value['pdf']);
+                foreach ($pdf_lists as $p) {
+                    $pdf[] = url('/') .'/upload/study_pdf/'. $p['pdf'];
+                }
+
+                $doc = array();
+                $doc_lists = unserialize($value['document']);
+                foreach ($doc_lists as $d) {
+                    $doc[] = url('/') .'/upload/study_doc/'. $d['doc'];
+                }
+
+                $studymat_arr[] = array(
+                    'subject_name' => $fetch_subject[0]['sub_full_name'],
+                    'area_name' => $fetch_area[0]['name'],
+                    'section_name' => $fetch_section[0]['name'],
+                    'video' => $video,
+                    'pdf' => $pdf,
+                    'document' => $doc,
+                    'description' => $value['description']
+                );
+            }
+            return response()->json(['msg' => 'Success', 'status_code' => 200, 'data' => $studymat_arr]);
+        } else {
+            return response()->json(['msg' => 'No study material available', 'status_code' => 404]);
+        }
+    }
 }

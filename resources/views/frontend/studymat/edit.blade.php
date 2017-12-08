@@ -255,7 +255,6 @@
             $( "#doc_sortable" ).sortable();
             $( "#doc_sortable" ).disableSelection();
 
-
             $('#frmStudyMat').validate({
                 rules:{
                     subject:{
@@ -281,7 +280,10 @@
                 }
             });
 
-            $('#study_mat_submit').on('click',function () {
+            var video_order = [];
+            var pdf_order = [];
+            var doc_order = [];
+            $('#study_mat_submit').on('click', function (e) {
                 var valid = $('#frmStudyMat').valid();
                 if (valid) {
                     $('#study_mat_submit').prop('disabled', true);
@@ -317,6 +319,7 @@
                         }
                     });
                 }
+                e.preventDefault();
             });
         });
 
