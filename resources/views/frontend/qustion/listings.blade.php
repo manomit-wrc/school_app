@@ -38,7 +38,7 @@
                         <thead>
                             <tr>
                                 <th>SL NO</th>
-                                <th>Exam</th>
+                                {{-- <th>Exam</th> --}}
                                 <th>Subject</th>
                                 <th>Question</th>
                                 <th>Level</th>
@@ -49,7 +49,7 @@
                             @foreach($fetch_all_question as $key => $value)
                                 <tr class="odd gradeX">
                                     <td>{{ ++$key }}</td>
-                                    <td>{{ $value['exams']['name']  }}</td>
+                                    {{-- <td>{{ $value['exams']['name']  }}</td> --}}
                                     <td>{{ $value['subject']['sub_full_name'] }}</td>
                                     <td>{{ strip_tags($value['question']) }}</td>
                                     <td>

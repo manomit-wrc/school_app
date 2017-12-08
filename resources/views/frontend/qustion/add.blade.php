@@ -33,7 +33,7 @@
                                 <option value="">Select Subject</option>
 
                                 @foreach($fetch_all_subject as $key => $value)
-                                    <option value="{{ $value }}">{{ $value }}</option>
+                                    <option value="{{ $key }}" subject_name="{{ $value }}">{{ $value }}</option>
                                 @endforeach
 
                             </select>
@@ -402,17 +402,18 @@
 
             $('#subject').on('change', function () {
                 var subject_id = $(this).val();
+                var subject_name = $('option:selected', this).attr('subject_name');
 
                 if(subject_id) {
                     $.ajax({
                         type: 'POST',
                         url: '/question/fetch-exam-subject-wise',
                         data: {
-                            subject_id :subject_id,
+                            subject_id :subject_name,
                             _token : "{{ csrf_token() }}"
                         },
                         success:function(response) {
-                            $('#exam').attr('subject_id',subject_id);
+                            $('#exam').attr('subject_id',subject_name);
 
                             $("#exam").find('option').not(':first').remove();
                             $("#section").find('option').not(':first').remove();

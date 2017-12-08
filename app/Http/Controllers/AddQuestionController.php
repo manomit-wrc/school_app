@@ -14,7 +14,10 @@ use Image;
 class AddQuestionController extends Controller
 {
     public function index () {
-    	$fetch_all_question = QuestionAnswer::with('subject','exams')->where('status','1')->orderby('id','desc')->get()->toArray();
+    	$fetch_all_question = QuestionAnswer::with('subject')->where('status','1')->orderby('id','desc')->get()->toArray();
+    	// echo "<pre>";
+    	// print_r($fetch_all_question);
+    	// die();
 
     	return view ('frontend.qustion.listings')->with('fetch_all_question',$fetch_all_question);
     }
@@ -291,7 +294,7 @@ class AddQuestionController extends Controller
     	return view('frontend.qustion.edit')->with('fetch_question_details',$fetch_question_details)
     										->with('option',$option)
     										->with('correct_answer',$correct_answer)
-    										->with('fetch_all_subject', $fetch_all_subject)
+    										->with('fetch_all_subject', array_unique($fetch_all_subject))
     										->with('fetch_exam',$fetch_exam)
     										->with('fetch_area',$fetch_area)
     										->with('fetch_section',$fetch_section)
@@ -506,9 +509,12 @@ class AddQuestionController extends Controller
     		'optionE' => $optionE
     	);
 
+    	$exam_ids = $request->exam;
+    	$new_ids = implode(",",$exam_ids);
+
     	$edit = QuestionAnswer::find($question_id);
     	$edit->subject_id = $request->subject;
-    	$edit->exam_id = $request->exam;
+    	$edit->exam_id = $new_ids;
     	$edit->area_id = $request->area;
     	$edit->section_id = $request->section;
     	$edit->level = $request->level;

@@ -33,7 +33,7 @@
                                 <option value="">Select Subject</option>
 
                                 @foreach($fetch_all_subject as $key => $value)
-                                    <option value="{{ $key }}" @if($fetch_question_details['subject_id'] == $key) selected="selected" @endif>{{ $value }}</option>
+                                    <option value="{{ $key }}" subject_name="{{ $value }}" @if($fetch_question_details['subject_id'] == $key) selected="selected" @endif>{{ $value }}</option>
                                 @endforeach
 
                             </select>
@@ -44,11 +44,11 @@
                     <div class="form-group">
                         <label class="col-md-2 control-label">Exam</label>
                         <div class="col-md-10 {{ $errors->has('exam') ? 'has-error' : '' }}">
-                            <select class="form-control" placeholder="Section exam" type="text" name="exam" id="exam" subject_id='' multiple>
+                            <select class="form-control" placeholder="Section exam" type="text" name="exam[]" id="exam" subject_id='' multiple>
                                 <option value="">Select Exam</option>
 
                                 @foreach($fetch_exam as $key => $value)
-                                    <option value="{{ $key }}" @if(in_array($key, $fetch_question_details['exam_id'])) selected="selected" @endif>{{ $value }}</option>
+                                    <option value="{{ $key }}" @if(in_array($key, $exam_ids)) selected="selected" @endif>{{ $value }}</option>
                                 @endforeach
 
                             </select>
@@ -514,17 +514,18 @@
 
             $('#subject').on('change', function () {
                 var subject_id = $(this).val();
+                var subject_name = $('option:selected', this).attr('subject_name');
 
                 if(subject_id) {
                     $.ajax({
                         type: 'POST',
                         url: '/question/fetch-exam-subject-wise',
                         data: {
-                            subject_id :subject_id,
+                            subject_id :subject_name,
                             _token : "{{ csrf_token() }}"
                         },
                         success:function(response) {
-                            $('#exam').attr('subject_id',subject_id);
+                            $('#exam').attr('subject_id',subject_name);
 
                             $("#exam").find('option').not(':first').remove();
                             $("#section").find('option').not(':first').remove();
