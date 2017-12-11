@@ -5,7 +5,7 @@
             <!-- begin brand -->
             <div class="login-header">
                 <div class="brand">
-                    Learning Management System
+                    One Click
                     
                 </div>
             </div>
