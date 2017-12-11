@@ -28,5 +28,5 @@ Route::group(['middleware' => ['jwt.auth']], function () {
 	Route::post('/getsubject', 'SubjectController@get_subject');
 	Route::post('/getarea', 'AreaController@get_area');
 	Route::post('/getsection', 'SectionController@get_section');
-	Route::post('/getstudymats', 'StudyMatController@get_studymat');
+	Route::post('/getstudymat', 'StudyMatController@get_studymat');
 });
