@@ -1,11 +1,11 @@
 <?php
+namespace App\Http\Controllers;
+
 header('Access-Control-Allow-Origin: *');
 header("Access-Control-Allow-Credentials: true");
 header('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
 header('Access-Control-Max-Age: 1000');
 header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token , Authorization');
-
-namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Student;
@@ -29,7 +29,7 @@ class StudentController extends Controller
 		if ($validator->fails()) {
             return response()->json(['error' => true,
                 'message' => $validator->messages()->first(),
-                'code' => 500]);
+                'status_code' => 500]);
         }
         else {
         	$student = new Student();
@@ -41,7 +41,7 @@ class StudentController extends Controller
         	if ($student->save()) {
         		return response()->json(['error' => false,
                 'message' => 'Registration has been successfully completed',
-                'code' => 200]);
+                'status_code' => 200]);
         	}
         }
     }
@@ -52,7 +52,7 @@ class StudentController extends Controller
         $token = null;
         try {
             if (!$token = JWTAuth::attempt($credentials)) {
-                return response()->json(['msg' => 'Invalid email or password', 'status_code' => 404]);
+                return response()->json(['msg' => 'Invalid Username or password', 'status_code' => 404]);
             }
         } catch (JWTAuthException $e) {
             return response()->json(['msg' => 'Failed to create token', 'status_code' => 500]);
