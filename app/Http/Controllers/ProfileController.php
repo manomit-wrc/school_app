@@ -1,11 +1,12 @@
 <?php
+namespace App\Http\Controllers;
+
+
 header('Access-Control-Allow-Origin: *');
 header("Access-Control-Allow-Credentials: true");
 header('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
 header('Access-Control-Max-Age: 1000');
 header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token , Authorization');
-
-namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Student;
@@ -82,15 +83,15 @@ class ProfileController extends Controller
     	$edit->image = $file;
 
     	if($edit->save()){
-    		return response()->json(['code'=>'100','msg'=>'profile edit successfully.']);
+    		return response()->json(['status_code'=>'100','msg'=>'profile edit successfully.']);
     	}else{
-    		return response()->json(['code'=>'500','msg'=>'profile edit failed.']);
+    		return response()->json(['status_code'=>'500','msg'=>'profile edit failed.']);
     	}
     }
 
     public function fetch_question (Request $request) {
     	$fetch_question_details = QuestionAnswer::where('status','1')->orderby('id','desc')->get()->toArray();
 
-    	return response()->json(['code'=>'100','fetch_question_details'=>$fetch_question_details]);
+    	return response()->json(['status_code'=>'100','fetch_question_details'=>$fetch_question_details]);
     }
 }
