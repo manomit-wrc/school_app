@@ -75,19 +75,9 @@ class SectionController extends Controller
 
     public function delete(Request $request, $area_id, $id) {
     	$section = Section::find($id);
-    	if($section->delete()) {
+    	if ($section->delete()) {
     		$request->session()->flash("submit-status",'Section deleted successfully.');
     		return redirect('/area/section/'.$area_id);
     	}
-    }
-
-    public function get_section(Request $request) {
-        $area_id = $request->area_id;
-        $section = Section::where('area_id', $area_id)->get()->toArray();
-        if ($section) {
-            return response()->json(['msg' => 'Success', 'status_code' => 200, 'data' => $section]);
-        } else {
-            return response()->json(['msg' => 'No data available', 'status_code' => 404]);
-        }
     }
 }
