@@ -75,7 +75,7 @@ class SectionController extends Controller
 
     public function delete(Request $request, $area_id, $id) {
     	$section = Section::find($id);
-    	if($section->delete()) {
+    	if ($section->delete()) {
     		$request->session()->flash("submit-status",'Section deleted successfully.');
     		return redirect('/area/section/'.$area_id);
     	}
