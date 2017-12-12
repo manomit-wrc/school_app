@@ -424,15 +424,4 @@ class SubjectController extends Controller
             exit();
         }
     }
-
-
-    public function get_subject(Request $request) {
-        $exam_id = $request->exam_id;
-        $subject = Subject::where('exam_id', $exam_id)->get()->toArray();
-        if ($subject) {
-            return response()->json(['msg' => 'Success', 'status_code' => 200, 'data' => $subject]);
-        } else {
-            return response()->json(['msg' => 'No subject available', 'status_code' => 404]);
-        }
-    }
 }
