@@ -14,15 +14,16 @@ use JWTAuth;
 use JWTAuthException;
 use Image;
 use App\QuestionAnswer;
+use App\;
 
 class ProfileController extends Controller
 {
     public function index (Request $request) {
     	$user = JWTAuth::toUser($request->token);
     	if(!empty($user['image'])){
-    		$profile_image_link = public_path() .'/upload/app/profile_image/resize/'.$user['image'];
+    		$profile_image_link = url('/') .'/upload/app/profile_image/resize/'.$user['image'];
     	}else{
-    		$profile_image_link = public_path() .'/upload/app/avatar.png';
+    		$profile_image_link = url('/') .'/upload/app/avatar.png';
     	}
     	return response()->json(['user'=>$user, 'profile_image_link'=>$profile_image_link]);
     }
@@ -42,7 +43,7 @@ class ProfileController extends Controller
 			$data = str_replace(' ', '+', $data);
 			$data = base64_decode($data);
 			$file = time() . '_profile_image.'.$image_ext;
-			$path = public_path() . "/upload/app/profile_image/original/" . $file;
+			$path = url('/') . "/upload/app/profile_image/original/" . $file;
 
 			file_put_contents($path, $data);
 
@@ -66,7 +67,7 @@ class ProfileController extends Controller
 
 	        imagecopyresampled($resource_copy, $resource, 0, 0, 0, 0, $WIDTH, $HEIGHT, $old_width, $old_height);
 
-	        $url = public_path() . "/upload/app/profile_image/resize/".$file;
+	        $url = url('/') . "/upload/app/profile_image/resize/".$file;
 	        $final = imagepng($resource_copy, $url, 9);
 
         }else{
@@ -90,8 +91,52 @@ class ProfileController extends Controller
     }
 
     public function fetch_question (Request $request) {
-    	$fetch_question_details = QuestionAnswer::where('status','1')->orderby('id','desc')->get()->toArray();
+    	$subjct_id = $request->subject_id;
+    	$exam_id = $request->exam_id;
+    	$area_id = $request->area_id;
+    	$page_no = $request->page_no;
 
-    	return response()->json(['status_code'=>'100','fetch_question_details'=>$fetch_question_details]);
+    	if (isset($page_no)) {
+		 $limit = 1;
+		    $page = $page_no; //it will telles the current page
+		    if ($page && $page > 0) {
+		        $start = ($page - 1) * $limit;
+		    } else {
+		        $start = 0;
+		    }
+		}
+
+    	$fetch_question_details = QuestionAnswer::where([['subject_id',$subjct_id],['area_id',$area_id],['status','1']])->offset($start)->limit($limit)->get()->toArray();
+
+    	if(count($fetch_question_details) > 0 ){
+    		$question_type = $fetch_question_details[0]['question_type'];
+	    	if($question_type == 'image'){
+	    		$question = url('/') . "/upload/question_file/resize/".$fetch_question_details[0]['question'];
+	    	}
+	    	if($question_type == 'text'){
+	    		$question = $fetch_question_details[0]['question'];
+	    	}
+
+	    	$option = unserialize($fetch_question_details[0]['answer']);
+	    	$option_image_link = url('/') . "/upload/answers_file/resize/";
+
+	    	$correct_answer = count(unserialize($fetch_question_details[0]['correct_answer']));
+	    	if($correct_answer > 1){
+	    		$answer_type = 'multiple';
+	    	}else{
+	    		$answer_type = 'single';
+	    	}
+
+	    	return response()->json(['status_code'=>'100','question'=>$question,'option'=>$option,'option_image_link'=>$option_image_link,'answer_type'=>$answer_type]);
+    	}else{
+    		return response()->json(['status_code'=>'404','msg'=>'No questions found.']);
+    	}
+    }
+
+    public function fetch_user_ans (Request $request) {
+    	$area_id = $request->area_id;
+    	$question_id = $request->question_id;
+
+    	$fetch_user_ans_details = 
     }
 }

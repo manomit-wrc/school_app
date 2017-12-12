@@ -23,11 +23,12 @@ Route::post('/login', 'StudentController@login');
 Route::group(['middleware' => ['jwt.auth']], function () {
 	Route::get('/profile', 'ProfileController@index');
 	Route::post('/profile-edit', 'ProfileController@profile_edit');
-	Route::get('/fetch_question', 'ProfileController@fetch_question');
+	Route::post('/fetch_question', 'ProfileController@fetch_question');
 	Route::post('/changepass', 'StudentController@changepass');
 	Route::post('/getallexam', 'ExamController@get_all_exam');
 	Route::post('/getsubject', 'SubjectController@get_subject');
 	Route::post('/getarea', 'AreaController@get_area');
 	Route::post('/getsection', 'SectionController@get_section');
 	Route::post('/getstudymat', 'StudyMatController@get_studymat');
+	Route::post('/fetch_user_ans', 'ProfileController@fetch_user_ans');
 });
