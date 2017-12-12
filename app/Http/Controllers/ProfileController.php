@@ -14,7 +14,7 @@ use JWTAuth;
 use JWTAuthException;
 use Image;
 use App\QuestionAnswer;
-use App\;
+use App\UserExam;
 
 class ProfileController extends Controller
 {
@@ -120,6 +120,7 @@ class ProfileController extends Controller
 	    	$option = unserialize($fetch_question_details[0]['answer']);
 	    	$option_image_link = url('/') . "/upload/answers_file/resize/";
 
+	    	
 	    	$correct_answer = count(unserialize($fetch_question_details[0]['correct_answer']));
 	    	if($correct_answer > 1){
 	    		$answer_type = 'multiple';
@@ -127,7 +128,9 @@ class ProfileController extends Controller
 	    		$answer_type = 'single';
 	    	}
 
-	    	return response()->json(['status_code'=>'100','question'=>$question,'option'=>$option,'option_image_link'=>$option_image_link,'answer_type'=>$answer_type]);
+	    	$correct_answer = unserialize($fetch_question_details[0]['correct_answer']);
+
+	    	return response()->json(['status_code'=>'100','question'=>$question,'option'=>$option,'option_image_link'=>$option_image_link,'answer_type'=>$answer_type,'correct_answer'=>$correct_answer]);
     	}else{
     		return response()->json(['status_code'=>'404','msg'=>'No questions found.']);
     	}
@@ -137,6 +140,21 @@ class ProfileController extends Controller
     	$area_id = $request->area_id;
     	$question_id = $request->question_id;
 
-    	$fetch_user_ans_details = 
+    	$fetch_user_ans_details = UserExam::where([['area_id',$area_id]])->get()->toArray();
+    	
+    	$i=0;
+
+    	foreach($fetch_user_ans_details as $key => $value){
+    		$user_ans = unserialize($value['user_answer']);
+
+    		$fetch_correct_ans_details = QuestionAnswer::where([['area_id',$area_id],['id',$value['question_id']]])->select('correct_answer')->get()->toArray();
+    		$correct_answer = unserialize($fetch_correct_ans_details[0]['correct_answer']);
+
+    		if($correct_answer == $user_ans){
+    			$i++;
+    		}
+    	}
+
+    	return response()->json(['status_code'=>'100','i'=>$i]);
     }
 }
