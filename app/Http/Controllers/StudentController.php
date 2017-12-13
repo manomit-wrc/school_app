@@ -19,6 +19,8 @@ use JWTAuth;
 use JWTAuthException;
 use Validator;
 use Config;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\Registration;
 
 class StudentController extends Controller
 {
@@ -45,9 +47,23 @@ class StudentController extends Controller
         	$student->mobile_no = $request->mobile_no;
 
         	if ($student->save()) {
-        		return response()->json(['error' => false,
-                'message' => 'Registration has been successfully completed',
-                'status_code' => 200]);
+                $otp = rand(1000,5000);
+                $user_name = $request->username;
+
+                $user_id = $student->id;
+
+                $edit = Student::find($user_id);
+                $edit->otp = $otp;
+                if($edit->save()){
+                    try{
+                        Mail::to($request->email)->send(new Registration($otp,$user_name));
+
+                        return response()->json(['error' => false,'message' => 'Registration has been successfully completed & OTP send to the user','status_code' => 100]);
+                    }catch(\Exception $e){
+
+                        return response()->json(['code'=>500,'message'=>'error']);
+                    }
+                }
         	}
         }
     }

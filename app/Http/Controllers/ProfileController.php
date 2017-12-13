@@ -15,6 +15,8 @@ use JWTAuthException;
 use Image;
 use App\QuestionAnswer;
 use App\UserExam;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ForgotPassword;
 
 class ProfileController extends Controller
 {
@@ -152,9 +154,61 @@ class ProfileController extends Controller
 	    		}
 	    	}
 
-	    	return response()->json(['status_code'=>'100','i'=>$i]);
+	    	$total_correct_answer = $i;
+	    	$total_no_of_question = count(QuestionAnswer::where('area_id',$area_id)->get()->toArray());
+
+	    	$marks = ($total_correct_answer / $total_no_of_question) * 100 .'%' ;
+
+	    	return response()->json(['status_code'=>'100','marks'=>$marks]);
     	}else{
     		return response()->json(['status_code'=>'404','msg'=>'No answer found.']);
+    	}
+    }
+
+    public function forgot_password (Request $request) {
+    	$user_email = trim($request->email);
+
+    	// $user = JWTAuth::toUser($request->token);
+    	$user = Student::where('email',$user_email)->get()->toArray();
+
+    	if(count($user) > 0){
+    		$new_password = rand(1000,5000);
+    		$user_name = ucwords($user[0]['username']);
+    		try{
+    			Mail::to($user_email)->send(new ForgotPassword($new_password,$user_name));
+
+    			$student = Student::find($user[0]['id']);
+    			$student->password = bcrypt($new_password);
+    			if ($student->save()) {
+		            return response()->json(['msg' => 'Email send successfully with new password.', 'status_code' =>'100']);
+		        }
+    		}catch(\Exception $e){
+
+			    return response()->json(['code'=>500,'message'=>'error']);
+			}
+    	}else{
+    		return response()->json(['status_code'=>'404', 'msg'=>'Email is wrong. Please give correct email.']);
+    	}
+    }
+
+    public function otp_verification(Request $request){
+    	$user_email = $request->email;
+    	$otp = $request->otp;
+
+    	$fetch_user_deatils = Student::where([['email',$user_email],['otp',$otp]])->get()->toArray();
+
+    	if(count($fetch_user_deatils) > 0){
+    		$id = $fetch_user_deatils[0]['id'];
+
+    		$edit = Student::find($id);
+    		$edit->status = 1;
+
+    		if($edit->save()){
+    			return response()->json(['status_code'=>100, 'msg'=>'Your have successfully acivate your account.']);
+    		}
+
+    	}else{
+    		return response()->json(['status_code'=>404, 'msg'=>'Invalid email or OTP.']);
     	}
     }
 }

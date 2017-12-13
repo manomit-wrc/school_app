@@ -19,6 +19,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::post('/registration', 'StudentController@registration');
 Route::post('/login', 'StudentController@login');
+Route::post('/forgot_password' , 'ProfileController@forgot_password');
+Route::post('/otp_verification','ProfileController@otp_verification');
 
 Route::group(['middleware' => ['jwt.auth']], function () {
 	Route::post('/changepass', 'StudentController@changepass');
