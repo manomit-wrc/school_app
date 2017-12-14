@@ -117,4 +117,7 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::get('/study_mat/del_pdf/{study_id}/{pdf_id}','StudyMatController@pdf_delete');
 	Route::get('/study_mat/del_doc/{study_id}/{doc_id}','StudyMatController@doc_delete');
 
+	Route::get('/students-details','DashboardController@students_list');
+	// Route::get('/dashboard/student-delete/{student_id}', 'DashboardController@students_delete');
+
 });

@@ -18,11 +18,11 @@
 			<div class="widget widget-stats bg-green">
 				<div class="stats-icon"><i class="fa fa-desktop"></i></div>
 				<div class="stats-info">
-					<h4>TOTAL VISITORS</h4>
-					<p>3,291,922</p>	
+					<h4>TOTAL STUDENTS</h4>
+					<p>{{ $fetch_all_studen_count }}</p>	
 				</div>
 				<div class="stats-link">
-					<a href="javascript:;">View Detail <i class="fa fa-arrow-circle-o-right"></i></a>
+					<a href="/students-details">View Detail <i class="fa fa-arrow-circle-o-right"></i></a>
 				</div>
 			</div>
 		</div>

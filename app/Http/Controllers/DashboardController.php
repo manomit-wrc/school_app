@@ -7,11 +7,14 @@ use \App\User;
 use Validator;
 use Auth;
 use Image;
+use App\Student;
+use Carbon;
 
 class DashboardController extends Controller
 {
  	public function index(){
- 		return view('frontend.dashboard');
+        $fetch_all_studen_count = count(Student::where('status','1')->get()->toArray());
+ 		return view('frontend.dashboard')->with('fetch_all_studen_count',$fetch_all_studen_count);
  	}
 
  	public function view_profile(){
@@ -102,5 +105,20 @@ class DashboardController extends Controller
             return redirect('/change-password');
         }
 
+    }
+
+    public function students_list (Request $request) {
+        $fetch_all_student = Student::where('status','1')->orderby('id','desc')->get()->toArray();
+        return view('frontend.student.list')->with('fetch_all_student',$fetch_all_student);
+    }
+
+    public function students_delete (Request $request,$student_id) {
+        $delete = Student::find($student_id);
+        $delete->status = 0;
+
+        if($delete->save()){
+            $request->session()->flash("submit-status", "Student delete successfully");
+            return redirect('/students-details');
+        }
     }
 }
