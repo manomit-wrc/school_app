@@ -512,7 +512,7 @@
                 $('#option_E_image_div').show();
             }
 
-            $('#subject').on('change', function () {
+            /*$('#subject').on('change', function () {
                 var subject_id = $(this).val();
                 var subject_name = $('option:selected', this).attr('subject_name');
 
@@ -543,7 +543,7 @@
                 else {
                     $("#exam").find('option').not(':first').remove();
                 }
-            });
+            });*/
 
             $('#exam').on('change', function () {
                 var exam_id = $(this).val();

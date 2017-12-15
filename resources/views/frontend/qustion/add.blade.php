@@ -46,7 +46,9 @@
                         <div class="col-md-10 {{ $errors->has('exam') ? 'has-error' : '' }}">
                             <select class="form-control" name="exam[]" id="exam" subject_id='' multiple>
                                 <option value="">Select Exam</option>
-
+                                @foreach($fetch_all_exam as $key => $value)
+                                    <option value="{{ $key }}" subject_name="{{ $value }}">{{ $value }}</option>
+                                @endforeach
                             </select>
                         </div>
                         @if ($errors->first('exam'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('exam') }}</span>@endif
@@ -400,7 +402,7 @@
                 $('#option_E_image_div').hide();
             });
 
-            $('#subject').on('change', function () {
+            /*$('#subject').on('change', function () {
                 var subject_id = $(this).val();
                 var subject_name = $('option:selected', this).attr('subject_name');
 
@@ -431,7 +433,7 @@
                 else {
                     $("#exam").find('option').not(':first').remove();
                 }
-            });
+            });*/
 
             $('#exam').on('change', function () {
                 var exam_id = $(this).val();

@@ -31,7 +31,8 @@ class AddQuestionController extends Controller
 
     public function add_qustion_view() {
     	$fetch_all_subject = Subject::where('status', '1')->pluck('sub_full_name', 'id')->toArray();
-    	return view ('frontend.qustion.add')->with('fetch_all_subject', array_unique($fetch_all_subject));
+    	$fetch_all_exam = Exam::where('status','1')->pluck('name', 'id')->toArray();
+    	return view ('frontend.qustion.add')->with('fetch_all_subject', array_unique($fetch_all_subject))->with('fetch_all_exam', $fetch_all_exam);
     }
 
     public function fetch_exam_subject_wise(Request $request) {
