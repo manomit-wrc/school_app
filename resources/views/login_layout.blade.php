@@ -5,7 +5,7 @@
             <!-- begin brand -->
             <div class="login-header">
                 <div class="brand">
-                    One Click
+                   <img src="{{ url('upload/Final_logo.png') }}" alt="One Click" width="200" />
                     
                 </div>
             </div>

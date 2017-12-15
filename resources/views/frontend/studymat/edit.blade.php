@@ -77,6 +77,7 @@
                         <label class="col-md-2 control-label">Add Video</label>
                         <div class="col-md-10">
                             <input type="file" name="video_files[]" id="video_files" class="form-control" onchange="handleVideos();" accept=".mp4,.mpeg,.avi,.wmv" multiple />
+                            <span class="pull-left">Allowed file types .mp4, .mpeg, .avi, .wmv</span>
                         </div>
                         <ul id="video_sortable" class="ui-sortable">
                             @if(count($fetch_study_videos) > 0)
@@ -88,9 +89,10 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="col-md-2 control-label">Add Pdf</label>
+                        <label class="col-md-2 control-label">Add Pdf or Image</label>
                         <div class="col-md-10">
-                            <input type="file" name="pdf_files[]" id="pdf_files" class="form-control" onchange="handlePdfs();" accept=".pdf" multiple />
+                            <input type="file" name="pdf_files[]" id="pdf_files" class="form-control" onchange="handlePdfs();" accept=".pdf, .jpeg, .jpg, .png" multiple />
+                            <span class="pull-left">Allowed file types .pdf, .jpeg, .jpg, .png</span>
                         </div>
                         <ul id="pdf_sortable" class="ui-sortable">
                             @if(count($fetch_study_pdfs) > 0)
@@ -105,6 +107,7 @@
                         <label class="col-md-2 control-label">Add Document</label>
                         <div class="col-md-10">
                             <input type="file" name="doc_files[]" id="doc_files" class="form-control" onchange="handleDocs();" accept=".doc, .docx, .txt" multiple />
+                            <span class="pull-left">Allowed file types .doc, .docx, .txt</span>
                         </div>
                         <ul id="doc_sortable" class="ui-sortable">
                             @if(count($fetch_study_documents) > 0)

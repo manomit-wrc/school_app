@@ -50,7 +50,7 @@
                                     <td>{{ ++$key }}</td>
                                     <td>{{ $value['sub_full_name'] }}</td>
                                     <td>{{ $value['sub_short_name'] }}</td>
-                                    <td>{{ ucwords($value['exams']['code']) }}</td>
+                                    <td>{{ $value['exam_names'] }}</td>
                                     <td>
                                         <a title="Edit" href="/subject/edit/{{$value['id']}}" class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i></a>
 
