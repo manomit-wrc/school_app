@@ -17,4 +17,12 @@ class Subject extends Model
     public function topics() {
     	return $this->hasMany('\App\Topic', 'subject_id');
     }
+
+    public function examIds() {
+    	return $this->belongsToMany('\App\Exam', 'subject_exams', 'subject_id', 'exam_id');
+    }
+
+    public function subjectIds () {
+    	return $this->hasMany('\App\SubjectExam', 'subject_id');
+    }
 }

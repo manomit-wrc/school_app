@@ -42,10 +42,9 @@
                     <div class="form-group">
                         <label class="col-md-2 control-label">Exam</label>
                         <div class="col-md-10 {{ $errors->has('exam_id') ? 'has-error' : '' }}">
-                            <select name="exam_id" id="exam_id" class="form-control">
-                                <option value="">Select Exam</option>
+                            <select name="exam_id[]" id="exam_id" class="form-control" multiple="">
                                 @foreach($fetch_all_course as $key=> $value )
-                                    <option value="{{ $value['id'] }}" @if($value['id'] == $subject_details['exam_id']) selected="" @endif >{{ ucwords($value['name']).' ('.($value['code']).')' }}</option>
+                                    <option value="{{ $value['id'] }}" @if(in_array($value['id'], $exam_ids_array)) selected="selected" @endif >{{ ucwords($value['name']).' ('.($value['code']).')' }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -116,6 +115,10 @@
         $(document).ready(function() {
             $("#tags").select2({
                 placeholder: 'Select Tags',
+            });
+
+            $("#exam_id").select2({
+                placeholder: 'Select Exam',
             });
         });
         

@@ -15,12 +15,31 @@ use App\TopicAllFile;
 use App\TopicContent;
 use App\TopicDropboxFile;
 use App\TopicEmbedFile;
+use App\SubjectExam;
 use DB;
 
 class SubjectController extends Controller
 {
     public function index () {
-    	$fetch_all_subject = Subject::with('exams')->where('status','1')->orderby('id','desc')->get()->toArray();
+    	$fetch_all_subject = Subject::with('subjectIds')->where('status','1')->orderby('id','desc')->get()->toArray();
+
+        $exam_name = array();
+
+        foreach($fetch_all_subject as $key => $value){
+            if(!empty($value['subject_ids'])){
+                foreach ($value['subject_ids'] as $key1 => $value1) {
+                    $exam_id = $value1['exam_id'];
+
+                    $fetch_exam_details = Exam::where('id',$exam_id)->select('name')->get()->toArray();
+                    $exam_name[] =  $fetch_exam_details[0]['name'];
+                }
+                $new_exam_name = implode(", ", $exam_name);
+                $fetch_all_subject[$key]['exam_names'] = $new_exam_name;
+            }else{
+                $fetch_all_subject[$key]['exam_names'] = '';
+            }           
+        }
+
     	return view('frontend.subject.listing')->with('fetch_all_subject',$fetch_all_subject);
     }
 
@@ -32,24 +51,24 @@ class SubjectController extends Controller
     }
 
     public function subject_add_save (Request $request) {
-        $fecth_subject_exit = Subject::where([['exam_id',$request->exam_id],['sub_full_name', trim(ucwords($request->sub_full_name))],['sub_short_name',trim(ucwords($request->sub_short_name))]])->get()->toArray();
+        // $fecth_subject_exit = Subject::where([['exam_id',$request->exam_id],['sub_full_name', trim(ucwords($request->sub_full_name))],['sub_short_name',trim(ucwords($request->sub_short_name))]])->get()->toArray();
 
-        if(count($fecth_subject_exit) > 0){
-            Validator::make($request->all(),[
-                'sub_full_name' => 'required|unique:subjects,sub_full_name',
-                'sub_short_name' => 'required|unique:subjects,sub_short_name',
-                'exam_id' => 'required',
-                'description' => 'required'
-            ],[
-                'sub_full_name.required' => 'Please enter subject full name.',
-                'sub_full_name.unique' => 'Subject name already taken for the exam you have select',
-                'sub_short_name.required' => 'Please enter subject short name.',
-                'sub_short_name.unique' => 'Subject short name already taken for the exam you have select',
-                'exam_id.required' => 'Please select exam.',
-                'description.required' => 'Please enter subject description.',
-                'sub_file.mimes' => 'Please upload correct file.'
-            ])->validate();
-        }
+        // if(count($fecth_subject_exit) > 0){
+        //     Validator::make($request->all(),[
+        //         'sub_full_name' => 'required|unique:subjects,sub_full_name',
+        //         'sub_short_name' => 'required|unique:subjects,sub_short_name',
+        //         'exam_id' => 'required',
+        //         'description' => 'required'
+        //     ],[
+        //         'sub_full_name.required' => 'Please enter subject full name.',
+        //         'sub_full_name.unique' => 'Subject name already taken for the exam you have select',
+        //         'sub_short_name.required' => 'Please enter subject short name.',
+        //         'sub_short_name.unique' => 'Subject short name already taken for the exam you have select',
+        //         'exam_id.required' => 'Please select exam.',
+        //         'description.required' => 'Please enter subject description.',
+        //         'sub_file.mimes' => 'Please upload correct file.'
+        //     ])->validate();
+        // }
 
     	Validator::make($request->all(),[
     		'sub_full_name' => 'required',
@@ -92,7 +111,7 @@ class SubjectController extends Controller
         $add = new Subject();
         $add->sub_full_name = trim(ucwords($request->sub_full_name));
         $add->sub_short_name = trim(ucwords($request->sub_short_name));
-        $add->exam_id = $request->exam_id;
+        // $add->exam_id = $request->exam_id;
         $add->sub_desc = $request->description;
         $add->sub_file = $fileName;
         $add->status = 1;
@@ -100,6 +119,7 @@ class SubjectController extends Controller
         if($add->save()){
             if(count($request->tags) > 0) {
                 $add->tags()->attach($request->tags);
+                $add->examIds()->attach($request->exam_id);
             }
         	$request->session()->flash("submit-status",'Subject added successfully.');
         	return redirect('/subject');
@@ -109,6 +129,7 @@ class SubjectController extends Controller
     public function subject_edit($subject_id) {
     	$fetch = Subject::where([['id',$subject_id],['status','1']])->get()->toArray();
         $tags_array = array();
+        $exam_ids_array = array();
 
     	if(count($fetch) > 0){
     		$subject_details = Subject::with('exams')->find($subject_id)->toArray();
@@ -127,10 +148,18 @@ class SubjectController extends Controller
                 }
             }
 
+            $exam_name = Subject::with('examIds')->where('id',$subject_id)->get()->toArray();
+            if(!empty($exam_name[0]['exam_ids'])){
+                foreach ($exam_name[0]['exam_ids'] as $key => $value) {
+                    $exam_ids_array[] = $value['id'];
+                }
+            }
+
 	    	return view('frontend.subject.edit')->with('subject_details',$subject_details)
 	    										->with('fetch_all_course',$fetch_all_course)
                                                 ->with('all_tags', $all_tags)
-                                                ->with('tags_array', $tags_array);
+                                                ->with('tags_array', $tags_array)
+                                                ->with('exam_ids_array', $exam_ids_array);
     	}else{
     		return redirect('/subject');
     	}
@@ -181,7 +210,7 @@ class SubjectController extends Controller
         
         $edit->sub_full_name = trim(ucwords($request->sub_full_name));
         $edit->sub_short_name = trim(ucwords($request->sub_short_name));
-        $edit->exam_id = $request->exam_id;
+        // $edit->exam_id = $request->exam_id;
         $edit->sub_desc = $request->description;
         $edit->sub_file = $fileName;
 
@@ -189,6 +218,11 @@ class SubjectController extends Controller
             if(count($request->tags) > 0) {
                $edit->tags()->wherePivot('subject_id', '=', $subject_id)->detach();
                $edit->tags()->attach($request->tags);
+            }
+
+            if(count($request->exam_id) > 0){
+                $edit->examIds()->wherePivot('subject_id', '=', $subject_id)->detach();
+                $edit->examIds()->attach($request->exam_id);
             }
             
         	$request->session()->flash("submit-status",'Subject updated successfully.');

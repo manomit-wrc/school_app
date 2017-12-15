@@ -3,7 +3,7 @@
 	<div class="container-fluid">
 		<!-- begin mobile sidebar expand / collapse button -->
 		<div class="navbar-header">
-			<a href="/dashboard" class="navbar-brand"><img src="" alt="One Click" width="200" /></a>
+			<a href="/dashboard" class="navbar-brand"><img src="{{ url('upload/Final_logo.png') }}" style="width: 100px;" alt="One Click" width="200" /></a>
 			<button type="button" class="navbar-toggle" data-click="sidebar-toggled">
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
