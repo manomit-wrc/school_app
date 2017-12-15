@@ -19,9 +19,10 @@ class CreateUserMarksTable extends Migration
             $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
             $table->integer('exam_id')->unsigned();
             $table->foreign('exam_id')->references('id')->on('exams')->onDelete('cascade');
+            $table->integer('area_id')->unsigned();
+            $table->foreign('area_id')->references('id')->on('areas')->onDelete('cascade');
             $table->integer('subject_id')->unsigned();
             $table->foreign('subject_id')->references('id')->on('subjects')->onDelete('cascade');
-            $table->string('marks');
             $table->string('percentile');
             $table->timestamps();
         });

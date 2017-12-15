@@ -104,6 +104,8 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::get('/question/edit/{question_id}', 'AddQuestionController@edit');
 	Route::get('/question/delete/{question_id}', 'AddQuestionController@delete');
 	Route::post('/question/add-question-edit/{question_id}', 'AddQuestionController@edit_submit');
+	Route::get('/question/search', 'AddQuestionController@search');
+	Route::post('/question/filter-submit', 'AddQuestionController@filter_submit');
 
 	Route::get('/study_mat', 'StudyMatController@index');
 	Route::match(array('GET', 'POST'), '/study_mat/add', 'StudyMatController@add_study_mat_view');

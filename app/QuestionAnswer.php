@@ -13,4 +13,16 @@ class QuestionAnswer extends Model
     public function subject () {
     	return $this->belongsTo('\App\Subject', 'subject_id');
     }
+
+    public function exam () {
+    	return $this->belongsTo('\App\Exam', 'exam_id');
+    }
+
+    public function area () {
+    	return $this->belongsTo('\App\Area', 'area_id');
+    }
+
+    public function section () {
+    	return $this->belongsTo('\App\Section', 'section_id');
+    }
 }

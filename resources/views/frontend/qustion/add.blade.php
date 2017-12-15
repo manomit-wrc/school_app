@@ -29,7 +29,7 @@
                     <div class="form-group">
                         <label class="col-md-2 control-label">Subject</label>
                         <div class="col-md-10 {{ $errors->has('subject') ? 'has-error' : '' }}">
-                            <select class="form-control" placeholder="Section subject" type="text" name="subject" id="subject">
+                            <select class="form-control" name="subject" id="subject">
                                 <option value="">Select Subject</option>
 
                                 @foreach($fetch_all_subject as $key => $value)
@@ -44,7 +44,7 @@
                     <div class="form-group">
                         <label class="col-md-2 control-label">Exam</label>
                         <div class="col-md-10 {{ $errors->has('exam') ? 'has-error' : '' }}">
-                            <select class="form-control" placeholder="Section exam" type="text" name="exam[]" id="exam" subject_id='' multiple>
+                            <select class="form-control" name="exam[]" id="exam" subject_id='' multiple>
                                 <option value="">Select Exam</option>
 
                             </select>
@@ -55,7 +55,7 @@
                     <div class="form-group">
                         <label class="col-md-2 control-label">Area</label>
                         <div class="col-md-10 {{ $errors->has('area') ? 'has-error' : '' }}">
-                            <select class="form-control" placeholder="Section exam" type="text" name="area" id="area">
+                            <select class="form-control" name="area" id="area">
                                 <option value="">Select Area</option>
                             </select>
                         </div>
@@ -65,7 +65,7 @@
                     <div class="form-group">
                         <label class="col-md-2 control-label">Section</label>
                         <div class="col-md-10 {{ $errors->has('section') ? 'has-error' : '' }}">
-                            <select class="form-control" placeholder="Section exam" type="text" name="section" id="section">
+                            <select class="form-control" name="section" id="section">
                                 <option value="">Select Section</option>
                             </select>
                         </div>
@@ -75,7 +75,7 @@
                     <div class="form-group">
                         <label class="col-md-2 control-label">Level</label>
                         <div class="col-md-10 {{ $errors->has('level') ? 'has-error' : '' }}">
-                            <select class="form-control" placeholder="Level exam" name="level" id="level">
+                            <select class="form-control" name="level" id="level">
                                 <option value="">Select Level</option>
                                 <option value="1">Level 1</option>
                                 <option value="2">Level 2</option>

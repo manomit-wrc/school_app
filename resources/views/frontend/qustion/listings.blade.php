@@ -33,15 +33,18 @@
                             {{ Session::get('submit-status') }}
                       </div>
                     @endif
-
+                    <a href="/question" class="pull-right"><button type="button" class="btn btn-success m-r-5 m-b-5">Reset</button></a>
+                    <a href="/question/search" class="pull-right"><button type="button" class="btn btn-success m-r-5 m-b-5">Filter By</button></a>
                     <table id="data-table" class="table table-striped table-bordered">
                         <thead>
                             <tr>
-                                <th>SL NO</th>
-                                {{-- <th>Exam</th> --}}
+                                <th>Sl. No.</th>
                                 <th>Subject</th>
-                                <th>Question</th>
+                                <th>Exams</th>
+                                <th>Area</th>
+                                <th>Section</th>
                                 <th>Level</th>
+                                <th>Question</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -49,9 +52,10 @@
                             @foreach($fetch_all_question as $key => $value)
                                 <tr class="odd gradeX">
                                     <td>{{ ++$key }}</td>
-                                    {{-- <td>{{ $value['exams']['name']  }}</td> --}}
                                     <td>{{ $value['subject']['sub_full_name'] }}</td>
-                                    <td>{{ strip_tags($value['question']) }}</td>
+                                    <td>{{ $value['exam'] }}</td>
+                                    <td>{{ $value['area']['name'] }}</td>
+                                    <td>{{ $value['section']['name'] }}</td>
                                     <td>
                                         @if($value['level'] == '1')
                                             {{ 'Level 1' }}
@@ -65,6 +69,7 @@
                                             {{ 'Level 5' }}
                                         @endif
                                     </td>
+                                    <td>{{ strip_tags($value['question']) }}</td>
                                     <td>
                                         <a title="Edit" href="/question/edit/{{ $value['id'] }}" class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i></a>
 
