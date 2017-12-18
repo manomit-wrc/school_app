@@ -60,10 +60,10 @@ class StudentController extends Controller
                     try{
                         Mail::to($request->email)->send(new Registration($otp,$user_name));
 
-                        return response()->json(['error' => false,'message' => 'Registration has been successfully completed & OTP send to the user','status_code' => 100]);
+                        return response()->json(['error' => false,'msg' => 'Registration has been successfully completed & OTP send to the user','status_code' => 200]);
                     }catch(\Exception $e){
 
-                        return response()->json(['code'=>500,'message'=>'error']);
+                        return response()->json(['code'=>500,'msg'=>'error']);
                     }
                 }
         	}

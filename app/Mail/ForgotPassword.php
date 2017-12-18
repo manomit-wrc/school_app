@@ -16,12 +16,12 @@ class ForgotPassword extends Mailable
      *
      * @return void
      */
-    public $new_password;
+    public $otp;
     public $user_name;
 
-    public function __construct($new_password,$user_name)
+    public function __construct($otp,$user_name)
     {
-        $this->new_password = $new_password;
+        $this->otp = $otp;
         $this->user_name = $user_name;
     }
 

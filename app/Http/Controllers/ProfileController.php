@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 use App\Student;
 use JWTAuth;
 use JWTAuthException;
+use Validator;
+use Config;
 use Image;
 use App\QuestionAnswer;
 use App\UserExam;
@@ -21,13 +23,14 @@ use App\Mail\ForgotPassword;
 class ProfileController extends Controller
 {
     public function index (Request $request) {
-    	$user = JWTAuth::toUser($request->token);
+        $token = $request->header('token')?$request->header('token'):$request->token;
+    	$user = JWTAuth::toUser($token);
     	if(!empty($user['image'])){
     		$profile_image_link = url('/') .'/upload/app/profile_image/resize/'.$user['image'];
     	}else{
-    		$profile_image_link = url('/') .'/upload/app/avatar.png';
+    		$profile_image_link = url('/') .'/upload/app/profile_image/avatar.png';
     	}
-    	return response()->json(['user'=>$user, 'profile_image_link'=>$profile_image_link]);
+    	return response()->json(['user'=>$user,'profile_image_link'=>$profile_image_link,'status_code'=>200,'msg'=>'success']);
     }
 
     public function profile_edit (Request $request) {
@@ -86,7 +89,7 @@ class ProfileController extends Controller
     	$edit->image = $file;
 
     	if($edit->save()){
-    		return response()->json(['status_code'=>'100','msg'=>'profile edit successfully.']);
+    		return response()->json(['status_code'=>'200','msg'=>'profile edit successfully.']);
     	}else{
     		return response()->json(['status_code'=>'500','msg'=>'profile edit failed.']);
     	}
@@ -131,7 +134,7 @@ class ProfileController extends Controller
                     $answer_type = 'single';
                 }
 
-                return response()->json(['status_code'=>'100','question'=>$question,'option_type'=>'mcq','option'=>$option,'option_image_link'=>$option_image_link,'answer_type'=>$answer_type]);
+                return response()->json(['status_code'=>'200','question'=>$question,'option_type'=>'mcq','option'=>$option,'option_image_link'=>$option_image_link,'answer_type'=>$answer_type]);
             }
 
             if($fetch_question_details[0]['option_type'] == 'numeric'){
@@ -143,7 +146,7 @@ class ProfileController extends Controller
                     $question = $fetch_question_details[0]['question'];
                 }
 
-                return response()->json(['status_code'=>'100','question'=>$question,'option_type'=>'numeric']);
+                return response()->json(['status_code'=>'200','question'=>$question,'option_type'=>'numeric']);
             }	    	
     	}else{
     		return response()->json(['status_code'=>'404','msg'=>'No questions found.']);
@@ -173,7 +176,7 @@ class ProfileController extends Controller
 
 	    	$marks = ($total_correct_answer / $total_no_of_question) * 100 .'%' ;
 
-	    	return response()->json(['status_code'=>'100','marks'=>$marks]);
+	    	return response()->json(['status_code'=>'200','marks'=>$marks]);
     	}else{
     		return response()->json(['status_code'=>'404','msg'=>'No answer found.']);
     	}
@@ -186,19 +189,19 @@ class ProfileController extends Controller
     	$user = Student::where('email',$user_email)->get()->toArray();
 
     	if(count($user) > 0){
-    		$new_password = rand(1000,5000);
+    		$otp= rand(1000,5000);
     		$user_name = ucwords($user[0]['username']);
     		try{
-    			Mail::to($user_email)->send(new ForgotPassword($new_password,$user_name));
-
+    			Mail::to($user_email)->send(new ForgotPassword($otp,$user_name));
+                //edit student table
     			$student = Student::find($user[0]['id']);
-    			$student->password = bcrypt($new_password);
+    			$student->otp = $otp;
     			if ($student->save()) {
-		            return response()->json(['msg' => 'Email send successfully with new password.', 'status_code' =>'100']);
+		            return response()->json(['msg' => 'Email send successfully with OTP.', 'status_code' =>'200']);
 		        }
     		}catch(\Exception $e){
 
-			    return response()->json(['code'=>500,'message'=>'error']);
+			    return response()->json(['code'=>500,'msg'=>'error']);
 			}
     	}else{
     		return response()->json(['status_code'=>'404', 'msg'=>'Email is wrong. Please give correct email.']);
@@ -206,23 +209,47 @@ class ProfileController extends Controller
     }
 
     public function otp_verification(Request $request){
-    	$user_email = $request->email;
+    	// $user_email = $request->email;
     	$otp = $request->otp;
 
-    	$fetch_user_deatils = Student::where([['email',$user_email],['otp',$otp]])->get()->toArray();
+    	$fetch_user_deatils = Student::where('otp',$otp)->first();
+
+        $payload = JWTAuth::fromUser($fetch_user_deatils, ['username' => $fetch_user_deatils->username]);
+        $token = $payload;
 
     	if(count($fetch_user_deatils) > 0){
-    		$id = $fetch_user_deatils[0]['id'];
+    		$id = $fetch_user_deatils->id;
 
     		$edit = Student::find($id);
     		$edit->status = 1;
 
     		if($edit->save()){
-    			return response()->json(['status_code'=>100, 'msg'=>'Your have successfully acivate your account.']);
+                return response()->json(['status_code'=>200, 'msg'=>'Your have successfully acivate your account.','token' => $token]);
+
     		}
 
     	}else{
     		return response()->json(['status_code'=>404, 'msg'=>'Invalid email or OTP.']);
     	}
+    }
+
+    public function forgot_pw_verification (Request $request) {
+        $otp = $request->otp;
+        $pw = $request->password;
+
+        $fetch_user_details = Student::where('otp',$otp)->get()->toArray();
+        if(count($fetch_user_details) > 0){
+            $id = $fetch_user_details[0]['id'];
+
+            $edit = Student::find($id);
+            $edit->password = bcrypt($pw);
+
+            if($edit->save()){
+                return response()->json(['status_code'=>200, 'msg'=>'Your have successfully changed your password.']);
+            }
+
+        }else{
+            return response()->json(['status_code'=>404, 'msg'=>'Invalid OTP.']);
+        }
     }
 }
