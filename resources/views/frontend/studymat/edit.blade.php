@@ -140,6 +140,13 @@
                     </div>
 
                     <div class="form-group">
+                        <label class="col-md-2 control-label">Add Duration (Hrs)</label>
+                        <div class="col-md-10">
+                            <input type="text" name="duration" id="duration" class="form-control" value="{{$fetch_study_mat['duration']}}" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         <div class="col-md-4 col-md-offset-2">
                             <button type="submit" id="study_mat_submit" class="btn btn-sm btn-primary">Submit</button>
                             <button type="reset" class="btn btn-sm btn-default">Reset</button>
@@ -360,6 +367,7 @@
                     formdata.append('area', $("#area").val());
                     formdata.append('section', $("#section").val());
                     formdata.append('description', $("#description").val());
+                    formdata.append('duration', $("#duration").val());
                     formdata.append('_token', '{{csrf_token()}}');
                     $(".li-video").each(function(index) {
                         formdata.append('video_order[]', $(this).text());

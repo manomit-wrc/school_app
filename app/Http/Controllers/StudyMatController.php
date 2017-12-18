@@ -153,7 +153,8 @@ class StudyMatController extends Controller
 		$add->video = serialize($video_arr);
 		$add->pdf = serialize($pdf_arr);
 		$add->document = serialize($doc_arr);
-		$add->description = $request->description;
+        $add->description = $request->description;
+		$add->duration = $request->duration;
 
 		if ($add->save()) {
             return 1;
@@ -293,6 +294,7 @@ class StudyMatController extends Controller
         $studymat->pdf = serialize($pdf_arr);
         $studymat->document = serialize($doc_arr);
         $studymat->description = $request->description;
+        $studymat->duration = $request->duration;
 
         if ($studymat->save()) {
             return 1;
