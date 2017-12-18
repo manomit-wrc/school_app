@@ -37,7 +37,7 @@
                     <div class="form-group">
                         <label class="col-md-2 control-label">Subject</label>
                         <div class="col-md-10">
-                            <select class="form-control" placeholder="Subject" type="text" name="subject" id="subject">
+                            <select class="form-control" name="subject" id="subject">
                                 <option value="">Select Subject</option>
                                 @foreach($fetch_all_subject as $key => $value)
                                     <option value="{{ $key }}">{{ $value }}</option>
@@ -48,9 +48,19 @@
                     </div>
 
                     <div class="form-group">
+                        <label class="col-md-2 control-label">Exam</label>
+                        <div class="col-md-10 {{ $errors->has('exam') ? 'has-error' : '' }}">
+                            <select class="form-control" name="exam[]" id="exam" multiple>
+                                <option value="">Select Exam</option>
+                            </select>
+                        </div>
+                        @if ($errors->first('exam'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('exam') }}</span>@endif
+                    </div>
+
+                    <div class="form-group">
                         <label class="col-md-2 control-label">Area</label>
                         <div class="col-md-10">
-                            <select class="form-control" placeholder="Area" type="text" name="area" id="area">
+                            <select class="form-control" name="area" id="area">
                                 <option value="">Select Area</option>
                             </select>
                         </div>
@@ -60,7 +70,7 @@
                     <div class="form-group">
                         <label class="col-md-2 control-label">Section</label>
                         <div class="col-md-10">
-                            <select class="form-control" placeholder="Section" type="text" name="section" id="section">
+                            <select class="form-control" name="section" id="section">
                                 <option value="">Select Section</option>
                             </select>
                         </div>
@@ -116,6 +126,27 @@
     <!-- end #content -->
 
     <style type="text/css">
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: #49b6d6!important;
+            color: #fff!important;
+            border: 1px solid #aaa;
+            border-radius: 4px;
+            cursor: default;
+            float: left;
+            margin-right: 5px;
+            margin-top: 5px;
+            padding: 0 5px;
+        }
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+            color: #fff!important;
+            cursor: pointer;
+            display: inline-block;
+            font-weight: bold;
+            margin-right: 2px;
+        }
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
+            color: #333!important;
+        }
         #video_sortable, #pdf_sortable, #doc_sortable { width: 50%; float: left; margin-left: 18%; margin-top: 5px; padding: 0; }
         #video_sortable li, #pdf_sortable li, #doc_sortable li { list-style: outside none none; padding: 5px 10px; cursor: move; }
     </style>
@@ -123,20 +154,41 @@
     <script type="text/javascript">
         var formdata = new FormData();
         $(document).ready(function() {
+            $("#exam").select2({
+                placeholder: 'Select Exams',
+            });
+
             $('#subject').on('change', function () {
                 var subject_id = $(this).val();
                 if (subject_id) {
                     $.ajax({
                         type: 'POST',
+                        url: '/study_mat/fetch-subject-wise-exam',
+                        data: {
+                            subject_id : subject_id,
+                            _token : "{{ csrf_token() }}"
+                        },
+                        success:function(response) {
+                            console.log(response);
+                            $("#exam").find('option').not(':first').remove();
+                            for (var i = 0; i < response.tempArray.length; i++) {
+                                $("#exam").append('<option value="'+response.tempArray[i].exam_id+'">'+response.tempArray[i].exam_name+'</option>');
+                            }
+                        },
+                        error: function(err) {
+
+                        }
+                    });
+                    $.ajax({
+                        type: 'POST',
                         url: '/study_mat/fetch-subject-wise-area',
                         data: {
-                            subject_id :subject_id,
+                            subject_id : subject_id,
                             _token : "{{ csrf_token() }}"
                         },
                         success:function(response) {
                             $("#area").find('option').not(':first').remove();
                             $("#section").find('option').not(':first').remove();
-
                             for(var i = 0; i < response.tempArray.length; i++) {
                                 $("#area").append('<option value="'+response.tempArray[i].area_id+'">'+response.tempArray[i].area_name+'</option>');
                             }
@@ -146,6 +198,7 @@
                         }
                     });
                 } else {
+                    $("#exam").find('option').not(':first').remove();
                     $("#area").find('option').not(':first').remove();
                 }
             });
@@ -241,6 +294,9 @@
                     subject:{
                         required:true
                     },
+                    exam:{
+                        required:true
+                    },
                     area:{
                         required:true
                     },
@@ -250,13 +306,16 @@
                 },
                 messages:{
                     subject:{
-                        required:"<font color='red'>Please select subject.</font>"
+                        required:"<font color='red'>Please select subject</font>"
+                    },
+                    exam:{
+                        required:"<font color='red'>Please select exam</font>"
                     },
                     area:{
-                        required:"<font color='red'>Please select area.</font>"
+                        required:"<font color='red'>Please select area</font>"
                     },
                     section:{
-                        required:"<font color='red'>Please select section.</font>"
+                        required:"<font color='red'>Please select section</font>"
                     }
                 }
             });
@@ -268,8 +327,8 @@
                 var valid = $('#frmStudyMat').valid();
                 if (valid) {
                     $('#study_mat_submit').prop('disabled', true);
-
                     formdata.append('subject', $("#subject").val());
+                    formdata.append('exam[]', $("#exam").val());
                     formdata.append('area', $("#area").val());
                     formdata.append('section', $("#section").val());
                     formdata.append('description', $("#description").val());

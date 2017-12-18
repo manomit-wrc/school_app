@@ -51,14 +51,14 @@
                                     <td>{{ ++$key }}</td>
                                     <td>{{ $value['code'] }}</td>
                                     <td>{{ $value['name'] }}</td>
-                                    <td>{{ $value['subjects']['exams']['code'] }}</td>
+                                    <td>{{ $value['exam'] }}</td>
                                     <td>{{ $value['subjects']['sub_short_name'] }}</td>
                                     <td>
                                         <a title="Edit" href="/area/edit/{{$value['id']}}" class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i></a>
 
                                         <a title="Delete" href="/area/delete/{{$value['id']}}" onclick="return confirm('Do you really want to delete the current record ?');" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
 
-                                        <a title="Section" href="/area/section/{{$value['id']}}" class="btn btn-primary btn-sm"><i class="fa fa-briefcase"></i></a>
+                                        <a title=" View Section" href="/area/section/{{$value['id']}}" class="btn btn-primary btn-sm"><i class="fa fa-briefcase"></i></a>
                                     </td>
                                 </tr>
                             @endforeach

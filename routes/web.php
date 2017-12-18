@@ -82,7 +82,7 @@ Route::group(['middleware' => ['admin']], function() {
 
 	Route::get('/area','AreaController@index');
 	Route::get('/area/add','AreaController@add');
-	Route::post('/area/get-subject-by-exam', 'AreaController@get_subject_by_exam');
+	Route::post('/area/get-exam-by-subject', 'AreaController@get_exam_by_subject');
 	Route::post('/area/save','AreaController@save');
 	Route::get('/area/edit/{id}','AreaController@edit');
 	Route::post('/area/update/{id}','AreaController@update');
@@ -109,6 +109,7 @@ Route::group(['middleware' => ['admin']], function() {
 
 	Route::get('/study_mat', 'StudyMatController@index');
 	Route::match(array('GET', 'POST'), '/study_mat/add', 'StudyMatController@add_study_mat_view');
+	Route::post('/study_mat/fetch-subject-wise-exam', 'StudyMatController@fetch_subject_wise_exam');
 	Route::post('/study_mat/fetch-subject-wise-area', 'StudyMatController@fetch_subject_wise_area');
 	Route::post('/study_mat/fetch-area-wise-section', 'StudyMatController@fetch_area_wise_section');
 	Route::post('/study_mat/add-study-mat-submit', 'StudyMatController@study_mat_submit');
