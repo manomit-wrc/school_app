@@ -9,6 +9,7 @@ use App\Area;
 use App\Section;
 use Validator;
 use App\QuestionAnswer;
+use App\SubjectExam;
 use Image;
 use DB;
 
@@ -38,10 +39,10 @@ class AddQuestionController extends Controller
     public function fetch_exam_subject_wise(Request $request) {
     	$tempArray = array();
     	$subject_id = $request->subject_id;
-    	$fetch_exam_id = Subject::where([['status','1'],['sub_full_name',$subject_id]])->get()->toArray();
-    	foreach($fetch_exam_id as $key => $value){
+    	$fetch_exam_id = SubjectExam::where(['subject_id', $subject_id])->get()->toArray();
+    	foreach ($fetch_exam_id as $key => $value) {
     		$exam_id = $value['exam_id'];
-    		$fetch_exam_details = Exam::where('id',$exam_id)->get()->toArray();
+    		$fetch_exam_details = Exam::where('id', $exam_id)->get()->toArray();
     		$exam_details_array['exam_id'] = $fetch_exam_details[0]['id'];
     		$exam_details_array['exam_name'] = $fetch_exam_details[0]['name'];
     		$tempArray[] = $exam_details_array;

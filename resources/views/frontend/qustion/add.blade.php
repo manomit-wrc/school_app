@@ -31,11 +31,9 @@
                         <div class="col-md-10 {{ $errors->has('subject') ? 'has-error' : '' }}">
                             <select class="form-control" name="subject" id="subject">
                                 <option value="">Select Subject</option>
-
                                 @foreach($fetch_all_subject as $key => $value)
                                     <option value="{{ $key }}" subject_name="{{ $value }}">{{ $value }}</option>
                                 @endforeach
-
                             </select>
                         </div>
                         @if ($errors->first('subject'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('subject') }}</span>@endif
@@ -46,9 +44,9 @@
                         <div class="col-md-10 {{ $errors->has('exam') ? 'has-error' : '' }}">
                             <select class="form-control" name="exam[]" id="exam" subject_id='' multiple>
                                 <option value="">Select Exam</option>
-                                @foreach($fetch_all_exam as $key => $value)
+                                {{--@foreach($fetch_all_exam as $key => $value)
                                     <option value="{{ $key }}" subject_name="{{ $value }}">{{ $value }}</option>
-                                @endforeach
+                                @endforeach--}}
                             </select>
                         </div>
                         @if ($errors->first('exam'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('exam') }}</span>@endif
@@ -281,7 +279,6 @@
             margin-top: 5px;
             padding: 0 5px;
         }
-
         .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
             color: #fff!important;
             cursor: pointer;
@@ -289,16 +286,13 @@
             font-weight: bold;
             margin-right: 2px;
         }
-
         .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
             color: #333!important;
         }
-        
     </style>
 
     <script type="text/javascript">
-        $(document).ready(function(){
-
+        $(document).ready(function() {
             $("#exam").select2({
                 placeholder: 'Select Exams',
             });
@@ -309,16 +303,13 @@
             $('#question_type_text').on('click', function () {
                 $('#text_div').show();
                 CKEDITOR.replace( 'question', {
-
                     height: 300,
-
                     // Configure your file manager integration. This example uses CKFinder 3 for PHP.
                     filebrowserBrowseUrl: '/ckfinder/ckfinder.html',
                     filebrowserImageBrowseUrl: '/ckfinder/ckfinder.html?type=Images',
                     filebrowserUploadUrl: '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files',
                     filebrowserImageUploadUrl: '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images'
-                } );
-                
+                });
                 $('#image_div').hide();
             });
 
@@ -402,7 +393,7 @@
                 $('#option_E_image_div').hide();
             });
 
-            /*$('#subject').on('change', function () {
+            $('#subject').on('change', function () {
                 var subject_id = $(this).val();
                 var subject_name = $('option:selected', this).attr('subject_name');
 
@@ -416,12 +407,11 @@
                         },
                         success:function(response) {
                             $('#exam').attr('subject_id',subject_name);
-
                             $("#exam").find('option').not(':first').remove();
                             $("#section").find('option').not(':first').remove();
                             $("#area").find('option').not(':first').remove();
 
-                            for(var i=0; i<response.tempArray.length;i++) {
+                            for (var i = 0; i < response.tempArray.length; i++) {
                                 $("#exam").append('<option value="'+response.tempArray[i].exam_id+'">'+response.tempArray[i].exam_name+'</option>');
                             }
                         },
@@ -433,13 +423,14 @@
                 else {
                     $("#exam").find('option').not(':first').remove();
                 }
-            });*/
+            });
 
             $('#exam').on('change', function () {
                 var exam_id = $(this).val();
                 var subject_id = $(this).attr('subject_id');
+                alert(exam_id);
 
-                if(exam_id){
+                if(exam_id) {
                     $.ajax({
                         type: 'POST',
                         url: '/question/fetch-area-exam-wise',
@@ -450,7 +441,7 @@
                         },
                         success:function(response) {
                             $("#area").find('option').not(':first').remove();
-                            for(var i=0; i<response.fetch_area.length;i++) {
+                            for (var i = 0; i < response.fetch_area.length; i++) {
                                 $("#area").append('<option value="'+response.fetch_area[i].id+'">'+response.fetch_area[i].name+'</option>');
                             }
                         },
@@ -466,8 +457,7 @@
 
             $('#area').on('change', function() {
                 var area_id = $(this).val();
-
-                if(area_id){
+                if (area_id) {
                     $.ajax({
                         type: 'POST',
                         url: '/question/fetch-section-area-wise',
@@ -477,7 +467,7 @@
                         },
                         success:function(response) {
                             $("#section").find('option').not(':first').remove();
-                            for(var i=0; i<response.fetch_section_details.length;i++) {
+                            for (var i = 0; i < response.fetch_section_details.length; i++) {
                                 $("#section").append('<option value="'+response.fetch_section_details[i].id+'">'+response.fetch_section_details[i].name+'</option>');
                             }
                         },
@@ -485,8 +475,7 @@
 
                         }
                     });
-
-                }else{
+                } else {
                     $("#section").find('option').not(':first').remove();
                 }
             });
