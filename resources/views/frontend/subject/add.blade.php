@@ -43,7 +43,7 @@
                         <label class="col-md-2 control-label">Exam</label>
                         <div class="col-md-10 {{ $errors->has('exam_id') ? 'has-error' : '' }}">
                             <select name="exam_id[]" id="exam_id" class="form-control" multiple>
-                                @foreach($fetch_all_course as $key=> $value )
+                                @foreach($fetch_all_course as $key => $value)
                                     <option value="{{ $value['id'] }}">{{ ucwords($value['name']).' ('.($value['code']).')' }}</option>
                                 @endforeach
                             </select>
@@ -56,17 +56,9 @@
                             <textarea rows="12" cols="200" id="description" name="description" placeholder="Write your message here..." class="editor form-control">
                                 {{ old('description') }}
                             </textarea>
-
                         </div>
                         @if ($errors->first('description'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('description') }}</span>@endif
                     </div>
-                    {{-- <div class="form-group">
-                        <label class="col-md-2 control-label">Upload File</label>
-                        <div class="col-md-10 {{ $errors->has('sub_file') ? 'has-error' : '' }}">
-                            <input type="file" name="sub_file" id="sub_file" class="form-control">
-                        </div>
-                        @if ($errors->first('sub_file'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('sub_file') }}</span>@endif
-                    </div> --}}
                     <div class="form-group">
                         <label class="col-md-2 control-label">Tags</label>
                         <div class="col-md-10 {{ $errors->has('tags') ? 'has-error' : '' }}">
@@ -76,7 +68,6 @@
                                 @endforeach
                             </select>
                         </div>
-
                         @if ($errors->first('tags'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('tags') }}</span>@endif
                     </div>
                     <div class="form-group">

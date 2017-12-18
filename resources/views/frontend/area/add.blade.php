@@ -26,26 +26,25 @@
                 <form name="frmArea" method="POST" action="/area/save" class="form-horizontal" enctype="multipart/form-data">
                     {{ csrf_field() }}
                     <div class="form-group">
-                        <label class="col-md-2 control-label">Exam</label>
-                        <div class="col-md-10 {{ $errors->has('exam_id') ? 'has-error' : '' }}">
-                            <select name="exam_id" id="exam_id" class="form-control">
-                                <option value="">Select Exam</option>
-                                @foreach($exams as $key=> $value )
-                                    <option value="{{ $key }}">{{ $value }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        @if ($errors->first('exam_id'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('exam_id') }}</span>@endif
-                    </div>
-                    <div class="form-group">
                         <label class="col-md-2 control-label">Subject</label>
                         <div class="col-md-10 {{ $errors->has('subject_id') ? 'has-error' : '' }}">
                             <select name="subject_id" id="subject_id" class="form-control">
                                 <option value="">Select Subject</option>
-                                
+                                @foreach($fetch_all_subject as $key => $value )
+                                    <option value="{{ $key }}">{{ $value }}</option>
+                                @endforeach
                             </select>
                         </div>
                         @if ($errors->first('subject_id'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('subject_id') }}</span>@endif
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Exam</label>
+                        <div class="col-md-10 {{ $errors->has('exam_id') ? 'has-error' : '' }}">
+                            <select name="exam_id" id="exam_id" class="form-control">
+                                <option value="">Select Exam</option>
+                            </select>
+                        </div>
+                        @if ($errors->first('exam_id'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('exam_id') }}</span>@endif
                     </div>
                     <div class="form-group">
                         <label class="col-md-2 control-label">Code</label>
@@ -109,7 +108,6 @@
         .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
             color: #333!important;
         }
-        
     </style>
 
     <script type="text/javascript">
@@ -118,28 +116,26 @@
                 placeholder: 'Select Tags',
             });
 
-            $("#exam_id").change(function(e) {
-                if($(this).val()) {
+            $("#subject_id").change(function(e) {
+                if ($(this).val()) {
                     $.ajax({
                         type: 'POST',
-                        url: '/area/get-subject-by-exam',
-                        data: {exam_id:$(this).val(), _token: "{{ csrf_token() }}"},
+                        url: '/area/get-exam-by-subject',
+                        data: {subject_id: $(this).val(), _token: "{{ csrf_token() }}"},
                         success:function(response) {
-                            $("#subject_id").find('option').not(':first').remove();
-                            for(var i=0; i<response.subjects.length;i++) {
-                                $("#subject_id").append('<option value="'+response.subjects[i].id+'">'+response.subjects[i].sub_short_name+'</option>');
+                            $("#exam_id").find('option').not(':first').remove();
+                            for (var i = 0; i < response.exams.length; i++) {
+                                $("#exam_id").append('<option value="'+response.exams[i].id+'">'+response.exams[i].name+'</option>');
                             }
                         },
                         error: function(err) {
 
                         }
                     });
-                }
-                else {
-                    $("#subject_id").find('option').not(':first').remove();
+                } else {
+                    $("#exam_id").find('option').not(':first').remove();
                 }
             });
         });
-        
     </script>
 @endsection

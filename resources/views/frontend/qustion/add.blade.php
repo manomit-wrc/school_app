@@ -440,13 +440,12 @@
             $('#subject').on('change', function () {
                 var subject_id = $(this).val();
                 var subject_name = $('option:selected', this).attr('subject_name');
-
-                if(subject_id) {
+                if (subject_id) {
                     $.ajax({
                         type: 'POST',
                         url: '/question/fetch-exam-subject-wise',
                         data: {
-                            subject_id :subject_name,
+                            subject_id : subject_name,
                             _token : "{{ csrf_token() }}"
                         },
                         success:function(response) {
@@ -454,7 +453,6 @@
                             $("#exam").find('option').not(':first').remove();
                             $("#section").find('option').not(':first').remove();
                             $("#area").find('option').not(':first').remove();
-
                             for (var i = 0; i < response.tempArray.length; i++) {
                                 $("#exam").append('<option value="'+response.tempArray[i].exam_id+'">'+response.tempArray[i].exam_name+'</option>');
                             }
@@ -463,8 +461,7 @@
 
                         }
                     });
-                }
-                else {
+                } else {
                     $("#exam").find('option').not(':first').remove();
                 }
             });
@@ -472,7 +469,6 @@
             $('#exam').on('change', function () {
                 var exam_id = $(this).val();
                 var subject_id = $(this).attr('subject_id');
-
                 if(exam_id) {
                     $.ajax({
                         type: 'POST',

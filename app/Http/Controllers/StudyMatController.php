@@ -6,6 +6,8 @@ use App\Area;
 use App\Section;
 use Validator;
 use App\StudyMat;
+use App\SubjectExam;
+use App\Exam;
 
 use Illuminate\Http\Request;
 
@@ -20,6 +22,14 @@ class StudyMatController extends Controller
             $fetch_all_study_mat[$key]['subject'] = $fetch_subject[0]['sub_full_name'];
             $fetch_all_study_mat[$key]['area'] = $fetch_area[0]['name'];
             $fetch_all_study_mat[$key]['section'] = $fetch_section[0]['name'];
+            $exam_name = '';
+            $exam_ids = explode(',', $value['exam_id']);
+            foreach ($exam_ids as $e_id) {
+                $fetch_exam_details = Exam::find($e_id)->toArray();
+                $exam_name .= $fetch_exam_details['name'] . ', ';
+            }
+            $exam_name = rtrim($exam_name, ', ');
+            $fetch_all_study_mat[$key]['exam'] = $exam_name;
         }
     	return view('frontend.studymat.listings')->with('fetch_all_study_mat', $fetch_all_study_mat);
     }
@@ -27,6 +37,20 @@ class StudyMatController extends Controller
     public function add_study_mat_view() {
     	$fetch_all_subject = Subject::where('status', '1')->pluck('sub_full_name', 'id')->toArray();
     	return view('frontend.studymat.add')->with('fetch_all_subject', $fetch_all_subject);
+    }
+
+    public function fetch_subject_wise_exam(Request $request) {
+        $tempArray = array();
+        $subject_id = $request->subject_id;
+        $fetch_exam_id = SubjectExam::where('subject_id', $subject_id)->get()->toArray();
+        foreach ($fetch_exam_id as $key => $value) {
+            $exam_id = $value['exam_id'];
+            $fetch_exam_details = Exam::find($exam_id)->toArray();
+            $exam_details_array['exam_id'] = $fetch_exam_details['id'];
+            $exam_details_array['exam_name'] = $fetch_exam_details['name'];
+            $tempArray[] = $exam_details_array;
+        }
+        return response()->json(['tempArray' => $tempArray]);
     }
 
     public function fetch_subject_wise_area(Request $request) {
@@ -56,10 +80,12 @@ class StudyMatController extends Controller
     public function study_mat_submit(Request $request) {
     	Validator::make($request->all(),[
     		'subject' => 'required',
+            'exam' => 'required',
     		'area' => 'required',
     		'section' => 'required'
     	],[
     		'subject.required' => 'Please select subject',
+            'exam.required' => 'Please select exam',
     		'area.required' => 'Please select area',
     		'section.required' => 'Please select section'
     	])->validate();
@@ -116,14 +142,19 @@ class StudyMatController extends Controller
 			$doc_arr = array();
 		}
 
+        $exam_ids = $request->exam;
+        $exam_ids = implode(",", $exam_ids);
+
     	$add = new StudyMat();
     	$add->subject_id = $request->subject;
+        $add->exam_id = $exam_ids;
     	$add->area_id = $request->area;
     	$add->section_id = $request->section;
 		$add->video = serialize($video_arr);
 		$add->pdf = serialize($pdf_arr);
 		$add->document = serialize($doc_arr);
-		$add->description = $request->description;
+        $add->description = $request->description;
+		$add->duration = $request->duration;
 
 		if ($add->save()) {
             return 1;
@@ -153,19 +184,23 @@ class StudyMatController extends Controller
             return $t1 - $t2;
         });
         $fetch_all_subject = Subject::where('status', '1')->pluck('sub_full_name', 'id')->toArray();
+        $fetch_all_exam = Exam::where('status','1')->pluck('name','id')->toArray();
         $fetch_all_area = Area::where('status', '1')->pluck('name', 'id')->toArray();
         $fetch_all_section = Section::pluck('name', 'id')->toArray();
-        return view('frontend.studymat.edit')->with(['fetch_study_mat' => $fetch_study_mat,'fetch_study_videos' => $fetch_study_videos,'fetch_study_pdfs' => $fetch_study_pdfs,'fetch_study_documents' => $fetch_study_documents,'fetch_all_subject' => $fetch_all_subject,'fetch_all_area' => $fetch_all_area,'fetch_all_section' => $fetch_all_section]);
+        $exam_ids = explode(",", $fetch_study_mat['exam_id']);
+        return view('frontend.studymat.edit')->with(['fetch_study_mat' => $fetch_study_mat, 'fetch_all_exam' => $fetch_all_exam,'fetch_study_videos' => $fetch_study_videos,'fetch_study_pdfs' => $fetch_study_pdfs,'fetch_study_documents' => $fetch_study_documents,'fetch_all_subject' => $fetch_all_subject,'fetch_all_area' => $fetch_all_area,'fetch_all_section' => $fetch_all_section, 'exam_ids' => $exam_ids]);
     }
 
     public function study_mat_update(Request $request) {
         $id = $request->study_id;
         Validator::make($request->all(),[
             'subject' => 'required',
+            'exam' => 'required',
             'area' => 'required',
             'section' => 'required'
         ],[
             'subject.required' => 'Please select subject',
+            'exam.required' => 'Please select exam',
             'area.required' => 'Please select area',
             'section.required' => 'Please select section'
         ])->validate();
@@ -259,6 +294,7 @@ class StudyMatController extends Controller
         $studymat->pdf = serialize($pdf_arr);
         $studymat->document = serialize($doc_arr);
         $studymat->description = $request->description;
+        $studymat->duration = $request->duration;
 
         if ($studymat->save()) {
             return 1;
