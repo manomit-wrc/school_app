@@ -111,26 +111,40 @@ class ProfileController extends Controller
     	$fetch_question_details = QuestionAnswer::where([['subject_id',$subjct_id],['area_id',$area_id],['status','1']])->offset($start)->limit($limit)->get()->toArray();
 
     	if(count($fetch_question_details) > 0 ){
-    		$question_type = $fetch_question_details[0]['question_type'];
-	    	if($question_type == 'image'){
-	    		$question = url('/') . "/upload/question_file/resize/".$fetch_question_details[0]['question'];
-	    	}
-	    	if($question_type == 'text'){
-	    		$question = $fetch_question_details[0]['question'];
-	    	}
+            if($fetch_question_details[0]['option_type'] == 'mcq'){
+                $question_type = $fetch_question_details[0]['question_type'];
+                if($question_type == 'image'){
+                    $question = url('/') . "/upload/question_file/resize/".$fetch_question_details[0]['question'];
+                }
+                if($question_type == 'text'){
+                    $question = $fetch_question_details[0]['question'];
+                }
 
-	    	$option = unserialize($fetch_question_details[0]['answer']);
-	    	$option_image_link = url('/') . "/upload/answers_file/resize/";
+                $option = unserialize($fetch_question_details[0]['answer']);
+                $option_image_link = url('/') . "/upload/answers_file/resize/";
 
-	    	
-	    	$correct_answer = count(unserialize($fetch_question_details[0]['correct_answer']));
-	    	if($correct_answer > 1){
-	    		$answer_type = 'multiple';
-	    	}else{
-	    		$answer_type = 'single';
-	    	}
+                
+                $correct_answer = count(unserialize($fetch_question_details[0]['correct_answer']));
+                if($correct_answer > 1){
+                    $answer_type = 'multiple';
+                }else{
+                    $answer_type = 'single';
+                }
 
-	    	return response()->json(['status_code'=>'100','question'=>$question,'option'=>$option,'option_image_link'=>$option_image_link,'answer_type'=>$answer_type]);
+                return response()->json(['status_code'=>'100','question'=>$question,'option_type'=>'mcq','option'=>$option,'option_image_link'=>$option_image_link,'answer_type'=>$answer_type]);
+            }
+
+            if($fetch_question_details[0]['option_type'] == 'numeric'){
+                $question_type = $fetch_question_details[0]['question_type'];
+                if($question_type == 'image'){
+                    $question = url('/') . "/upload/question_file/resize/".$fetch_question_details[0]['question'];
+                }
+                if($question_type == 'text'){
+                    $question = $fetch_question_details[0]['question'];
+                }
+
+                return response()->json(['status_code'=>'100','question'=>$question,'option_type'=>'numeric']);
+            }	    	
     	}else{
     		return response()->json(['status_code'=>'404','msg'=>'No questions found.']);
     	}
