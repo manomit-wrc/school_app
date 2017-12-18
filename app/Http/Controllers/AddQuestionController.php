@@ -39,7 +39,8 @@ class AddQuestionController extends Controller
     public function fetch_exam_subject_wise(Request $request) {
     	$tempArray = array();
     	$subject_id = $request->subject_id;
-    	$fetch_exam_id = SubjectExam::where(['subject_id', $subject_id])->get()->toArray();
+    	$fetch_exam_id = SubjectExam::with('exams')->where('subject_id', $subject_id)->get()->toArray();
+
     	foreach ($fetch_exam_id as $key => $value) {
     		$exam_id = $value['exam_id'];
     		$fetch_exam_details = Exam::where('id', $exam_id)->get()->toArray();
@@ -54,7 +55,7 @@ class AddQuestionController extends Controller
     	$tempArray = array();
     	$exam_id = $request->exam_id;
     	$subject_id = $request->subject_id;
-    	$fetch_subject_details = Subject::where('sub_full_name',$subject_id)->get()->toArray();
+    	$fetch_subject_details = Subject::where('id',$subject_id)->get()->toArray();
     	$fetch_area = Area::where([['subject_id',$fetch_subject_details[0]['id']],['status','1']])->get()->toArray();
     	return response()->json(['fetch_area'=>$fetch_area]);
     }
@@ -72,14 +73,16 @@ class AddQuestionController extends Controller
     		'area' => 'required',
     		'section' => 'required',
     		'level' => 'required',
-    		'answer' => 'required'
+    		'question_type' => 'required|in:text,image',
+    		'option_type'=> 'required|in:mcq,numeric' 
     	],[
     		'subject.required' => 'Please select subject.',
     		'exam.required' => 'Please select exam type.',
     		'area.required' => 'Please select area.',
     		'section.required' => 'Please select section.',
     		'level.required' => 'Please select question level.',
-    		'answer.required' => 'Please select correct answer.'
+    		'question_type.required' => 'Please select question type.',
+    		'option_type.required' => 'Please select option type.'
     	])->validate();
 
     	if ($request->hasFile('question_image')) {
@@ -265,9 +268,10 @@ class AddQuestionController extends Controller
     		$add->question_type = $request->question_type;
     		$add->question = $fileName1;
     	}
-
+    	$add->option_type = $request->option_type;
     	$add->answer = serialize($tempArray);
     	$add->correct_answer = serialize($request->answer);
+    	$add->numeric_answer = $request->numeric_correct_ans;
     	$add->status = 1;
 
     	if ($add->save()) {
@@ -278,13 +282,22 @@ class AddQuestionController extends Controller
 
     public function edit(Request $request, $question_id) {
     	$fetch_question_details = QuestionAnswer::find($question_id)->toArray();
+
     	$fetch_all_subject = Subject::where('status','1')->pluck('sub_full_name','id')->toArray();
-    	$option = unserialize($fetch_question_details['answer']);
-    	$correct_answer = unserialize($fetch_question_details['correct_answer']);
+    	
+    	if($fetch_question_details['option_type'] != 'numeric'){
+    		$option = unserialize($fetch_question_details['answer']);
+    		$correct_answer = unserialize($fetch_question_details['correct_answer']);
+    	}else{
+    		$option = '';
+    		$correct_answer = '';
+    	}
+
     	$fetch_exam = Exam::where('status','1')->pluck('name','id')->toArray();
     	$fetch_area = Area::where('status','1')->pluck('name','id')->toArray();
     	$fetch_section = Section::pluck('name','id')->toArray();
     	$exam_ids = explode(",", $fetch_question_details['exam_id']);
+
     	return view('frontend.qustion.edit')->with('fetch_question_details',$fetch_question_details)
     										->with('option',$option)
     										->with('correct_answer',$correct_answer)
@@ -311,14 +324,16 @@ class AddQuestionController extends Controller
     		'area' => 'required',
     		'section' => 'required',
     		'level' => 'required',
-    		'answer' => 'required'
+    		'question_type' => 'required|in:text,image',
+    		'option_type'=> 'required|in:mcq,numeric' 
     	],[
     		'subject.required' => 'Please select subject.',
     		'exam.required' => 'Please select exam type.',
     		'area.required' => 'Please select area.',
     		'section.required' => 'Please select section.',
     		'level.required' => 'Please select question level.',
-    		'answer.required' => 'Please select correct answer.'
+    		'question_type.required' => 'Please select question type.',
+    		'option_type.required' => 'Please select option type.'
     	])->validate();
 
     	if ($request->hasFile('question_image')) {
@@ -515,9 +530,18 @@ class AddQuestionController extends Controller
     		$edit->question_type = $request->question_type;
     		$edit->question = $fileName1;
     	}
-
-    	$edit->answer = serialize($tempArray);
-    	$edit->correct_answer = serialize($request->answer);
+    	$edit->option_type = $request->option_type;
+    	if($request->option_type == 'mcq'){
+    		$edit->answer = serialize($tempArray);
+    		$edit->correct_answer = serialize($request->answer);
+    		$edit->numeric_answer = '';
+    	}
+    	if($request->option_type == 'numeric'){
+    		$edit->answer = '';
+	    	$edit->correct_answer = '';
+	    	$edit->numeric_answer = $request->numeric_correct_ans;
+    	}
+    	
 
     	if ($edit->save()) {
     		$request->session()->flash("submit-status", "Question edit successfully.");

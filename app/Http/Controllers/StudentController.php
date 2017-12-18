@@ -45,6 +45,8 @@ class StudentController extends Controller
         	$student->email = $request->email;
         	$student->password = bcrypt($request->password);
         	$student->mobile_no = $request->mobile_no;
+            $student->city = $request->city;
+            $student->country = $request->country;
 
         	if ($student->save()) {
                 $otp = rand(1000,5000);
