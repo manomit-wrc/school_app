@@ -46,6 +46,7 @@
                             <tr>
                                 <th>SL NO</th>
                                 <th>Subject</th>
+                                <th>Exam</th>
                                 <th>Area</th>
                                 <th>Section</th>
                                 <th>Action</th>
@@ -58,6 +59,7 @@
                                 <tr>
                                     <td>{{$i++}}</td>
                                     <td>{{$study_mat['subject']}}</td>
+                                    <td>{{$study_mat['exam']}}</td>
                                     <td>{{$study_mat['area']}}</td>
                                     <td>{{$study_mat['section']}}</td>
                                     <td>

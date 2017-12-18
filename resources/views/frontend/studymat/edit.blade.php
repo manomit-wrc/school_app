@@ -47,13 +47,13 @@
                         </div>
                         @if ($errors->first('subject'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('subject') }}</span>@endif
                     </div>
-                    
+
                     <div class="form-group">
                         <label class="col-md-2 control-label">Exam</label>
                         <div class="col-md-10 {{ $errors->has('exam') ? 'has-error' : '' }}">
                             <select class="form-control" name="exam[]" id="exam" multiple>
                                 <option value="">Select Exam</option>
-                                @foreach($exam_ids as $key => $value)
+                                @foreach($fetch_all_exam as $key => $value)
                                     <option value="{{ $key }}" @if(in_array($key, $exam_ids)) selected="selected" @endif>{{ $value }}</option>
                                 @endforeach
                             </select>
