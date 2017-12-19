@@ -147,6 +147,31 @@
                     </div>
 
                     <div class="form-group">
+                        <label class="col-md-2 control-label">Sample Questions</label>
+                        <div class="col-md-9" id="dynamic-div">
+                            @if(count($fetch_sample_ques) > 0)
+                                <?php $i = 1; ?>
+                                @foreach($fetch_sample_ques as $key => $value)
+                                <div id="div-{{$i}}" class="div-border">
+                                    <textarea name="sample_ques[]" id="sample_ques{{$i}}" class="form-control sample_ques" placeholder="Sample Question" />{{$key}}</textarea><br />
+                                    <textarea name="sample_ans[]" id="sample_ans{{$i}}" class="form-control sample_ans" placeholder="Sample Answer" />{{$value}}</textarea>
+                                </div>
+                                <?php $i++; ?>
+                                @endforeach
+                            @else
+                            <div class="div-border">
+                                <textarea name="sample_ques[]" id="sample_ques1" class="form-control sample_ques" placeholder="Sample Question" /></textarea><br />
+                                <textarea name="sample_ans[]" id="sample_ans1" class="form-control sample_ans" placeholder="Sample Answer" /></textarea>
+                            </div>
+                            @endif
+                        </div>
+                        <div class="col-md-1">
+                            <button class="btn btn-primary btn-sm add_div" title="Add more sample questions"><i class="fa fa-plus"></i></button>
+                            <button class="btn btn-danger btn-sm remove_div" @if(count($fetch_sample_ques) == 0) style="visibility: hidden;" @endif title="remove sample question"><i class="fa fa-minus"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         <div class="col-md-4 col-md-offset-2">
                             <button type="submit" id="study_mat_submit" class="btn btn-sm btn-primary">Submit</button>
                             <button type="reset" class="btn btn-sm btn-default">Reset</button>
@@ -183,6 +208,7 @@
         }
         #video_sortable, #pdf_sortable, #doc_sortable { width: 50%; float: left; margin-left: 18%; margin-top: 5px; padding: 0; }
         #video_sortable li, #pdf_sortable li, #doc_sortable li { list-style: outside none none; padding: 5px 10px; cursor: move; }
+        .div-border { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
     </style>
 
     <script type="text/javascript">
@@ -378,6 +404,12 @@
                     $(".li-doc").each(function(index) {
                         formdata.append('doc_order[]', $(this).text());
                     });
+                    $(".sample_ques").each(function(index) {
+                        formdata.append('sample_questions[]', $(this).val());
+                    });
+                    $(".sample_ans").each(function(index) {
+                        formdata.append('sample_answers[]', $(this).val());
+                    });
                     $.ajax({
                         type: "POST",
                         url: '/study_mat/study-mat-update',
@@ -394,6 +426,28 @@
                     });
                 }
                 e.preventDefault();
+            });
+
+            <?php if (count($fetch_sample_ques) > 0) { ?>
+                var iCnt = <?php echo count($fetch_sample_ques); ?>;
+            <?php } else { ?>
+                var iCnt = 1;
+            <?php } ?>
+
+            $('.add_div').on('click', function () {
+                iCnt = iCnt + 1;
+                $('#dynamic-div').append('<div id="div-'+iCnt+'" class="div-border"><textarea name="sample_ques[]" id="sample_ques'+iCnt+'" class="form-control sample_ques" placeholder="Sample Question" /></textarea><br /><textarea name="sample_ans[]" id="sample_ans'+iCnt+'" class="form-control sample_ans" placeholder="Sample Answer" /></textarea></div>');
+                $('.remove_div').css('visibility', 'visible');
+                return false;
+            });
+
+            $('.remove_div').on('click', function () {
+                if (iCnt != 1) {
+                    $('#div-'+iCnt).remove();
+                    iCnt = iCnt - 1;
+                }
+                if (iCnt == 1) $('.remove_div').css('visibility', 'hidden');
+                return false;
             });
         });
 

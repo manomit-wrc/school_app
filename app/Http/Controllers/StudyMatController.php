@@ -6,6 +6,7 @@ use App\Area;
 use App\Section;
 use Validator;
 use App\StudyMat;
+use App\StudyMatSampleQues;
 use App\SubjectExam;
 use App\Exam;
 
@@ -145,6 +146,8 @@ class StudyMatController extends Controller
         $exam_ids = $request->exam;
         $exam_ids = implode(",", $exam_ids);
 
+        $sample = array_combine($request->sample_questions, $request->sample_answers);
+
     	$add = new StudyMat();
     	$add->subject_id = $request->subject;
         $add->exam_id = $exam_ids;
@@ -157,6 +160,14 @@ class StudyMatController extends Controller
 		$add->duration = $request->duration;
 
 		if ($add->save()) {
+            $studymat_id = $add->id;
+            foreach ($sample as $question => $answer) {
+                $add_sample_ques = new StudyMatSampleQues();
+                $add_sample_ques->study_mat_id = $studymat_id;
+                $add_sample_ques->questions = $question;
+                $add_sample_ques->answers = $answer;
+                $add_sample_ques->save();
+            }
             return 1;
         } else {
             return 0;
@@ -188,7 +199,10 @@ class StudyMatController extends Controller
         $fetch_all_area = Area::where('status', '1')->pluck('name', 'id')->toArray();
         $fetch_all_section = Section::pluck('name', 'id')->toArray();
         $exam_ids = explode(",", $fetch_study_mat['exam_id']);
-        return view('frontend.studymat.edit')->with(['fetch_study_mat' => $fetch_study_mat, 'fetch_all_exam' => $fetch_all_exam,'fetch_study_videos' => $fetch_study_videos,'fetch_study_pdfs' => $fetch_study_pdfs,'fetch_study_documents' => $fetch_study_documents,'fetch_all_subject' => $fetch_all_subject,'fetch_all_area' => $fetch_all_area,'fetch_all_section' => $fetch_all_section, 'exam_ids' => $exam_ids]);
+
+        $fetch_sample_ques = StudyMatSampleQues::where('study_mat_id', $id)->pluck('answers', 'questions')->toArray();
+
+        return view('frontend.studymat.edit')->with(['fetch_study_mat' => $fetch_study_mat, 'fetch_all_exam' => $fetch_all_exam,'fetch_study_videos' => $fetch_study_videos,'fetch_study_pdfs' => $fetch_study_pdfs,'fetch_study_documents' => $fetch_study_documents,'fetch_all_subject' => $fetch_all_subject,'fetch_all_area' => $fetch_all_area,'fetch_all_section' => $fetch_all_section, 'exam_ids' => $exam_ids, 'fetch_sample_ques' => $fetch_sample_ques]);
     }
 
     public function study_mat_update(Request $request) {
@@ -287,6 +301,8 @@ class StudyMatController extends Controller
             $doc_arr = $temp_doc_arr;
         }
 
+        $sample = array_combine($request->sample_questions, $request->sample_answers);
+
         $studymat->subject_id = $request->subject;
         $studymat->area_id = $request->area;
         $studymat->section_id = $request->section;
@@ -297,6 +313,15 @@ class StudyMatController extends Controller
         $studymat->duration = $request->duration;
 
         if ($studymat->save()) {
+            $study_mat_sample_ques = StudyMatSampleQues::where('study_mat_id', $id);
+            $study_mat_sample_ques->delete();
+            foreach ($sample as $question => $answer) {
+                $add_sample_ques = new StudyMatSampleQues();
+                $add_sample_ques->study_mat_id = $id;
+                $add_sample_ques->questions = $question;
+                $add_sample_ques->answers = $answer;
+                $add_sample_ques->save();
+            }
             return 1;
         } else {
             return 0;

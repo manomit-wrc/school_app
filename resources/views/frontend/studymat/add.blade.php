@@ -33,7 +33,6 @@
             <div class="row">
                 <form name="frmStudyMat" id="frmStudyMat" method="POST" action="/study_mat/add-study-mat-submit" class="form-horizontal" enctype="multipart/form-data">
                     {{ csrf_field() }}
-                    
                     <div class="form-group">
                         <label class="col-md-2 control-label">Subject</label>
                         <div class="col-md-10">
@@ -93,7 +92,6 @@
                             <span class="pull-left">Allowed file types .pdf, .jpeg, .jpg, .png</span>
                         </div>
                         <ul id="pdf_sortable" class="ui-sortable"></ul>
-
                     </div>
 
                     <div class="form-group">
@@ -116,6 +114,20 @@
                         <label class="col-md-2 control-label">Add Duration (Hrs)</label>
                         <div class="col-md-10">
                             <input type="text" name="duration" id="duration" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Sample Questions</label>
+                        <div class="col-md-9" id="dynamic-div">
+                            <div class="div-border">
+                                <textarea name="sample_ques[]" id="sample_ques1" class="form-control sample_ques" placeholder="Sample Question" /></textarea><br />
+                                <textarea name="sample_ans[]" id="sample_ans1" class="form-control sample_ans" placeholder="Sample Answer" /></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <button class="btn btn-primary btn-sm add_div" title="Add more sample questions"><i class="fa fa-plus"></i></button>
+                            <button class="btn btn-danger btn-sm remove_div" style="visibility: hidden;" title="remove sample question"><i class="fa fa-minus"></i></button>
                         </div>
                     </div>
 
@@ -156,6 +168,7 @@
         }
         #video_sortable, #pdf_sortable, #doc_sortable { width: 50%; float: left; margin-left: 18%; margin-top: 5px; padding: 0; }
         #video_sortable li, #pdf_sortable li, #doc_sortable li { list-style: outside none none; padding: 5px 10px; cursor: move; }
+        .div-border { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
     </style>
 
     <script type="text/javascript">
@@ -350,6 +363,12 @@
                     $(".li-doc").each(function(index) {
                         formdata.append('doc_order[]', $(this).text());
                     });
+                    $(".sample_ques").each(function(index) {
+                        formdata.append('sample_questions[]', $(this).val());
+                    });
+                    $(".sample_ans").each(function(index) {
+                        formdata.append('sample_answers[]', $(this).val());
+                    });
                     $.ajax({
                         type: "POST",
                         url: '/study_mat/add-study-mat-submit',
@@ -366,6 +385,24 @@
                     });
                 }
                 e.preventDefault();
+            });
+
+            var iCnt = 1;
+
+            $('.add_div').on('click', function () {
+                iCnt = iCnt + 1;
+                $('#dynamic-div').append('<div id="div-'+iCnt+'" class="div-border"><textarea name="sample_ques[]" id="sample_ques'+iCnt+'" class="form-control sample_ques" placeholder="Sample Question" /></textarea><br /><textarea name="sample_ans[]" id="sample_ans'+iCnt+'" class="form-control sample_ans" placeholder="Sample Answer" /></textarea></div>');
+                $('.remove_div').css('visibility', 'visible');
+                return false;
+            });
+
+            $('.remove_div').on('click', function () {
+                if (iCnt != 1) {
+                    $('#div-'+iCnt).remove();
+                    iCnt = iCnt - 1;
+                }
+                if (iCnt == 1) $('.remove_div').css('visibility', 'hidden');
+                return false;
             });
         });
     </script>
