@@ -74,7 +74,9 @@ class AddQuestionController extends Controller
     		'section' => 'required',
     		'level' => 'required',
     		'question_type' => 'required|in:text,image',
-    		'option_type'=> 'required|in:mcq,numeric' 
+    		'option_type'=> 'required|in:mcq,numeric',
+    		'explanation_details' => 'required' ,
+    		'explanation_file' => 'mimetypes:image/jpeg,image/png,image/jpg,video/mp4,application/zip,application/pdf|max:6144'
     	],[
     		'subject.required' => 'Please select subject.',
     		'exam.required' => 'Please select exam type.',
@@ -82,7 +84,10 @@ class AddQuestionController extends Controller
     		'section.required' => 'Please select section.',
     		'level.required' => 'Please select question level.',
     		'question_type.required' => 'Please select question type.',
-    		'option_type.required' => 'Please select option type.'
+    		'option_type.required' => 'Please select option type.',
+    		'explanation_details.required' => "Explanation details can't be blank." ,
+    		'explanation_file.*.mimetypes' => 'Please upload correct file.',
+    		'explanation_file.*.max' => 'Please upload file within 6MB'
     	])->validate();
 
     	if ($request->hasFile('question_image')) {
@@ -250,6 +255,21 @@ class AddQuestionController extends Controller
     		'optionE' => $optionE
     	);
 
+    	if ($request->hasFile('explanation_file')) {
+            $file = $request->file('explanation_file');
+        	$explanation_file_name = time().'_'.$file->getClientOriginalName();
+        
+            //thumb destination path
+    //         $destinationPath_2 = public_path().'/upload/explanation_file/resize/';
+    //         $img = Image::make($file->getRealPath());
+    //         $img->resize(175, 175, function ($constraint) {
+				// $constraint->aspectRatio();
+    //         })->save($destinationPath_2.'/'.$explanation_file_name);
+            //original destination path
+            $destinationPath = public_path().'/upload/explanation_file/original/';
+            $file->move($destinationPath,$explanation_file_name);
+        }
+
     	$exam_ids = $request->exam;
     	$new_ids = implode(",",$exam_ids);
 
@@ -273,6 +293,8 @@ class AddQuestionController extends Controller
     	$add->correct_answer = serialize($request->answer);
     	$add->numeric_answer = $request->numeric_correct_ans;
     	$add->status = 1;
+    	$add->explanation_details = $request->explanation_details;
+    	$add->explanation_file = $explanation_file_name;
 
     	if ($add->save()) {
     		$request->session()->flash("submit-status", "Question added successfully.");
@@ -325,7 +347,9 @@ class AddQuestionController extends Controller
     		'section' => 'required',
     		'level' => 'required',
     		'question_type' => 'required|in:text,image',
-    		'option_type'=> 'required|in:mcq,numeric' 
+    		'option_type'=> 'required|in:mcq,numeric',
+    		'explanation_details' => 'required' ,
+    		'explanation_file' => 'mimetypes:image/jpeg,image/png,image/jpg,video/mp4,application/zip,application/pdf|max:6144' 
     	],[
     		'subject.required' => 'Please select subject.',
     		'exam.required' => 'Please select exam type.',
@@ -333,7 +357,9 @@ class AddQuestionController extends Controller
     		'section.required' => 'Please select section.',
     		'level.required' => 'Please select question level.',
     		'question_type.required' => 'Please select question type.',
-    		'option_type.required' => 'Please select option type.'
+    		'option_type.required' => 'Please select option type.',
+    		'explanation_file.*.mimetypes' => 'Please upload correct file.',
+    		'explanation_file.*.max' => 'Please upload file within 6MB'
     	])->validate();
 
     	if ($request->hasFile('question_image')) {
@@ -512,6 +538,23 @@ class AddQuestionController extends Controller
     		'optionE' => $optionE
     	);
 
+    	if ($request->hasFile('explanation_file')) {
+            $file = $request->file('explanation_file');
+        	$explanation_file_name = time().'_'.$file->getClientOriginalName();
+        
+            //thumb destination path
+    //         $destinationPath_2 = public_path().'/upload/explanation_file/resize/';
+    //         $img = Image::make($file->getRealPath());
+    //         $img->resize(175, 175, function ($constraint) {
+				// $constraint->aspectRatio();
+    //         })->save($destinationPath_2.'/'.$explanation_file_name);
+            //original destination path
+            $destinationPath = public_path().'/upload/explanation_file/original/';
+            $file->move($destinationPath,$explanation_file_name);
+        }else{
+        	$explanation_file_name = $request->exit_explanation_image;
+        }
+
     	$exam_ids = $request->exam;
     	$new_ids = implode(",",$exam_ids);
 
@@ -521,6 +564,8 @@ class AddQuestionController extends Controller
     	$edit->area_id = $request->area;
     	$edit->section_id = $request->section;
     	$edit->level = $request->level;
+    	$edit->explanation_details = $request->explanation_details;
+    	$edit->explanation_file = $explanation_file_name;
     	
     	if ($request->question_type == 'text') {
     		$edit->question_type = $request->question_type;

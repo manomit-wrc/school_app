@@ -21,10 +21,11 @@ Route::post('/registration', 'StudentController@registration');
 Route::post('/login', 'StudentController@login');
 Route::post('/forgot_password' , 'ProfileController@forgot_password');
 Route::post('/otp_verification','ProfileController@otp_verification');
+Route::post('/forgot_pw_verification', 'ProfileController@forgot_pw_verification');
 
 Route::group(['middleware' => ['jwt.auth']], function () {
 	Route::post('/changepass', 'StudentController@changepass');
-	Route::get('/profile', 'ProfileController@index');
+	Route::post('/profile', 'ProfileController@index');
 	Route::post('/profile-edit', 'ProfileController@profile_edit');
 	Route::post('/fetch_question', 'ProfileController@fetch_question');
 	Route::post('/changepass', 'StudentController@changepass');
@@ -34,7 +35,7 @@ Route::group(['middleware' => ['jwt.auth']], function () {
 	Route::post('/getsection', 'SectionController@get_section');
 	Route::post('/getstudymat', 'StudyMatController@get_studymat');
 	Route::post('/fetch_user_ans', 'ProfileController@fetch_user_ans');
-	Route::get('/fetch_question', 'ProfileController@fetch_question');
+	Route::post('/fetch_question', 'ProfileController@fetch_question');
 	Route::post('/getallexam', 'StudentController@get_all_exam');
 	Route::post('/getexam', 'StudentController@get_exam_by_exam_id');
 	Route::post('/getsubject', 'StudentController@get_subject');

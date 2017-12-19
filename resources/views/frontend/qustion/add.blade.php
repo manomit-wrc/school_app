@@ -285,6 +285,23 @@
                     </div>
 
                     <div class="form-group">
+                        <label class="col-md-2 control-label">Explanation Details</label>
+                        <div class="col-md-10">
+                            <textarea cols="" rows="" class="form-control" name="explanation_details" id="explanation_details" style="height: 200px;"></textarea>
+                        </div>
+                        @if ($errors->first('explanation_details'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('explanation_details') }}</span>@endif
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Explanation File</label>
+                        <div class="col-md-10">
+                            <input type="file" name="explanation_file" id="explanation_file" class="form-control">
+                            <span class="pull-left">Allowed file types .jpeg, .png, .jpg, .mp4, .zip, .pdf and file should be within 6MB</span>
+                        </div>
+                        @if ($errors->first('explanation_file'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('explanation_file') }}</span>@endif
+                    </div>
+
+                    <div class="form-group">
                         <div class="col-md-4 col-md-offset-2">
                             <button type="submit" class="btn btn-sm btn-primary">Submit</button>
                             <button type="reset" class="btn btn-sm btn-default" id="reset_form">Reset</button>
