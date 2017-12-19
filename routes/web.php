@@ -123,4 +123,8 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::get('/students-details','DashboardController@students_list');
 	// Route::get('/dashboard/student-delete/{student_id}', 'DashboardController@students_delete');
 
+	Route::get('/banner','BannerController@index');
+	Route::get('/banner/add','BannerController@add');
+	Route::post('/banner/add_submit','BannerController@add_submit');
+
 });

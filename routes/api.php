@@ -35,7 +35,7 @@ Route::group(['middleware' => ['jwt.auth']], function () {
 	Route::post('/getsection', 'SectionController@get_section');
 	Route::post('/getstudymat', 'StudyMatController@get_studymat');
 	Route::post('/fetch_user_ans', 'ProfileController@fetch_user_ans');
-	Route::get('/fetch_question', 'ProfileController@fetch_question');
+	Route::post('/fetch_question', 'ProfileController@fetch_question');
 	Route::post('/getallexam', 'StudentController@get_all_exam');
 	Route::post('/getexam', 'StudentController@get_exam_by_exam_id');
 	Route::post('/getsubject', 'StudentController@get_subject');

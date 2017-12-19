@@ -155,347 +155,347 @@
                         @if ($errors->first('option_type'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('option_type') }}</span>@endif
                     </div>
 
-                        <div id="all_options">
-                            <div class="form-group">
-                                <label class="col-md-2 control-label">Option A</label>
+                    <div id="all_options">
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Option A</label>
 
-                                @if(!empty($option))
-                                    <div class="col-md-10 {{ $errors->has('optionA') ? 'has-error' : '' }}">
-                                        <label class="radio-inline">
-                                            <input type="radio" name="option_type_A" value="text" id="question_typeA_text" @if($option['optionA_type'] == 'text') checked="checked" @endif>
-                                            Text
-                                        </label>
-                                        <label class="radio-inline">
-                                            <input type="radio" name="option_type_A" value="image" id="question_typeA_file" @if($option['optionA_type'] == 'image') checked="checked" @endif>
-                                            Image
-                                        </label>
+                            @if(!empty($option))
+                                <div class="col-md-10 {{ $errors->has('optionA') ? 'has-error' : '' }}">
+                                    <label class="radio-inline">
+                                        <input type="radio" name="option_type_A" value="text" id="question_typeA_text" @if($option['optionA_type'] == 'text') checked="checked" @endif>
+                                        Text
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="option_type_A" value="image" id="question_typeA_file" @if($option['optionA_type'] == 'image') checked="checked" @endif>
+                                        Image
+                                    </label>
 
-                                        <div id="option_A_text_div">                               
-                                                @if($option['optionA_type'] == 'text')
-                                                    <textarea class="form-control" cols="" rows="" name="optionA" id="optionA">
-                                                        {{ $option['optionA'] }}
-                                                    </textarea>
-                                                @else
-                                                    <textarea class="form-control" cols="" rows="" name="optionA" id="optionA">
-                                                    </textarea>
-                                                @endif
-                                                
+                                    <div id="option_A_text_div">                               
+                                            @if($option['optionA_type'] == 'text')
+                                                <textarea class="form-control" cols="" rows="" name="optionA" id="optionA">
+                                                    {{ $option['optionA'] }}
+                                                </textarea>
+                                            @else
+                                                <textarea class="form-control" cols="" rows="" name="optionA" id="optionA">
+                                                </textarea>
+                                            @endif
                                             
-                                        </div>
+                                        
+                                    </div>
 
-                                        <div id="option_A_image_div">
-                                            <input type="file" name="optionA_file" id="optionA_file" class="form-control">
+                                    <div id="option_A_image_div">
+                                        <input type="file" name="optionA_file" id="optionA_file" class="form-control">
 
-                                            @if($option['optionA_type'] == 'image')
-                                                <br>
-                                                <img src="{{ url('upload/answers_file/resize/'.$option['optionA']) }}" style="width: 50px;height: 50px;">
-                                                <input type="hidden" name="exit_optionA_image" id="exit_optionA_image" value="{{ $option['optionA'] }}">
+                                        @if($option['optionA_type'] == 'image')
+                                            <br>
+                                            <img src="{{ url('upload/answers_file/resize/'.$option['optionA']) }}" style="width: 50px;height: 50px;">
+                                            <input type="hidden" name="exit_optionA_image" id="exit_optionA_image" value="{{ $option['optionA'] }}">
+                                        @endif
+                                    </div>
+                                    
+                                </div>
+                            @else
+                                <div class="col-md-10 {{ $errors->has('optionA') ? 'has-error' : '' }}">
+                                    <label class="radio-inline">
+                                        <input type="radio" name="option_type_A" value="text" id="question_typeA_text">
+                                        Text
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="option_type_A" value="image" id="question_typeA_file">
+                                        Image
+                                    </label>
+
+                                    <div id="option_A_text_div">
+                                        <textarea class="form-control" cols="" rows="" name="optionA" id="optionA"></textarea>
+                                    </div>
+
+                                    <div id="option_A_image_div">
+                                        <input type="file" name="optionA_file" id="optionA_file" class="form-control">
+                                    </div>
+                                    
+                                </div>
+
+                            @endif
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Option B</label>
+                            @if(!empty($option))
+                                <div class="col-md-10 {{ $errors->has('optionA') ? 'has-error' : '' }}">
+                                    <label class="radio-inline">
+                                        <input type="radio" name="option_type_B" value="text" id="question_typeB_text" @if($option['optionB_type'] == 'text') checked="checked" @endif>
+                                        Text
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="option_type_B" value="image" id="question_typeB_file" @if($option['optionB_type'] == 'image') checked="checked" @endif>
+                                        Image
+                                    </label>
+
+                                    <div id="option_B_text_div">
+                                        <textarea class="form-control" cols="" rows="" name="optionB" id="optionB">
+                                            @if($option['optionB_type'] == 'text')
+                                                {{ $option['optionB'] }}
+                                            @endif  
+                                        </textarea>
+                                    </div>
+
+                                    <div id="option_B_image_div">
+                                        <input type="file" name="optionB_file" id="optionB_file" class="form-control">
+
+                                        @if($option['optionB_type'] == 'image')
+                                            <br>
+                                            <img src="{{ url('upload/answers_file/resize/'.$option['optionB']) }}" style="width: 50px;height: 50px;">
+                                            <input type="hidden" name="exit_optionB_image" id="exit_optionB_image" value="{{ $option['optionB'] }}">
+                                        @endif
+                                    </div>
+                                    
+                                </div>
+                            @else
+                                <div class="col-md-10 {{ $errors->has('optionA') ? 'has-error' : '' }}">
+                                    <label class="radio-inline">
+                                        <input type="radio" name="option_type_B" value="text" id="question_typeB_text">
+                                        Text
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="option_type_B" value="image" id="question_typeB_file">
+                                        Image
+                                    </label>
+
+                                    <div id="option_B_text_div">
+                                        <textarea class="form-control" cols="" rows="" name="optionB" id="optionB"></textarea>
+                                    </div>
+
+                                    <div id="option_B_image_div">
+                                        <input type="file" name="optionB_file" id="optionB_file" class="form-control">
+                                    </div>
+                                    
+                                </div>
+                            @endif
+
+                            
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Option C</label>
+                            @if(!empty($option))
+                                <div class="col-md-10 {{ $errors->has('optionA') ? 'has-error' : '' }}">
+                                    <label class="radio-inline">
+                                        <input type="radio" name="option_type_C" value="text" id="question_typeC_text" @if($option['optionC_type'] == 'text') checked="checked" @endif>
+                                        Text
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="option_type_C" value="image" id="question_typeC_file" @if($option['optionC_type'] == 'image') checked="checked" @endif>
+                                        Image
+                                    </label>
+
+                                    <div id="option_C_text_div">
+                                        <textarea class="form-control" cols="" rows="" name="optionC" id="optionC">
+                                            @if($option['optionC_type'] == 'text')
+                                                {{ $option['optionC'] }}
                                             @endif
-                                        </div>
-                                        
-                                    </div>
-                                @else
-                                    <div class="col-md-10 {{ $errors->has('optionA') ? 'has-error' : '' }}">
-                                        <label class="radio-inline">
-                                            <input type="radio" name="option_type_A" value="text" id="question_typeA_text">
-                                            Text
-                                        </label>
-                                        <label class="radio-inline">
-                                            <input type="radio" name="option_type_A" value="image" id="question_typeA_file">
-                                            Image
-                                        </label>
-
-                                        <div id="option_A_text_div">
-                                            <textarea class="form-control" cols="" rows="" name="optionA" id="optionA"></textarea>
-                                        </div>
-
-                                        <div id="option_A_image_div">
-                                            <input type="file" name="optionA_file" id="optionA_file" class="form-control">
-                                        </div>
-                                        
+                                            
+                                        </textarea>
                                     </div>
 
-                                @endif
-                            </div>
+                                    <div id="option_C_image_div">
+                                        <input type="file" name="optionC_file" id="optionC_file" class="form-control">
 
-                            <div class="form-group">
-                                <label class="col-md-2 control-label">Option B</label>
-                                @if(!empty($option))
-                                    <div class="col-md-10 {{ $errors->has('optionA') ? 'has-error' : '' }}">
-                                        <label class="radio-inline">
-                                            <input type="radio" name="option_type_B" value="text" id="question_typeB_text" @if($option['optionB_type'] == 'text') checked="checked" @endif>
-                                            Text
-                                        </label>
-                                        <label class="radio-inline">
-                                            <input type="radio" name="option_type_B" value="image" id="question_typeB_file" @if($option['optionB_type'] == 'image') checked="checked" @endif>
-                                            Image
-                                        </label>
-
-                                        <div id="option_B_text_div">
-                                            <textarea class="form-control" cols="" rows="" name="optionB" id="optionB">
-                                                @if($option['optionB_type'] == 'text')
-                                                    {{ $option['optionB'] }}
-                                                @endif  
-                                            </textarea>
-                                        </div>
-
-                                        <div id="option_B_image_div">
-                                            <input type="file" name="optionB_file" id="optionB_file" class="form-control">
-
-                                            @if($option['optionB_type'] == 'image')
-                                                <br>
-                                                <img src="{{ url('upload/answers_file/resize/'.$option['optionB']) }}" style="width: 50px;height: 50px;">
-                                                <input type="hidden" name="exit_optionB_image" id="exit_optionB_image" value="{{ $option['optionB'] }}">
-                                            @endif
-                                        </div>
-                                        
+                                        @if($option['optionC_type'] == 'image')
+                                            <br>
+                                            <img src="{{ url('upload/answers_file/resize/'.$option['optionC']) }}" style="width: 50px;height: 50px;">
+                                            <input type="hidden" name="exit_optionC_image" id="exit_optionC_image" value="{{ $option['optionC'] }}">
+                                        @endif
                                     </div>
-                                @else
-                                    <div class="col-md-10 {{ $errors->has('optionA') ? 'has-error' : '' }}">
-                                        <label class="radio-inline">
-                                            <input type="radio" name="option_type_B" value="text" id="question_typeB_text">
-                                            Text
-                                        </label>
-                                        <label class="radio-inline">
-                                            <input type="radio" name="option_type_B" value="image" id="question_typeB_file">
-                                            Image
-                                        </label>
+                                    
+                                </div>
+                            @else
+                                <div class="col-md-10 {{ $errors->has('optionA') ? 'has-error' : '' }}">
+                                    <label class="radio-inline">
+                                        <input type="radio" name="option_type_C" value="text" id="question_typeC_text">
+                                        Text
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="option_type_C" value="image" id="question_typeC_file">
+                                        Image
+                                    </label>
 
-                                        <div id="option_B_text_div">
-                                            <textarea class="form-control" cols="" rows="" name="optionB" id="optionB"></textarea>
-                                        </div>
-
-                                        <div id="option_B_image_div">
-                                            <input type="file" name="optionB_file" id="optionB_file" class="form-control">
-                                        </div>
-                                        
+                                    <div id="option_C_text_div">
+                                        <textarea class="form-control" cols="" rows="" name="optionC" id="optionC"></textarea>
                                     </div>
-                                @endif
 
-                                
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-2 control-label">Option C</label>
-                                @if(!empty($option))
-                                    <div class="col-md-10 {{ $errors->has('optionA') ? 'has-error' : '' }}">
-                                        <label class="radio-inline">
-                                            <input type="radio" name="option_type_C" value="text" id="question_typeC_text" @if($option['optionC_type'] == 'text') checked="checked" @endif>
-                                            Text
-                                        </label>
-                                        <label class="radio-inline">
-                                            <input type="radio" name="option_type_C" value="image" id="question_typeC_file" @if($option['optionC_type'] == 'image') checked="checked" @endif>
-                                            Image
-                                        </label>
-
-                                        <div id="option_C_text_div">
-                                            <textarea class="form-control" cols="" rows="" name="optionC" id="optionC">
-                                                @if($option['optionC_type'] == 'text')
-                                                    {{ $option['optionC'] }}
-                                                @endif
-                                                
-                                            </textarea>
-                                        </div>
-
-                                        <div id="option_C_image_div">
-                                            <input type="file" name="optionC_file" id="optionC_file" class="form-control">
-
-                                            @if($option['optionC_type'] == 'image')
-                                                <br>
-                                                <img src="{{ url('upload/answers_file/resize/'.$option['optionC']) }}" style="width: 50px;height: 50px;">
-                                                <input type="hidden" name="exit_optionC_image" id="exit_optionC_image" value="{{ $option['optionC'] }}">
-                                            @endif
-                                        </div>
-                                        
+                                    <div id="option_C_image_div">
+                                        <input type="file" name="optionC_file" id="optionC_file" class="form-control">
                                     </div>
-                                @else
-                                    <div class="col-md-10 {{ $errors->has('optionA') ? 'has-error' : '' }}">
-                                        <label class="radio-inline">
-                                            <input type="radio" name="option_type_C" value="text" id="question_typeC_text">
-                                            Text
-                                        </label>
-                                        <label class="radio-inline">
-                                            <input type="radio" name="option_type_C" value="image" id="question_typeC_file">
-                                            Image
-                                        </label>
+                                    
+                                </div>
+                            @endif
+                            
+                        </div>
 
-                                        <div id="option_C_text_div">
-                                            <textarea class="form-control" cols="" rows="" name="optionC" id="optionC"></textarea>
-                                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Option D</label>
+                            @if(!empty($option))
+                                <div class="col-md-10 {{ $errors->has('optionA') ? 'has-error' : '' }}">
+                                    <label class="radio-inline">
+                                        <input type="radio" name="option_type_D" value="text" id="question_typeD_text" @if($option['optionD_type'] == 'text') checked="checked" @endif>
+                                        Text
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="option_type_D" value="image" id="question_typeD_file" @if($option['optionD_type'] == 'image') checked="checked" @endif>
+                                        Image
+                                    </label>
 
-                                        <div id="option_C_image_div">
-                                            <input type="file" name="optionC_file" id="optionC_file" class="form-control">
-                                        </div>
-                                        
+                                    <div id="option_D_text_div">
+                                        <textarea class="form-control" cols="" rows="" name="optionD" id="optionD">
+                                            @if($option['optionD_type'] == 'text')
+                                                {{ $option['optionD'] }}
+                                            @endif()
+                                            
+                                        </textarea>
                                     </div>
-                                @endif
-                                
-                            </div>
 
-                            <div class="form-group">
-                                <label class="col-md-2 control-label">Option D</label>
-                                @if(!empty($option))
-                                    <div class="col-md-10 {{ $errors->has('optionA') ? 'has-error' : '' }}">
-                                        <label class="radio-inline">
-                                            <input type="radio" name="option_type_D" value="text" id="question_typeD_text" @if($option['optionD_type'] == 'text') checked="checked" @endif>
-                                            Text
-                                        </label>
-                                        <label class="radio-inline">
-                                            <input type="radio" name="option_type_D" value="image" id="question_typeD_file" @if($option['optionD_type'] == 'image') checked="checked" @endif>
-                                            Image
-                                        </label>
+                                    <div id="option_D_image_div">
+                                        <input type="file" name="optionD_file" id="optionD_file" class="form-control">
 
-                                        <div id="option_D_text_div">
-                                            <textarea class="form-control" cols="" rows="" name="optionD" id="optionD">
-                                                @if($option['optionD_type'] == 'text')
-                                                    {{ $option['optionD'] }}
-                                                @endif()
-                                                
-                                            </textarea>
-                                        </div>
-
-                                        <div id="option_D_image_div">
-                                            <input type="file" name="optionD_file" id="optionD_file" class="form-control">
-
-                                            @if($option['optionD_type'] == 'image')
-                                                <br>
-                                                <img src="{{ url('upload/answers_file/resize/'.$option['optionD']) }}" style="width: 50px;height: 50px;">
-                                                <input type="hidden" name="exit_optionD_image" id="exit_optionD_image" value="{{ $option['optionD'] }}">
-                                            @endif
-                                        </div>
-                                        
+                                        @if($option['optionD_type'] == 'image')
+                                            <br>
+                                            <img src="{{ url('upload/answers_file/resize/'.$option['optionD']) }}" style="width: 50px;height: 50px;">
+                                            <input type="hidden" name="exit_optionD_image" id="exit_optionD_image" value="{{ $option['optionD'] }}">
+                                        @endif
                                     </div>
-                                @else
-                                    <div class="col-md-10 {{ $errors->has('optionA') ? 'has-error' : '' }}">
-                                        <label class="radio-inline">
-                                            <input type="radio" name="option_type_D" value="text" id="question_typeD_text">
-                                            Text
-                                        </label>
-                                        <label class="radio-inline">
-                                            <input type="radio" name="option_type_D" value="image" id="question_typeD_file">
-                                            Image
-                                        </label>
+                                    
+                                </div>
+                            @else
+                                <div class="col-md-10 {{ $errors->has('optionA') ? 'has-error' : '' }}">
+                                    <label class="radio-inline">
+                                        <input type="radio" name="option_type_D" value="text" id="question_typeD_text">
+                                        Text
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="option_type_D" value="image" id="question_typeD_file">
+                                        Image
+                                    </label>
 
-                                        <div id="option_D_text_div">
-                                            <textarea class="form-control" cols="" rows="" name="optionD" id="optionD"></textarea>
-                                        </div>
-
-                                        <div id="option_D_image_div">
-                                            <input type="file" name="optionD_file" id="optionD_file" class="form-control">
-                                        </div>
-                                        
+                                    <div id="option_D_text_div">
+                                        <textarea class="form-control" cols="" rows="" name="optionD" id="optionD"></textarea>
                                     </div>
-                                @endif
-                                
-                            </div>
 
-                            <div class="form-group">
-                                <label class="col-md-2 control-label">Option E</label>
-                                @if(!empty($option))
-                                    <div class="col-md-10 {{ $errors->has('optionA') ? 'has-error' : '' }}">
-                                        <label class="radio-inline">
-                                            <input type="radio" name="option_type_E" value="text" id="question_typeE_text" @if($option['optionE_type'] == 'text') checked="checked" @endif>
-                                            Text
-                                        </label>
-                                        <label class="radio-inline">
-                                            <input type="radio" name="option_type_E" value="image" id="question_typeE_file" @if($option['optionE_type'] == 'image') checked="checked" @endif>
-                                            Image
-                                        </label>
-
-                                        <div id="option_E_text_div">
-                                            <textarea class="form-control" cols="" rows="" name="optionE" id="optionE">
-                                                {{ $option['optionE'] }}
-                                            </textarea>
-                                        </div>
-
-                                        <div id="option_E_image_div">
-                                            <input type="file" name="optionE_file" id="optionE_file" class="form-control">
-
-                                            @if($option['optionE_type'] == 'image')
-                                                <br>
-                                                <img src="{{ url('upload/answers_file/resize/'.$option['optionE']) }}" style="width: 50px;height: 50px;">
-                                                <input type="hidden" name="exit_optionE_image" id="exit_optionE_image" value="{{ $option['optionE'] }}">
-                                            @endif
-                                        </div>
-                                        
+                                    <div id="option_D_image_div">
+                                        <input type="file" name="optionD_file" id="optionD_file" class="form-control">
                                     </div>
-                                @else
-                                    <div class="col-md-10 {{ $errors->has('optionA') ? 'has-error' : '' }}">
-                                        <label class="radio-inline">
-                                            <input type="radio" name="option_type_E" value="text" id="question_typeE_text">
-                                            Text
-                                        </label>
-                                        <label class="radio-inline">
-                                            <input type="radio" name="option_type_E" value="image" id="question_typeE_file">
-                                            Image
-                                        </label>
+                                    
+                                </div>
+                            @endif
+                            
+                        </div>
 
-                                        <div id="option_E_text_div">
-                                            <textarea class="form-control" cols="" rows="" name="optionE" id="optionE"></textarea>
-                                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Option E</label>
+                            @if(!empty($option))
+                                <div class="col-md-10 {{ $errors->has('optionA') ? 'has-error' : '' }}">
+                                    <label class="radio-inline">
+                                        <input type="radio" name="option_type_E" value="text" id="question_typeE_text" @if($option['optionE_type'] == 'text') checked="checked" @endif>
+                                        Text
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="option_type_E" value="image" id="question_typeE_file" @if($option['optionE_type'] == 'image') checked="checked" @endif>
+                                        Image
+                                    </label>
 
-                                        <div id="option_E_image_div">
-                                            <input type="file" name="optionE_file" id="optionE_file" class="form-control">
-                                        </div>
-                                        
+                                    <div id="option_E_text_div">
+                                        <textarea class="form-control" cols="" rows="" name="optionE" id="optionE">
+                                            {{ $option['optionE'] }}
+                                        </textarea>
                                     </div>
-                                @endif
-                                
-                            </div>
 
-                            <div class="form-group">
-                                <label class="col-md-2 control-label">Correct Answer</label>
-                                @if(!empty($correct_answer))
-                                    <div class="col-md-10">
-                                            <label class="checkbox-inline">
-                                                <input type="checkbox" name="answer[]" value="1" @if(in_array(1, $correct_answer)) checked="checked" @endif>
-                                                A
-                                            </label>
-                                            <label class="checkbox-inline">
-                                                <input type="checkbox" name="answer[]" value="2" @if(in_array(2, $correct_answer)) checked="checked" @endif>
-                                                B
-                                            </label>
-                                            <label class="checkbox-inline">
-                                                <input type="checkbox" name="answer[]" value="3" @if(in_array(3, $correct_answer)) checked="checked" @endif>
-                                                C
-                                            </label>
-                                            <label class="checkbox-inline">
-                                                <input type="checkbox" name="answer[]" value="4" @if(in_array(4, $correct_answer)) checked="checked" @endif>
-                                                D
-                                            </label>
-                                            <label class="checkbox-inline">
-                                                <input type="checkbox" name="answer[]" value="5" @if(in_array(5, $correct_answer)) checked="checked" @endif>
-                                                E
-                                            </label>
+                                    <div id="option_E_image_div">
+                                        <input type="file" name="optionE_file" id="optionE_file" class="form-control">
+
+                                        @if($option['optionE_type'] == 'image')
+                                            <br>
+                                            <img src="{{ url('upload/answers_file/resize/'.$option['optionE']) }}" style="width: 50px;height: 50px;">
+                                            <input type="hidden" name="exit_optionE_image" id="exit_optionE_image" value="{{ $option['optionE'] }}">
+                                        @endif
                                     </div>
-                                @else
-                                    <div class="col-md-10">
+                                    
+                                </div>
+                            @else
+                                <div class="col-md-10 {{ $errors->has('optionA') ? 'has-error' : '' }}">
+                                    <label class="radio-inline">
+                                        <input type="radio" name="option_type_E" value="text" id="question_typeE_text">
+                                        Text
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="option_type_E" value="image" id="question_typeE_file">
+                                        Image
+                                    </label>
+
+                                    <div id="option_E_text_div">
+                                        <textarea class="form-control" cols="" rows="" name="optionE" id="optionE"></textarea>
+                                    </div>
+
+                                    <div id="option_E_image_div">
+                                        <input type="file" name="optionE_file" id="optionE_file" class="form-control">
+                                    </div>
+                                    
+                                </div>
+                            @endif
+                            
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Correct Answer</label>
+                            @if(!empty($correct_answer))
+                                <div class="col-md-10">
                                         <label class="checkbox-inline">
-                                            <input type="checkbox" name="answer[]" value="1">
+                                            <input type="checkbox" name="answer[]" value="1" @if(in_array(1, $correct_answer)) checked="checked" @endif>
                                             A
                                         </label>
                                         <label class="checkbox-inline">
-                                            <input type="checkbox" name="answer[]" value="2">
+                                            <input type="checkbox" name="answer[]" value="2" @if(in_array(2, $correct_answer)) checked="checked" @endif>
                                             B
                                         </label>
                                         <label class="checkbox-inline">
-                                            <input type="checkbox" name="answer[]" value="3">
+                                            <input type="checkbox" name="answer[]" value="3" @if(in_array(3, $correct_answer)) checked="checked" @endif>
                                             C
                                         </label>
                                         <label class="checkbox-inline">
-                                            <input type="checkbox" name="answer[]" value="4">
+                                            <input type="checkbox" name="answer[]" value="4" @if(in_array(4, $correct_answer)) checked="checked" @endif>
                                             D
                                         </label>
                                         <label class="checkbox-inline">
-                                            <input type="checkbox" name="answer[]" value="5">
+                                            <input type="checkbox" name="answer[]" value="5" @if(in_array(5, $correct_answer)) checked="checked" @endif>
                                             E
                                         </label>
-                                    </div>
-                                @endif
-                                
-                                @if ($errors->first('answer'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('answer') }}</span>@endif
-                            </div> 
-                        </div>
+                                </div>
+                            @else
+                                <div class="col-md-10">
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" name="answer[]" value="1">
+                                        A
+                                    </label>
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" name="answer[]" value="2">
+                                        B
+                                    </label>
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" name="answer[]" value="3">
+                                        C
+                                    </label>
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" name="answer[]" value="4">
+                                        D
+                                    </label>
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" name="answer[]" value="5">
+                                        E
+                                    </label>
+                                </div>
+                            @endif
+                            
+                            @if ($errors->first('answer'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('answer') }}</span>@endif
+                        </div> 
+                    </div>
 
                     <div id="numeric_correct_answer_div">
                         <div class="form-group">
@@ -505,6 +505,28 @@
                             </div>
                             @if ($errors->first('answer'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('answer') }}</span>@endif
                         </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Explanation Details</label>
+                        <div class="col-md-10">
+                            <textarea cols="" rows="" class="form-control" name="explanation_details" id="explanation_details" style="height: 200px;">{{ $fetch_question_details['explanation_details'] }}</textarea>
+                        </div>
+                        @if ($errors->first('explanation_details'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('explanation_details') }}</span>@endif
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Explanation File</label>
+                        <div class="col-md-10">
+                            <input type="file" name="explanation_file" id="explanation_file" class="form-control">
+                            <span class="pull-left">Allowed file types .jpeg, .png, .jpg, .mp4, .zip, .pdf and file should be within 6MB</span>
+
+                            <br><br>
+                            {{ $fetch_question_details['explanation_file'] }}
+                            <input type="hidden" name="exit_explanation_image" id="exit_explanation_image" value="{{ $fetch_question_details['explanation_file'] }}">
+                        </div>
+
+                        @if ($errors->first('explanation_file'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('explanation_file') }}</span>@endif
                     </div>
 
                     <div class="form-group">
