@@ -268,6 +268,8 @@ class AddQuestionController extends Controller
             //original destination path
             $destinationPath = public_path().'/upload/explanation_file/original/';
             $file->move($destinationPath,$explanation_file_name);
+        }else{
+            $explanation_file_name = "";
         }
 
     	$exam_ids = $request->exam;
