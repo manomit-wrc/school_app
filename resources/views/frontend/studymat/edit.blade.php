@@ -88,10 +88,10 @@
                     </div>
                     
                     <div class="form-group">
-                        <label class="col-md-2 control-label">Add Video</label>
+                        <label class="col-md-2 control-label">Video</label>
                         <div class="col-md-10">
                             <input type="file" name="video_files[]" id="video_files" class="form-control" onchange="handleVideos();" accept=".mp4,.mpeg,.avi,.wmv" multiple />
-                            <span class="pull-left">Allowed file types .mp4, .mpeg, .avi, .wmv</span>
+                            <span class="pull-left">Allowed file types .mp4, .mpeg, .avi, .wmv [User can upload multiple videos at a time or separately]</span>
                         </div>
                         <ul id="video_sortable" class="ui-sortable">
                             @if(count($fetch_study_videos) > 0)
@@ -103,10 +103,10 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="col-md-2 control-label">Add Pdf or Image</label>
+                        <label class="col-md-2 control-label">Course Structure</label>
                         <div class="col-md-10">
                             <input type="file" name="pdf_files[]" id="pdf_files" class="form-control" onchange="handlePdfs();" accept=".pdf, .jpeg, .jpg, .png" multiple />
-                            <span class="pull-left">Allowed file types .pdf, .jpeg, .jpg, .png</span>
+                            <span class="pull-left">Allowed file types .pdf, .jpeg, .jpg, .png [User can upload multiple images or pdfs at a time or separately]</span>
                         </div>
                         <ul id="pdf_sortable" class="ui-sortable">
                             @if(count($fetch_study_pdfs) > 0)
@@ -118,10 +118,10 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="col-md-2 control-label">Add Document</label>
+                        <label class="col-md-2 control-label">Theory</label>
                         <div class="col-md-10">
                             <input type="file" name="doc_files[]" id="doc_files" class="form-control" onchange="handleDocs();" accept=".doc, .docx, .txt" multiple />
-                            <span class="pull-left">Allowed file types .doc, .docx, .txt</span>
+                            <span class="pull-left">Allowed file types .doc, .docx, .txt [User can upload multiple documents at a time or separately]</span>
                         </div>
                         <ul id="doc_sortable" class="ui-sortable">
                             @if(count($fetch_study_documents) > 0)
@@ -133,14 +133,14 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="col-md-2 control-label">Add Description</label>
+                        <label class="col-md-2 control-label">Description</label>
                         <div class="col-md-10">
                             <textarea name="description" id="description" class="form-control">{{$fetch_study_mat['description']}}</textarea>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="col-md-2 control-label">Add Duration (Hrs)</label>
+                        <label class="col-md-2 control-label">Duration (Hrs)</label>
                         <div class="col-md-10">
                             <input type="text" name="duration" id="duration" class="form-control" value="{{$fetch_study_mat['duration']}}" />
                         </div>
@@ -209,6 +209,7 @@
         #video_sortable, #pdf_sortable, #doc_sortable { width: 50%; float: left; margin-left: 18%; margin-top: 5px; padding: 0; }
         #video_sortable li, #pdf_sortable li, #doc_sortable li { list-style: outside none none; padding: 5px 10px; cursor: move; }
         .div-border { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+        input[type="file"] { height: auto; }
     </style>
 
     <script type="text/javascript">
