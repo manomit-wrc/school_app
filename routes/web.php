@@ -126,5 +126,8 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::get('/banner','BannerController@index');
 	Route::get('/banner/add','BannerController@add');
 	Route::post('/banner/add_submit','BannerController@add_submit');
+	Route::get('/banner/edit/{banner_id}','BannerController@edit_view');
+	Route::post('/banner/edit_submit/{banner_id}','BannerController@edit_submit');
+	Route::get('/banner/delete/{banner_id}', 'BannerController@delete');
 
 });

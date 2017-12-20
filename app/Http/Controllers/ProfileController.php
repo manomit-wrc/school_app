@@ -19,6 +19,7 @@ use App\QuestionAnswer;
 use App\UserExam;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ForgotPassword;
+use App\Banner;
 
 class ProfileController extends Controller
 {
@@ -265,5 +266,13 @@ class ProfileController extends Controller
         }else{
             return response()->json(['status_code'=>404, 'msg'=>'Invalid OTP.']);
         }
+    }
+
+    public function banner (Request $request){
+        $all_banner = Banner::all();
+
+        $banner_image_link = url('/') . '/upload/banner_file/resize/';
+
+        return response()->json(['status_code'=>200,'msg'=>'All banner details','all_banner'=>$all_banner,'banner_image_link'=>$banner_image_link]);
     }
 }
