@@ -21,6 +21,7 @@ use Validator;
 use Config;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\Registration;
+use App\QuestionAnswer;
 
 class StudentController extends Controller
 {
@@ -194,21 +195,36 @@ class StudentController extends Controller
 
     public function add_user_exam(Request $request) {
         $ans_arr = array();
-        $student_id = $request->student_id;
+        
+        $user = JWTAuth::toUser($request->token);
+        $user_id = $user['id'];
+
         $exam_id = $request->exam_id;
         $subject_id = $request->subject_id;
         $area_id = $request->area_id;
+        $section_id = $request->section_id;
         $question_id = $request->question_id;
-        $ans_arr = explode(',', $request->user_answer);
-        $user_answer = serialize($ans_arr);
 
         $user_exam = new UserExam();
-        $user_exam->student_id = $student_id;
+        $user_exam->student_id = $user_id;
         $user_exam->exam_id = $exam_id;
         $user_exam->subject_id = $subject_id;
+        $user_exam->section_id = $section_id;
         $user_exam->area_id = $area_id;
         $user_exam->question_id = $question_id;
-        $user_exam->user_answer = $user_answer;
+
+        $fetch_question_type = QuestionAnswer::where('id',$question_id)->select('option_type')->get()->toArray();
+        if($fetch_question_type[0]['option_type'] == 'mcq'){
+            $ans_arr = explode(',', $request->user_answer);
+            $user_answer = serialize($ans_arr);
+
+            $user_exam->user_answer = $user_answer;
+        }
+        if($fetch_question_type[0]['option_type'] == 'numeric'){
+            $user_exam->numeric_ans = $request->user_answer;
+        }
+
+        
 
         if ($user_exam->save()) {
             return response()->json(['msg' => 'Successfully inserted', 'status_code' => 200]);

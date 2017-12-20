@@ -169,32 +169,58 @@ class ProfileController extends Controller
     }
 
     public function fetch_user_ans (Request $request) {
+        $user = JWTAuth::toUser($request->token);
+        $user_id = $user['id'];
+
+        $exam_id = $request->exam_id;
+        $subject_id = $request->subject_id;
     	$area_id = $request->area_id;
+        $section_id = $request->section_id;
 
-    	$fetch_user_ans_details = UserExam::where([['area_id',$area_id]])->get()->toArray();
-    	if(count($fetch_user_ans_details) > 0){
-    		$i=0;
+    	$fetch_user_ans_details = UserExam::where([['student_id',$user_id],['exam_id',$exam_id],['subject_id',$subject_id],['area_id',$area_id],['section_id',$section_id]])->get()->toArray();
 
-	    	foreach($fetch_user_ans_details as $key => $value){
-	    		$user_ans = unserialize($value['user_answer']);
+        if(count($fetch_user_ans_details) > 0){
+            $i = 0 ;
 
-	    		$fetch_correct_ans_details = QuestionAnswer::where([['area_id',$area_id],['id',$value['question_id']]])->select('correct_answer')->get()->toArray();
-	    		$correct_answer = unserialize($fetch_correct_ans_details[0]['correct_answer']);
+            foreach ($fetch_user_ans_details as $key => $value) {
+                $question_id = $value['question_id'];
 
-	    		if($correct_answer == $user_ans){
-	    			$i++;
-	    		}
-	    	}
+                $fetch_question_type = QuestionAnswer::where('id',$question_id)->select('option_type')->get()->toArray();
 
-	    	$total_correct_answer = $i;
-	    	$total_no_of_question = count(QuestionAnswer::where('area_id',$area_id)->get()->toArray());
+                if($fetch_question_type[0]['option_type'] == 'mcq'){
+                    $user_ans = unserialize($value['user_answer']);
 
-	    	$marks = ($total_correct_answer / $total_no_of_question) * 100 .'%' ;
+                    $fetch_correct_ans_details = QuestionAnswer::where('id',$question_id)->select('correct_answer')->get()->toArray();
+                    $correct_answer = unserialize($fetch_correct_ans_details[0]['correct_answer']);
 
-	    	return response()->json(['status_code'=>'200','marks'=>$marks]);
-    	}else{
-    		return response()->json(['status_code'=>'404','msg'=>'No answer found.']);
-    	}
+                    if($correct_answer == $user_ans){
+                        $i++;
+                    }
+                }
+
+                if($fetch_question_type[0]['option_type'] == 'numeric'){
+                    $numeric_ans = trim($value['numeric_ans']);
+
+                    $fetch_correct_ans_details = QuestionAnswer::where('id',$question_id)->select('numeric_answer')->get()->toArray();
+                    $correct_answer = trim($fetch_correct_ans_details[0]['numeric_answer']);
+
+                    if($correct_answer == $numeric_ans){
+                        $i++;
+                    }
+                }
+
+                $total_correct_answer = $i;  
+            }
+            
+            $total_no_of_question = count(QuestionAnswer::where([['subject_id',$subject_id],['area_id',$area_id],['section_id',$section_id],['exam_id','like','%'.$exam_id.'%']])->get()->toArray());
+
+            $marks = ($total_correct_answer / $total_no_of_question) * 100 .'%' ;
+
+            return response()->json(['status_code'=>'200','total_no_of_question'=>$total_no_of_question,'total_correct_answer'=>$total_correct_answer,'marks'=>$marks]);
+
+        }else{
+            return response()->json(['status_code'=>'404','msg'=>'No answer found.']);
+        }
     }
 
     public function forgot_password (Request $request) {
