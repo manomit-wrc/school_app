@@ -614,7 +614,7 @@ class AddQuestionController extends Controller
     					return $query->where('subject_id', $request->subject);
     				})
     				->when($request->exam, function($query) use ($request) {
-    					return $query->whereIn('exam_id', array($request->exam));
+    					return $query->where('exam_id','like','%'.$request->exam.'%');
     				})
     				->when($request->section, function($query) use ($request) {
     					return $query->where('section_id', $request->section);
@@ -635,9 +635,17 @@ class AddQuestionController extends Controller
     		$new_question['area']['name'] = $fetch_area_details['name'];
     		$fetch_section_details = Section::find($value->section_id)->toArray();
     		$new_question['section']['name'] = $fetch_section_details['name'];
-    		$fetch_exam_details = Exam::find($value->exam_id)->toArray();
-    		$new_question['exam'] = $fetch_exam_details['name'];
-    		array_push($output, $new_question);
+
+            $exam_name = '';
+            $exam_ids = explode(',', $value->exam_id);
+            foreach ($exam_ids as $e_id) {
+                $fetch_exam_details = Exam::find($e_id)->toArray();
+                $exam_name .= $fetch_exam_details['name'] . ', ';
+            }
+            $exam_name = rtrim($exam_name, ', ');
+            $new_question['exam'] = $exam_name;
+    		
+            array_push($output, $new_question);
         }
         $fetch_all_subject = Subject::where('status','1')->pluck('sub_full_name', 'id')->toArray();
         $fetch_all_exam = Exam::where('status','1')->pluck('name', 'id')->toArray();
