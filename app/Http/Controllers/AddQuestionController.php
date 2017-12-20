@@ -625,7 +625,8 @@ class AddQuestionController extends Controller
     				->when($request->level, function($query) use ($request) {
     					return $query->where('level', $request->level);
     				})
-    				->get()->toArray();
+    				->get()->toArray(); 
+                    
 
     	foreach ($question as $key => $value) {
     		$new_question = (array) $value;

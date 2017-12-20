@@ -20,6 +20,7 @@ use App\UserExam;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ForgotPassword;
 use App\Banner;
+use App\UserMarks;
 
 class ProfileController extends Controller
 {
@@ -215,6 +216,19 @@ class ProfileController extends Controller
             $total_no_of_question = count(QuestionAnswer::where([['subject_id',$subject_id],['area_id',$area_id],['section_id',$section_id],['exam_id','like','%'.$exam_id.'%']])->get()->toArray());
 
             $marks = ($total_correct_answer / $total_no_of_question) * 100 .'%' ;
+
+            if(!empty($marks)){
+                $add = new UserMarks ();
+                $add->student_id = $user_id;
+                $add->exam_id = $exam_id;
+                $add->area_id = $area_id;
+                $add->subject_id = $subject_id;
+                $add->section_id = $section_id;
+                $add->percentile = $marks;
+                $add->total_correct_ans = $total_correct_answer;
+
+                $add->save();
+            }
 
             return response()->json(['status_code'=>'200','total_no_of_question'=>$total_no_of_question,'total_correct_answer'=>$total_correct_answer,'marks'=>$marks]);
 
