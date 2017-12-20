@@ -27,7 +27,11 @@ class AddQuestionController extends Controller
         	$exam_name = rtrim($exam_name, ', ');
         	$fetch_all_question[$key]['exam'] = $exam_name;
         }
-    	return view ('frontend.qustion.listings')->with('fetch_all_question',$fetch_all_question);
+        $fetch_all_subject = Subject::where('status','1')->pluck('sub_full_name', 'id')->toArray();
+        $fetch_all_exam = Exam::where('status','1')->pluck('name', 'id')->toArray();
+        $fetch_all_area = Area::where('status','1')->pluck('name', 'id')->toArray();
+        $fetch_all_section = Section::pluck('name', 'id')->toArray();
+    	return view ('frontend.qustion.listings')->with('fetch_all_question', $fetch_all_question)->with('fetch_all_subject', $fetch_all_subject)->with('fetch_all_exam', $fetch_all_exam)->with('fetch_all_area', $fetch_all_area)->with('fetch_all_section', $fetch_all_section);
     }
 
     public function add_qustion_view() {
@@ -186,7 +190,6 @@ class AddQuestionController extends Controller
 			$optionC = $fileName;
 		}
 
-
 		if (isset($request->option_type_D) && $request->option_type_D == 'text') {
 			$optionD_type = $request->option_type_D;
 			$optionD = $request->optionD;
@@ -260,11 +263,11 @@ class AddQuestionController extends Controller
         	$explanation_file_name = time().'_'.$file->getClientOriginalName();
         
             //thumb destination path
-    //         $destinationPath_2 = public_path().'/upload/explanation_file/resize/';
-    //         $img = Image::make($file->getRealPath());
-    //         $img->resize(175, 175, function ($constraint) {
-				// $constraint->aspectRatio();
-    //         })->save($destinationPath_2.'/'.$explanation_file_name);
+            // $destinationPath_2 = public_path().'/upload/explanation_file/resize/';
+            // $img = Image::make($file->getRealPath());
+            // $img->resize(175, 175, function ($constraint) {
+			// $constraint->aspectRatio();
+            // })->save($destinationPath_2.'/'.$explanation_file_name);
             //original destination path
             $destinationPath = public_path().'/upload/explanation_file/original/';
             $file->move($destinationPath,$explanation_file_name);
@@ -402,7 +405,7 @@ class AddQuestionController extends Controller
 	            //original destination path
 	            $destinationPath = public_path().'/upload/answers_file/original/';
 	            $file->move($destinationPath,$fileName);
-	        }else{
+	        } else {
 	        	$fileName = $request->exit_optionA_image;
 	        }
 			$optionA = $fileName;
@@ -543,15 +546,15 @@ class AddQuestionController extends Controller
         	$explanation_file_name = time().'_'.$file->getClientOriginalName();
         
             //thumb destination path
-    //         $destinationPath_2 = public_path().'/upload/explanation_file/resize/';
-    //         $img = Image::make($file->getRealPath());
-    //         $img->resize(175, 175, function ($constraint) {
-				// $constraint->aspectRatio();
-    //         })->save($destinationPath_2.'/'.$explanation_file_name);
+            // $destinationPath_2 = public_path().'/upload/explanation_file/resize/';
+            // $img = Image::make($file->getRealPath());
+            // $img->resize(175, 175, function ($constraint) {
+        	// $constraint->aspectRatio();
+            // })->save($destinationPath_2.'/'.$explanation_file_name);
             //original destination path
             $destinationPath = public_path().'/upload/explanation_file/original/';
             $file->move($destinationPath,$explanation_file_name);
-        }else{
+        } else {
         	$explanation_file_name = $request->exit_explanation_image;
         }
 
@@ -576,18 +579,17 @@ class AddQuestionController extends Controller
     		$edit->question = $fileName1;
     	}
     	$edit->option_type = $request->option_type;
-    	if($request->option_type == 'mcq'){
+    	if ($request->option_type == 'mcq') {
     		$edit->answer = serialize($tempArray);
     		$edit->correct_answer = serialize($request->answer);
     		$edit->numeric_answer = '';
     	}
-    	if($request->option_type == 'numeric'){
+    	if ($request->option_type == 'numeric') {
     		$edit->answer = '';
 	    	$edit->correct_answer = '';
 	    	$edit->numeric_answer = $request->numeric_correct_ans;
     	}
     	
-
     	if ($edit->save()) {
     		$request->session()->flash("submit-status", "Question edit successfully.");
             return redirect('/question');
@@ -635,6 +637,10 @@ class AddQuestionController extends Controller
     		$new_question['exam'] = $fetch_exam_details['name'];
     		array_push($output, $new_question);
         }
-        return view ('frontend.qustion.listings')->with('fetch_all_question',$output);
+        $fetch_all_subject = Subject::where('status','1')->pluck('sub_full_name', 'id')->toArray();
+        $fetch_all_exam = Exam::where('status','1')->pluck('name', 'id')->toArray();
+        $fetch_all_area = Area::where('status','1')->pluck('name', 'id')->toArray();
+        $fetch_all_section = Section::pluck('name', 'id')->toArray();
+        return view ('frontend.qustion.listings')->with('fetch_all_question', $output)->with('fetch_all_subject', $fetch_all_subject)->with('fetch_all_exam', $fetch_all_exam)->with('fetch_all_area', $fetch_all_area)->with('fetch_all_section', $fetch_all_section)->with('subject', $request->subject)->with('exam', $request->exam)->with('section', $request->section)->with('area', $request->area)->with('level', $request->level);
     }
 }

@@ -70,7 +70,7 @@
                                 </tr>
                                 @endforeach
                             @else
-                            <tr><td colspan="5">There is no data available</td></tr>
+                            <tr><td colspan="6">There is no data available</td></tr>
                             @endif
                         </tbody>
                     </table>
