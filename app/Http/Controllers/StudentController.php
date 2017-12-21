@@ -14,6 +14,7 @@ use App\Area;
 use App\Subject;
 use App\Section;
 use App\StudyMat;
+use App\StudyMatSampleQues;
 use App\UserExam;
 use JWTAuth;
 use JWTAuthException;
@@ -40,8 +41,7 @@ class StudentController extends Controller
             return response()->json(['error' => true,
                 'msg' => $validator->messages()->first(),
                 'status_code' => 500]);
-        }
-        else {
+        } else {
             $student = new Student();
         	$student->first_name = $request->first_name;
             $student->last_name = $request->last_name;
@@ -50,29 +50,22 @@ class StudentController extends Controller
         	$student->mobile_no = $request->mobile_no;
             $student->city = $request->city;
             $student->country = $request->country;
-
             $eaxm_name = trim($request->exam_id);
             $fetch_exam_id = Exam::where('code','like',"%".$eaxm_name."%")->get()->toArray();
             $exam_id = $fetch_exam_id[0]['id'];
-
             $student->exam_id = $exam_id;
-
         	if ($student->save()) {
                 $otp = rand(1000,5000);
                 $user_name = $request->username;
-
                 $user_id = $student->id;
-
                 $edit = Student::find($user_id);
                 $edit->otp = $otp;
-                if($edit->save()){
+                if ($edit->save()) {
                     try{
                         Mail::to($request->email)->send(new Registration($otp,$user_name));
-
-                        return response()->json(['error' => false,'msg' => 'Registration has been successfully completed & OTP send to the user','status_code' => 200]);
-                    }catch(\Exception $e){
-
-                        return response()->json(['code'=>500,'msg'=>'error']);
+                        return response()->json(['error' => false, 'msg' => 'Registration has been successfully completed & OTP send to the user', 'status_code' => 200]);
+                    } catch(\Exception $e) {
+                        return response()->json(['status_code' => 500, 'msg' => 'error']);
                     }
                 }
         	}
@@ -126,8 +119,7 @@ class StudentController extends Controller
 
     public function get_subject(Request $request) {
         $exam_id = $request->exam_id;
-
-        $all_subject = SubjectExam::with('subject')->where('exam_id',$exam_id)->get()->toArray();
+        $all_subject = SubjectExam::with('subject')->where('exam_id', $exam_id)->get()->toArray();
         if ($all_subject) {
             return response()->json(['msg' => 'Success', 'status_code' => 200, 'data' => $all_subject]);
         } else {
@@ -158,10 +150,11 @@ class StudentController extends Controller
 
     public function get_studymat(Request $request) {
         $studymat_arr = array();
+        $exam_id = $request->exam_id;
         $subject_id = $request->subject_id;
         $area_id = $request->area_id;
         $section_id = $request->section_id;
-        $studymat_details = StudyMat::where([['subject_id', '=', $subject_id],['area_id', '=', $area_id],['section_id', '=', $section_id]])->get()->toArray();
+        $studymat_details = StudyMat::where([['subject_id', '=', $subject_id],['exam_id', 'LIKE', "%".$exam_id."%"],['area_id', '=', $area_id],['section_id', '=', $section_id]])->get()->toArray();
         if ($studymat_details) {
             foreach ($studymat_details as $key => $value) {
                 $fetch_subject = Subject::where('id', $value['subject_id'])->get()->toArray();
@@ -186,14 +179,18 @@ class StudentController extends Controller
                     $doc[] = url('/') .'/upload/study_doc/'. $d['doc'];
                 }
 
+                $fetch_studymat_sample_ques = StudyMatSampleQues::where('study_mat_id', $value['id'])->get()->toArray();
+
                 $studymat_arr[] = array(
                     'subject_name' => $fetch_subject[0]['sub_full_name'],
                     'area_name' => $fetch_area[0]['name'],
                     'section_name' => $fetch_section[0]['name'],
                     'video' => $video,
-                    'pdf' => $pdf,
-                    'document' => $doc,
-                    'description' => $value['description']
+                    'course_structure' => $pdf,
+                    'theory' => $doc,
+                    'description' => $value['description'],
+                    'duration' => $value['duration'] . " hrs",
+                    'sample_ques_ans' => $fetch_studymat_sample_ques
                 );
             }
             return response()->json(['msg' => 'Success', 'status_code' => 200, 'data' => $studymat_arr]);
@@ -232,8 +229,6 @@ class StudentController extends Controller
         if($fetch_question_type[0]['option_type'] == 'numeric'){
             $user_exam->numeric_ans = $request->user_answer;
         }
-
-        
 
         if ($user_exam->save()) {
             return response()->json(['msg' => 'Successfully inserted', 'status_code' => 200]);
