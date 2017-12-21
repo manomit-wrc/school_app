@@ -22,32 +22,40 @@ use Config;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\Registration;
 use App\QuestionAnswer;
+use App\SubjectExam;
 
 class StudentController extends Controller
 {
     public function registration(Request $request) {
     	$validator = Validator::make($request->all(),[
-    		'username' => 'required|unique:students,username',
+    		// 'username' => 'required|unique:students,username',
     		'email' => 'required|email|unique:students,email',
     		'password' => 'required',
     		'mobile_no' => 'required|max:10|min:10|regex:/[0-9]{10}/'
 		],[
-			'username.required' => 'Please enter username',
+			// 'username.required' => 'Please enter username',
 			'email.required' => 'Please enter email id'
 		]);
 		if ($validator->fails()) {
             return response()->json(['error' => true,
-                'message' => $validator->messages()->first(),
+                'msg' => $validator->messages()->first(),
                 'status_code' => 500]);
         }
         else {
-        	$student = new Student();
-        	$student->username = $request->username;
+            $student = new Student();
+        	$student->first_name = $request->first_name;
+            $student->last_name = $request->last_name;
         	$student->email = $request->email;
         	$student->password = bcrypt($request->password);
         	$student->mobile_no = $request->mobile_no;
             $student->city = $request->city;
             $student->country = $request->country;
+
+            $eaxm_name = trim($request->exam_id);
+            $fetch_exam_id = Exam::where('code','like',"%".$eaxm_name."%")->get()->toArray();
+            $exam_id = $fetch_exam_id[0]['id'];
+
+            $student->exam_id = $exam_id;
 
         	if ($student->save()) {
                 $otp = rand(1000,5000);
@@ -73,7 +81,7 @@ class StudentController extends Controller
 
     public function login(Request $request) {
         Config::set('tymon.jwt.provider.jwt', '\App\Student');
-        $credentials = $request->only('username', 'password');
+        $credentials = $request->only('email', 'password');
         $token = null;
         try {
             if (!$token = JWTAuth::attempt($credentials)) {
@@ -86,7 +94,7 @@ class StudentController extends Controller
         if ($user->status == 0) {
             return response()->json(['msg' => 'Account not activated.', 'status_code' => 404]);
         } else {
-            return response()->json(['msg' => 'Successfully login', 'status_code' => 200, 'token' => $token]);
+            return response()->json(['msg' => 'Successfully login', 'status_code' => 200, 'token' => $token, 'exam_id'=>$user->exam_id]);
         }
     }
 
@@ -118,9 +126,10 @@ class StudentController extends Controller
 
     public function get_subject(Request $request) {
         $exam_id = $request->exam_id;
-        $subject = Subject::where('exam_id', $exam_id)->get()->toArray();
-        if ($subject) {
-            return response()->json(['msg' => 'Success', 'status_code' => 200, 'data' => $subject]);
+
+        $all_subject = SubjectExam::with('subject')->where('exam_id',$exam_id)->get()->toArray();
+        if ($all_subject) {
+            return response()->json(['msg' => 'Success', 'status_code' => 200, 'data' => $all_subject]);
         } else {
             return response()->json(['msg' => 'No subject available', 'status_code' => 404]);
         }

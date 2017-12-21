@@ -278,8 +278,11 @@ class ProfileController extends Controller
     		$edit = Student::find($id);
     		$edit->status = 1;
 
+            $user = JWTAuth::toUser($token);
+            $exam_id = $user['exam_id'];
+
     		if($edit->save()){
-                return response()->json(['status_code'=>200, 'msg'=>'Your have successfully acivate your account.','token' => $token]);
+                return response()->json(['status_code'=>200, 'msg'=>'Your have successfully acivate your account.','token' => $token, 'exam_id'=>$exam_id]);
 
     		}
 

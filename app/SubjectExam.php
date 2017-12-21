@@ -14,4 +14,8 @@ class SubjectExam extends Model
     public function exams(){
     	return $this->belongsTo('\App\Exam', 'exam_id');
     }
+
+    public function subject(){
+    	return $this->belongsTo('\App\Subject', 'subject_id');
+    }
 }

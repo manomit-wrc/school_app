@@ -9,6 +9,7 @@ use Auth;
 use Image;
 use App\Student;
 use Carbon;
+use App\UserMarks;
 
 class DashboardController extends Controller
 {
@@ -108,7 +109,7 @@ class DashboardController extends Controller
     }
 
     public function students_list (Request $request) {
-        $fetch_all_student = Student::where('status','1')->orderby('id','desc')->get()->toArray();
+        $fetch_all_student = Student::with('exams')->where('status','1')->orderby('id','desc')->get()->toArray();
         return view('frontend.student.list')->with('fetch_all_student',$fetch_all_student);
     }
 
@@ -120,5 +121,14 @@ class DashboardController extends Controller
             $request->session()->flash("submit-status", "Student delete successfully");
             return redirect('/students-details');
         }
+    }
+
+    public function students_profile (Request $request,$student_id) {
+        $fetch_student_details = Student::with('exams')->find($student_id)->toArray();
+
+        $user_marks = UserMarks::with('exams','subject','area','section')->where('student_id',$student_id)->orderby('id','desc')->get()->toArray();
+
+        return view('frontend.student.profile')->with('fetch_student_details',$fetch_student_details)
+                                                ->with('user_marks',$user_marks);
     }
 }
