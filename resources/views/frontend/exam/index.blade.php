@@ -58,7 +58,7 @@
                                     <td>
                                         <a title="Edit" href="/exam/edit/{{$value->id}}" class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i></a>
 
-                                        <a title="Delete" href="/exam/delete/{{$value->id}}" onclick="return confirm('Do you really want to delete the current record ?');" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>                      
+                                        {{-- <a title="Delete" href="/exam/delete/{{$value->id}}" onclick="return confirm('Do you really want to delete the current record ?');" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>  --}}                     
                                     </td>
                                 </tr>
                             @endforeach

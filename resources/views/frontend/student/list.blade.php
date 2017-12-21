@@ -33,11 +33,12 @@
                         <thead>
                             <tr>
                                 <th>SL NO</th>
-                                <th>User Name</th>
+                                <td>Exam Name</td>
+                                <th>Student Name</th>
                                 <th>Email</th>
                                 <th>Mobile Number</th>
                                 <th>City</th>
-                                {{-- <th>Action</th> --}}
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -45,14 +46,17 @@
                         		
                         		<tr class="odd gradeX">
                                     <td>{{ ++$key }}</td>
-                                    <td>{{ ucwords($value['username']) }}</td>
+                                    <td>{{ $value['exams']['name'] }}</td>
+                                    <td>{{ ucwords($value['first_name'].' '.$value['last_name']) }}</td>
                                     <td>{{ $value['email'] }}</td>
                                     <td>{{ $value['mobile_no'] }}</td>
                                     <td>{{ ucwords($value['city']) }}</td>
-                                    {{-- <td>
+                                    <td>
 
-										<a href="/dashboard/student-delete/{{ $value['id'] }}" onclick="return confirm('Do you really want to delete the current record ?');" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
-                                    </td> --}}
+										{{-- <a href="/dashboard/student-delete/{{ $value['id'] }}" onclick="return confirm('Do you really want to delete the current record ?');" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a> --}}
+
+                                        <a title="Profile" href="/dashboard/student-profile/{{ $value['id'] }}" class="btn btn-primary btn-sm"><i class="fa fa-user-circle" aria-hidden="true"></i></a>
+                                    </td>
                                 </tr>
                         	@endforeach
                             
