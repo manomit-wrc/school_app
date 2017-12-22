@@ -131,8 +131,23 @@ class StudentController extends Controller
         $exam_id = $request->exam_id;
         $subject_id = $request->subject_id;
         $area_details = Area::where([['exam_id', '=', $exam_id],['subject_id', '=', $subject_id]])->get()->toArray();
+
+        foreach($area_details as $key => $value){
+            $area_id = $value['id'];
+
+            $fetch_sections = Section::where('area_id',$area_id)->get()->toArray();
+            $area_details[$key]['sections'] = $fetch_sections;
+        }
+
+        $description = array();
+
+        foreach($area_details as $key => $value){
+            $description[] = strip_tags($value['description']);
+        }
+        $all_area_description = $description;
+
         if ($area_details) {
-            return response()->json(['msg' => 'Success', 'status_code' => 200, 'data' => $area_details]);
+            return response()->json(['msg' => 'Success', 'status_code' => 200, 'data' => $area_details,'all_area_description'=>$all_area_description]);
         } else {
             return response()->json(['msg' => 'No area available', 'status_code' => 404]);
         }
@@ -235,5 +250,6 @@ class StudentController extends Controller
         } else {
             return response()->json(['msg' => 'Insertion error.', 'status_code' => 500]);
         }
+        
     }
 }
