@@ -518,8 +518,8 @@
                     <div class="form-group">
                         <label class="col-md-2 control-label">Explanation File</label>
                         <div class="col-md-10">
-                            <input type="file" name="explanation_file" id="explanation_file" class="form-control">
-                            <span class="pull-left">Allowed file types .jpeg, .png, .jpg, .mp4, .zip, .pdf and file should be within 6MB</span>
+                            <input type="file" name="explanation_file" id="explanation_file" class="form-control" accept=".jpeg,.png,.jpg,.pdf" />
+                            <span class="pull-left">Allowed file types .jpeg, .png, .jpg, .pdf and file should be within 6MB</span>
 
                             <br><br>
                             {{ $fetch_question_details['explanation_file'] }}

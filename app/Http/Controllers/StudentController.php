@@ -29,12 +29,10 @@ class StudentController extends Controller
 {
     public function registration(Request $request) {
     	$validator = Validator::make($request->all(),[
-    		// 'username' => 'required|unique:students,username',
     		'email' => 'required|email|unique:students,email',
     		'password' => 'required',
     		'mobile_no' => 'required|max:10|min:10|regex:/[0-9]{10}/'
 		],[
-			// 'username.required' => 'Please enter username',
 			'email.required' => 'Please enter email id'
 		]);
 		if ($validator->fails()) {
@@ -84,10 +82,23 @@ class StudentController extends Controller
             return response()->json(['msg' => 'Failed to create token', 'status_code' => 500]);
         }
         $user = JWTAuth::toUser($token);
+        if ($user->image == '') {
+            $image = url('/') .'/upload/profile_image/default.png';
+        } else {
+            $image = url('/') .'/upload/profile_image/resize/'. $user->image;
+        }
         if ($user->status == 0) {
             return response()->json(['msg' => 'Account not activated.', 'status_code' => 404]);
         } else {
-            return response()->json(['msg' => 'Successfully login', 'status_code' => 200, 'token' => $token, 'exam_id'=>$user->exam_id]);
+            return response()->json([
+                'msg' => 'Successfully login',
+                'status_code' => 200,
+                'token' => $token,
+                'first_name' => ucfirst($user->first_name),
+                'last_name' => ucfirst($user->last_name),
+                'image' => $image,
+                'exam_id' => $user->exam_id
+            ]);
         }
     }
 
@@ -119,7 +130,7 @@ class StudentController extends Controller
 
     public function get_subject(Request $request) {
         $exam_id = $request->exam_id;
-        $all_subject = SubjectExam::with('subject')->where('exam_id', $exam_id)->get()->toArray();
+        $all_subject = SubjectExam::with('subject')->where('exam_id', $exam_id)->orderBy('id', 'desc')->get()->toArray();
         if ($all_subject) {
             return response()->json(['msg' => 'Success', 'status_code' => 200, 'data' => $all_subject]);
         } else {
@@ -132,22 +143,17 @@ class StudentController extends Controller
         $subject_id = $request->subject_id;
         $area_details = Area::where([['exam_id', '=', $exam_id],['subject_id', '=', $subject_id]])->get()->toArray();
 
-        foreach($area_details as $key => $value){
+        foreach ($area_details as $key => $value) {
+            $description = strip_tags($value['description']);
             $area_id = $value['id'];
-
-            $fetch_sections = Section::where('area_id',$area_id)->get()->toArray();
+            $area_details[$key]['description'] = $description;
+            $fetch_sections = Section::where('area_id', $area_id)->get()->toArray();
             $area_details[$key]['sections'] = $fetch_sections;
+            
         }
-
-        $description = array();
-
-        foreach($area_details as $key => $value){
-            $description[] = strip_tags($value['description']);
-        }
-        $all_area_description = $description;
 
         if ($area_details) {
-            return response()->json(['msg' => 'Success', 'status_code' => 200, 'data' => $area_details,'all_area_description'=>$all_area_description]);
+            return response()->json(['msg' => 'Success', 'status_code' => 200, 'data' => $area_details]);
         } else {
             return response()->json(['msg' => 'No area available', 'status_code' => 404]);
         }
@@ -185,7 +191,13 @@ class StudentController extends Controller
                 $pdf = array();
                 $pdf_lists = unserialize($value['pdf']);
                 foreach ($pdf_lists as $p) {
-                    $pdf[] = url('/') .'/upload/study_pdf/'. $p['pdf'];
+                    $file_name = url('/') .'/upload/study_pdf/'. $p['pdf'];
+                    $file_extn = pathinfo($p['pdf'], PATHINFO_EXTENSION);
+
+                    $pdf[] = array(
+                        'file' => $file_name,
+                        'ext' => $file_extn
+                    );
                 }
 
                 $doc = array();
@@ -234,14 +246,14 @@ class StudentController extends Controller
         $user_exam->area_id = $area_id;
         $user_exam->question_id = $question_id;
 
-        $fetch_question_type = QuestionAnswer::where('id',$question_id)->select('option_type')->get()->toArray();
-        if($fetch_question_type[0]['option_type'] == 'mcq'){
+        $fetch_question_type = QuestionAnswer::where('id', $question_id)->select('option_type')->get()->toArray();
+        if ($fetch_question_type[0]['option_type'] == 'mcq') {
             $ans_arr = explode(',', $request->user_answer);
             $user_answer = serialize($ans_arr);
 
             $user_exam->user_answer = $user_answer;
         }
-        if($fetch_question_type[0]['option_type'] == 'numeric'){
+        if ($fetch_question_type[0]['option_type'] == 'numeric') {
             $user_exam->numeric_ans = $request->user_answer;
         }
 
@@ -250,6 +262,5 @@ class StudentController extends Controller
         } else {
             return response()->json(['msg' => 'Insertion error.', 'status_code' => 500]);
         }
-        
     }
 }

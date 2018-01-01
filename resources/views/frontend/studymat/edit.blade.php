@@ -45,7 +45,6 @@
                                 @endforeach
                             </select>
                         </div>
-                        @if ($errors->first('subject'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('subject') }}</span>@endif
                     </div>
 
                     <div class="form-group">
@@ -58,7 +57,6 @@
                                 @endforeach
                             </select>
                         </div>
-                        @if ($errors->first('exam'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('exam') }}</span>@endif
                     </div>
 
                     <div class="form-group">
@@ -71,7 +69,6 @@
                                 @endforeach
                             </select>
                         </div>
-                        @if ($errors->first('area'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('area') }}</span>@endif
                     </div>
 
                     <div class="form-group">
@@ -84,14 +81,13 @@
                                 @endforeach
                             </select>
                         </div>
-                        @if ($errors->first('section'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('section') }}</span>@endif
                     </div>
                     
                     <div class="form-group">
                         <label class="col-md-2 control-label">Video</label>
                         <div class="col-md-10">
-                            <input type="file" name="video_files[]" id="video_files" class="form-control" onchange="handleVideos();" accept=".mp4,.mpeg,.avi,.wmv" multiple />
-                            <span class="pull-left">Allowed file types .mp4, .mpeg, .avi, .wmv [User can upload multiple videos at a time or separately]</span>
+                            <input type="file" name="video_files[]" id="video_files" class="form-control" onchange="handleVideos();" accept=".mp4" multiple />
+                            <span class="pull-left">Allowed file types .mp4 [User can upload multiple videos at a time or separately]</span>
                         </div>
                         <ul id="video_sortable" class="ui-sortable">
                             @if(count($fetch_study_videos) > 0)
@@ -120,8 +116,8 @@
                     <div class="form-group">
                         <label class="col-md-2 control-label">Theory</label>
                         <div class="col-md-10">
-                            <input type="file" name="doc_files[]" id="doc_files" class="form-control" onchange="handleDocs();" accept=".doc, .docx, .txt" multiple />
-                            <span class="pull-left">Allowed file types .doc, .docx, .txt [User can upload multiple documents at a time or separately]</span>
+                            <input type="file" name="doc_files[]" id="doc_files" class="form-control" onchange="handleDocs();" accept=".pdf" multiple />
+                            <span class="pull-left">Allowed file types .pdf [User can upload multiple documents (pdf) at a time or separately]</span>
                         </div>
                         <ul id="doc_sortable" class="ui-sortable">
                             @if(count($fetch_study_documents) > 0)
@@ -212,6 +208,8 @@
         input[type="file"] { height: auto; }
     </style>
 
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
     <script type="text/javascript">
         var formdata = new FormData();
         $(document).ready(function() {
@@ -222,6 +220,7 @@
             $('#subject').on('change', function () {
                 var subject_id = $(this).val();
                 if (subject_id) {
+                    $('#study_mat_submit').prop('disabled', false);
                     $.ajax({
                         type: 'POST',
                         url: '/study_mat/fetch-subject-wise-exam',
@@ -255,7 +254,6 @@
                             }
                         },
                         error: function(err) {
-
                         }
                     });
                 } else {
@@ -267,6 +265,7 @@
             $('#area').on('change', function() {
                 var area_id = $(this).val();
                 if (area_id) {
+                    $('#study_mat_submit').prop('disabled', false);
                     $.ajax({
                         type: 'POST',
                         url: '/study_mat/fetch-area-wise-section',
@@ -288,6 +287,10 @@
                 } else {
                     $("#section").find('option').not(':first').remove();
                 }
+            });
+
+            $('#section').on('change', function() {
+                $('#study_mat_submit').prop('disabled', false);
             });
         });
 
@@ -387,13 +390,12 @@
                 var valid = $('#frmStudyMat').valid();
                 if (valid) {
                     $('#study_mat_submit').prop('disabled', true);
-
                     formdata.append('study_id', $("#study_id").val());
                     formdata.append('subject', $("#subject").val());
                     formdata.append('exam[]', $("#exam").val());
                     formdata.append('area', $("#area").val());
                     formdata.append('section', $("#section").val());
-                    formdata.append('description', $("#description").val());
+                    formdata.append('description', CKEDITOR.instances['description'].getData());
                     formdata.append('duration', $("#duration").val());
                     formdata.append('_token', '{{csrf_token()}}');
                     $(".li-video").each(function(index) {
@@ -418,7 +420,9 @@
                         contentType: false,
                         data: formdata,
                         success: function (data) {
-                            if (data == 1) {
+                            if (data.code == 500) {
+                                swal(data.message);
+                            } else if (data == 1) {
                                 window.location.href = '/study_mat';
                             } else if (data == 0) {
                                 window.location.href = '/study_mat/edit/';

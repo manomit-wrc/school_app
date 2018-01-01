@@ -79,17 +79,26 @@ class StudyMatController extends Controller
     }
 
     public function study_mat_submit(Request $request) {
-    	Validator::make($request->all(),[
+    	$validator = Validator::make($request->all(),[
     		'subject' => 'required',
             'exam' => 'required',
     		'area' => 'required',
-    		'section' => 'required'
+    		'section' => 'required|unique:study_mats,section_id,'.$request->section
     	],[
     		'subject.required' => 'Please select subject',
             'exam.required' => 'Please select exam',
     		'area.required' => 'Please select area',
-    		'section.required' => 'Please select section'
-    	])->validate();
+    		'section.required' => 'Please select section',
+            'section.unique' => 'Study material already exists. Please choose another section'
+    	]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => true,
+                'message' => $validator->messages()->first(),
+                'code' => 500
+            ]);
+        }
 
     	$video_arr = array();
     	$pdf_arr = array();
@@ -207,17 +216,26 @@ class StudyMatController extends Controller
 
     public function study_mat_update(Request $request) {
         $id = $request->study_id;
-        Validator::make($request->all(),[
+        $validator = Validator::make($request->all(),[
             'subject' => 'required',
             'exam' => 'required',
             'area' => 'required',
-            'section' => 'required'
+            'section' => 'required|unique:study_mats,section_id,'.$request->section
         ],[
             'subject.required' => 'Please select subject',
             'exam.required' => 'Please select exam',
             'area.required' => 'Please select area',
-            'section.required' => 'Please select section'
-        ])->validate();
+            'section.required' => 'Please select section',
+            'section.unique' => 'Study material already exists. Please choose another section'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => true,
+                'message' => $validator->messages()->first(),
+                'code' => 500
+            ]);
+        }
 
         $studymat = StudyMat::find($id);
 
