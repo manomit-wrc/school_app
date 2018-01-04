@@ -38,4 +38,7 @@ Route::group(['middleware' => ['jwt.auth']], function () {
 	Route::post('/adduserexam', 'StudentController@add_user_exam');
 	Route::post('/banner','ProfileController@banner');
 	Route::post('/reviewexam', 'ProfileController@review_exam');
+	Route::post('/updatestudymatlog', 'StudentController@update_study_mat_log');
+	Route::post('/fetchareaquestion', 'ProfileController@fetch_area_question');
+	Route::post('/reviewareaexam', 'ProfileController@review_area_exam');
 });

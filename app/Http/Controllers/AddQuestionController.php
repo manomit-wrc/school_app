@@ -16,7 +16,7 @@ use DB;
 class AddQuestionController extends Controller
 {
     public function index() {
-    	$fetch_all_question = QuestionAnswer::with('subject', 'area', 'section')->where('status','1')->orderby('id','desc')->get()->toArray();
+    	$fetch_all_question = QuestionAnswer::with('subject', 'area', 'section')->where('status', '1')->orderby('id','desc')->get()->toArray();
     	foreach ($fetch_all_question as $key => $value) {
     		$exam_name = '';
     		$exam_ids = explode(',', $value['exam_id']);
@@ -27,9 +27,9 @@ class AddQuestionController extends Controller
         	$exam_name = rtrim($exam_name, ', ');
         	$fetch_all_question[$key]['exam'] = $exam_name;
         }
-        $fetch_all_subject = Subject::where('status','1')->pluck('sub_full_name', 'id')->toArray();
-        $fetch_all_exam = Exam::where('status','1')->pluck('name', 'id')->toArray();
-        $fetch_all_area = Area::where('status','1')->pluck('name', 'id')->toArray();
+        $fetch_all_subject = Subject::where('status', '1')->pluck('sub_full_name', 'id')->toArray();
+        $fetch_all_exam = Exam::where('status', '1')->pluck('name', 'id')->toArray();
+        $fetch_all_area = Area::where('status', '1')->pluck('name', 'id')->toArray();
         $fetch_all_section = Section::pluck('name', 'id')->toArray();
     	return view ('frontend.qustion.listings')->with('fetch_all_question', $fetch_all_question)->with('fetch_all_subject', $fetch_all_subject)->with('fetch_all_exam', $fetch_all_exam)->with('fetch_all_area', $fetch_all_area)->with('fetch_all_section', $fetch_all_section);
     }
@@ -52,14 +52,14 @@ class AddQuestionController extends Controller
     		$exam_details_array['exam_name'] = $fetch_exam_details[0]['name'];
     		$tempArray[] = $exam_details_array;
     	}
-    	return response()->json(['tempArray'=>$tempArray]);
+    	return response()->json(['tempArray' => $tempArray]);
     }
 
     public function fetch_area_exam_wise(Request $request) {
     	$tempArray = array();
     	$exam_id = $request->exam_id;
     	$subject_id = $request->subject_id;
-    	$fetch_subject_details = Subject::where('id',$subject_id)->get()->toArray();
+    	$fetch_subject_details = Subject::where('id', $subject_id)->get()->toArray();
     	$fetch_area = Area::where([['subject_id', $fetch_subject_details[0]['id']], ['status', '1']])->get()->toArray();
     	return response()->json(['fetch_area' => $fetch_area]);
     }
@@ -75,22 +75,22 @@ class AddQuestionController extends Controller
     		'subject' => 'required',
     		'exam' => 'required',
     		'area' => 'required',
-    		'section' => 'required',
+    		//'section' => 'required',
     		'level' => 'required',
     		'question_type' => 'required|in:text,image',
     		'option_type'=> 'required|in:mcq,numeric',
-    		'explanation_details' => 'required' ,
+    		'explanation_details' => 'required',
     		'explanation_file' => 'mimetypes:image/jpeg,image/png,image/jpg,application/pdf|max:6144'
     	],[
-    		'subject.required' => 'Please select subject.',
-    		'exam.required' => 'Please select exam type.',
-    		'area.required' => 'Please select area.',
-    		'section.required' => 'Please select section.',
-    		'level.required' => 'Please select question level.',
-    		'question_type.required' => 'Please select question type.',
-    		'option_type.required' => 'Please select option type.',
-    		'explanation_details.required' => "Explanation details can't be blank." ,
-    		'explanation_file.*.mimetypes' => 'Please upload correct file.',
+    		'subject.required' => 'Please select subject',
+    		'exam.required' => 'Please select exam',
+    		'area.required' => 'Please select area',
+    		//'section.required' => 'Please select section',
+    		'level.required' => 'Please select question level',
+    		'question_type.required' => 'Please select question type',
+    		'option_type.required' => 'Please select option type',
+    		'explanation_details.required' => 'Please enter explanation details',
+    		'explanation_file.*.mimetypes' => 'Please upload correct file',
     		'explanation_file.*.max' => 'Please upload file within 6MB'
     	])->validate();
 
@@ -346,21 +346,22 @@ class AddQuestionController extends Controller
     		'subject' => 'required',
     		'exam' => 'required',
     		'area' => 'required',
-    		'section' => 'required',
+    		//'section' => 'required',
     		'level' => 'required',
     		'question_type' => 'required|in:text,image',
     		'option_type'=> 'required|in:mcq,numeric',
     		'explanation_details' => 'required' ,
     		'explanation_file' => 'mimetypes:image/jpeg,image/png,image/jpg,application/pdf|max:6144' 
     	],[
-    		'subject.required' => 'Please select subject.',
-    		'exam.required' => 'Please select exam type.',
-    		'area.required' => 'Please select area.',
-    		'section.required' => 'Please select section.',
-    		'level.required' => 'Please select question level.',
-    		'question_type.required' => 'Please select question type.',
-    		'option_type.required' => 'Please select option type.',
-    		'explanation_file.*.mimetypes' => 'Please upload correct file.',
+    		'subject.required' => 'Please select subject',
+    		'exam.required' => 'Please select exam type',
+    		'area.required' => 'Please select area',
+    		//'section.required' => 'Please select section',
+    		'level.required' => 'Please select question level',
+    		'question_type.required' => 'Please select question type',
+    		'option_type.required' => 'Please select option type',
+            'explanation_details.required' => 'Please enter explanation details',
+    		'explanation_file.*.mimetypes' => 'Please upload correct file',
     		'explanation_file.*.max' => 'Please upload file within 6MB'
     	])->validate();
 

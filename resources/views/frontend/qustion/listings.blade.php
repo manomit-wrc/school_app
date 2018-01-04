@@ -97,6 +97,9 @@
                                         <option value="3" @if(isset($level) && $level == 3) selected="selected" @endif>Level 3</option>
                                         <option value="4" @if(isset($level) && $level == 4) selected="selected" @endif>Level 4</option>
                                         <option value="5" @if(isset($level) && $level == 5) selected="selected" @endif>Level 5</option>
+                                        <option value="6" @if(isset($level) && $level == 6) selected="selected" @endif>Area Test</option>
+                                        <option value="7" @if(isset($level) && $level == 7) selected="selected" @endif>Subject Test</option>
+                                        <option value="8" @if(isset($level) && $level == 8) selected="selected" @endif>Full Length Test</option>
                                     </select>
                                 </div>
                             </div>
@@ -143,6 +146,12 @@
                                             {{ 'Level 4' }}
                                         @elseif($value['level'] == '5')
                                             {{ 'Level 5' }}
+                                        @elseif($value['level'] == '6')
+                                            {{ 'Area Test' }}
+                                        @elseif($value['level'] == '7')
+                                            {{ 'Subject Test' }}
+                                        @elseif($value['level'] == '8')
+                                            {{ 'Full Length Test' }}
                                         @endif
                                     </td>
                                     <td>{{ strip_tags($value['question']) }}</td>

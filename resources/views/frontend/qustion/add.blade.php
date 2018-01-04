@@ -32,7 +32,7 @@
                             <select class="form-control" name="subject" id="subject">
                                 <option value="">Select Subject</option>
                                 @foreach($fetch_all_subject as $key => $value)
-                                    <option value="{{ $key }}" subject_name="{{ $key }}">{{ $value }}</option>
+                                    <option value="{{ $key }}">{{ $value }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -42,10 +42,10 @@
                     <div class="form-group">
                         <label class="col-md-2 control-label">Exam</label>
                         <div class="col-md-10 {{ $errors->has('exam') ? 'has-error' : '' }}">
-                            <select class="form-control" name="exam[]" id="exam" subject_id='' multiple>
+                            <select class="form-control" name="exam[]" id="exam" multiple>
                                 <option value="">Select Exam</option>
                                 {{--@foreach($fetch_all_exam as $key => $value)
-                                    <option value="{{ $key }}" subject_name="{{ $value }}">{{ $value }}</option>
+                                    <option value="{{ $key }}">{{ $value }}</option>
                                 @endforeach--}}
                             </select>
                         </div>
@@ -69,7 +69,6 @@
                                 <option value="">Select Section</option>
                             </select>
                         </div>
-                        @if ($errors->first('section'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('section') }}</span>@endif
                     </div>
 
                     <div class="form-group">
@@ -82,9 +81,12 @@
                                 <option value="3">Level 3</option>
                                 <option value="4">Level 4</option>
                                 <option value="5">Level 5</option>
+                                <option value="6">Area Test</option>
+                                <option value="7">Subject Test</option>
+                                <option value="8">Full Length Test</option>
                             </select>
                         </div>
-                        @if ($errors->first('level'))<span class="input-group col-md-offset-2 level-danger">{{ $errors->first('level') }}</span>@endif
+                        @if ($errors->first('level'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('level') }}</span>@endif
                     </div>
                     
                     <div class="form-group">
@@ -456,17 +458,16 @@
 
             $('#subject').on('change', function () {
                 var subject_id = $(this).val();
-                var subject_name = $('option:selected', this).attr('subject_name');
                 if (subject_id) {
                     $.ajax({
                         type: 'POST',
                         url: '/question/fetch-exam-subject-wise',
                         data: {
-                            subject_id : subject_name,
+                            subject_id : subject_id,
                             _token : "{{ csrf_token() }}"
                         },
                         success:function(response) {
-                            $('#exam').attr('subject_id',subject_name);
+                            $('#exam').attr('subject_id', subject_id);
                             $("#exam").find('option').not(':first').remove();
                             $("#section").find('option').not(':first').remove();
                             $("#area").find('option').not(':first').remove();
@@ -505,8 +506,7 @@
 
                         }
                     });
-
-                }else{
+                } else {
                     $("#area").find('option').not(':first').remove();
                 }
             });
@@ -535,7 +535,6 @@
                     $("#section").find('option').not(':first').remove();
                 }
             });
-            
         });
     </script>
 @endsection

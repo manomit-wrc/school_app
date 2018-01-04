@@ -97,16 +97,19 @@ class ProfileController extends Controller
     	}
     }
 
-    public function fetch_question(Request $request) {
-    	$subject_id = $request->subject_id;
+    /*public function fetch_question(Request $request) {
+        $user = JWTAuth::toUser($request->token);
+        $user_id = $user['id'];
+
     	$exam_id = $request->exam_id;
+        $subject_id = $request->subject_id;
     	$area_id = $request->area_id;
         $section_id = $request->section_id;
         $level = $request->level;
     	$page_no = $request->page_no;
 
     	if (isset($page_no)) {
-		 $limit = 1;
+            $limit = 1;
 		    $page = $page_no; //it will telles the current page
 		    if ($page && $page > 0) {
 		        $start = ($page - 1) * $limit;
@@ -115,64 +118,296 @@ class ProfileController extends Controller
 		    }
 		}
 
-    	$fetch_question_details = QuestionAnswer::where([['subject_id', $subject_id], ['area_id', $area_id], ['status', '1'], ['section_id', $section_id], ['exam_id', 'like', '%'.$exam_id.'%'], ['level', '=', $level]])->offset($start)->limit($limit)->get()->toArray();
-
-    	if (count($fetch_question_details) > 0) {
-            if ($fetch_question_details[0]['option_type'] == 'mcq') {
-                $question_type = $fetch_question_details[0]['question_type'];
-                if ($question_type == 'image') {
-                    $question_url = url('/') . "/upload/question_file/resize/" . $fetch_question_details[0]['question'];
-                    $question = "<img src='".$question_url."' alt='' />";
-                }
-                if ($question_type == 'text') {
-                    $question = $fetch_question_details[0]['question'];
-                }
-
-                $option = unserialize($fetch_question_details[0]['answer']);
-                $option['optionA_val'] = '1';
-                $option['optionB_val'] = '2';
-                $option['optionC_val'] = '3';
-                $option['optionD_val'] = '4';
-                $option['optionE_val'] = '5';
-
-                $option_image_link = url('/') . "/upload/answers_file/resize/";
-                
-                $correct_answer = count(unserialize($fetch_question_details[0]['correct_answer']));
-                if ($correct_answer > 1) {
-                    $answer_type = 'multiple';
+        if ($level == 1) {
+            $access = 1;
+        } else {
+            $pre_level = $level - 1;
+            $fetch_user_marks = UserMarks::where([['student_id', '=', $user_id], ['exam_id', '=', $exam_id], ['subject_id', '=', $subject_id], ['area_id', '=', $area_id], ['section_id', '=', $section_id], ['level', '=', $pre_level]])->orderBy('id', 'desc')->take(1)->get()->toArray();
+            if (count($fetch_user_marks) > 0) {
+                $fetch_correct_ans = $fetch_user_marks[0]['total_correct_ans'];
+                if ($fetch_correct_ans > 3) {
+                    $access = 1;
                 } else {
-                    $answer_type = 'single';
+                    $access = 0;
                 }
-
-                if (!empty($fetch_question_details[0]['explanation_file'])) {
-                    $explanation_file_link = url('/') . "/upload/explanation_file/resize/" . $fetch_question_details[0]['explanation_file'];
-                } else {
-                    $explanation_file_link = "N/A";
-                }
-
-                return response()->json(['status_code' => 200, 'question_id' => $fetch_question_details[0]['id'], 'question' => $question, 'question_type' => $fetch_question_details[0]['question_type'], 'option_type' => 'mcq', 'option' => $option, 'option_image_link' => $option_image_link, 'answer_type' => $answer_type, 'explanation_details' => $fetch_question_details[0]['explanation_details'], 'explanation_file_link' => $explanation_file_link]);
+            } else {
+                $access = 0;
             }
+        }
 
-            if ($fetch_question_details[0]['option_type'] == 'numeric') {
-                $question_type = $fetch_question_details[0]['question_type'];
-                if ($question_type == 'image') {
-                    $question = url('/') . "/upload/question_file/resize/" . $fetch_question_details[0]['question'];
-                }
-                if ($question_type == 'text') {
-                    $question = $fetch_question_details[0]['question'];
+        if ($access == 1) {
+            $fetch_question_details = QuestionAnswer::where([['subject_id', '=', $subject_id], ['area_id', '=', $area_id], ['status', '=', '1'], ['section_id', '=', $section_id], ['exam_id', 'like', '%'.$exam_id.'%'], ['level', '=', $level]])->offset($start)->limit($limit)->get()->toArray();
+
+        	if (count($fetch_question_details) > 0) {
+                if ($fetch_question_details[0]['option_type'] == 'mcq') {
+                    $question_type = $fetch_question_details[0]['question_type'];
+                    if ($question_type == 'image') {
+                        $question_url = url('/') . "/upload/question_file/resize/" . $fetch_question_details[0]['question'];
+                        $question = "<img src='".$question_url."' alt='' />";
+                    }
+                    if ($question_type == 'text') {
+                        $question = $fetch_question_details[0]['question'];
+                    }
+
+                    $option = unserialize($fetch_question_details[0]['answer']);
+                    $option['optionA_val'] = '1';
+                    $option['optionB_val'] = '2';
+                    $option['optionC_val'] = '3';
+                    $option['optionD_val'] = '4';
+                    $option['optionE_val'] = '5';
+
+                    $option_image_link = url('/') . "/upload/answers_file/resize/";
+                    
+                    $correct_answer = count(unserialize($fetch_question_details[0]['correct_answer']));
+                    if ($correct_answer > 1) {
+                        $answer_type = 'multiple';
+                    } else {
+                        $answer_type = 'single';
+                    }
+
+                    if (!empty($fetch_question_details[0]['explanation_file'])) {
+                        $explanation_file_link = url('/') . "/upload/explanation_file/resize/" . $fetch_question_details[0]['explanation_file'];
+                    } else {
+                        $explanation_file_link = "N/A";
+                    }
+
+                    return response()->json(['status_code' => 200, 'question_id' => $fetch_question_details[0]['id'], 'question' => $question, 'question_type' => $fetch_question_details[0]['question_type'], 'option_type' => 'mcq', 'option' => $option, 'option_image_link' => $option_image_link, 'answer_type' => $answer_type, 'explanation_details' => $fetch_question_details[0]['explanation_details'], 'explanation_file_link' => $explanation_file_link]);
                 }
 
-                if (!empty($fetch_question_details[0]['explanation_file'])) {
-                    $explanation_file_link = url('/') . "/upload/explanation_file/resize/" . $fetch_question_details[0]['explanation_file'];
+                if ($fetch_question_details[0]['option_type'] == 'numeric') {
+                    $question_type = $fetch_question_details[0]['question_type'];
+                    if ($question_type == 'image') {
+                        $question = url('/') . "/upload/question_file/resize/" . $fetch_question_details[0]['question'];
+                    }
+                    if ($question_type == 'text') {
+                        $question = $fetch_question_details[0]['question'];
+                    }
+
+                    if (!empty($fetch_question_details[0]['explanation_file'])) {
+                        $explanation_file_link = url('/') . "/upload/explanation_file/resize/" . $fetch_question_details[0]['explanation_file'];
+                    } else {
+                        $explanation_file_link = "N/A";
+                    }
+
+                    return response()->json(['status_code' => 200, 'question_id' => $fetch_question_details[0]['id'], 'question' => $question, 'question_type' => $fetch_question_details[0]['question_type'], 'option_type' => 'numeric', 'explanation_file_link' => $explanation_file_link, 'explanation_details' => $fetch_question_details[0]['explanation_details']]);
+                }
+        	} else {
+        		return response()->json(['status_code' => 404, 'msg' => 'No questions found.']);
+        	}
+        } else {
+            return response()->json(['status_code' => 500, 'msg' => 'You are not eligible to take this test!']);
+        }
+    }*/
+
+    public function fetch_question(Request $request) {
+        $user = JWTAuth::toUser($request->token);
+        $user_id = $user['id'];
+
+        $exam_id = $request->exam_id;
+        $subject_id = $request->subject_id;
+        $area_id = $request->area_id;
+        $section_id = $request->section_id;
+        $level = $request->level;
+
+        $question_list = array();
+
+        if ($level == 1) {
+            $access = 1;
+        } else if ($level == 4 || $level == 5) {
+            if ($user['subscription'] == 0) {
+                $access = 2;
+            } else {
+                $pre_level = $level - 1;
+                $fetch_user_marks = UserMarks::where([['student_id', '=', $user_id], ['exam_id', '=', $exam_id], ['subject_id', '=', $subject_id], ['area_id', '=', $area_id], ['section_id', '=', $section_id], ['level', '=', $pre_level]])->orderBy('id', 'desc')->take(1)->get()->toArray();
+                if (count($fetch_user_marks) > 0) {
+                    $fetch_correct_ans = $fetch_user_marks[0]['total_correct_ans'];
+                    if ($fetch_correct_ans >= 3) {
+                        $access = 1;
+                    } else {
+                        $access = 0;
+                    }
                 } else {
-                    $explanation_file_link = "N/A";
+                    $access = 0;
+                }
+            }
+        } else {
+            $pre_level = $level - 1;
+            $fetch_user_marks = UserMarks::where([['student_id', '=', $user_id], ['exam_id', '=', $exam_id], ['subject_id', '=', $subject_id], ['area_id', '=', $area_id], ['section_id', '=', $section_id], ['level', '=', $pre_level]])->orderBy('id', 'desc')->take(1)->get()->toArray();
+            if (count($fetch_user_marks) > 0) {
+                $fetch_correct_ans = $fetch_user_marks[0]['total_correct_ans'];
+                if ($fetch_correct_ans >= 3) {
+                    $access = 1;
+                } else {
+                    $access = 0;
+                }
+            } else {
+                $access = 0;
+            }
+        }
+
+        if ($access == 1) {
+            $fetch_question_details = QuestionAnswer::where([['subject_id', '=', $subject_id], ['area_id', '=', $area_id], ['status', '=', '1'], ['section_id', '=', $section_id], ['exam_id', 'like', '%'.$exam_id.'%'], ['level', '=', $level]])->orderByRaw("RAND()")->take(5)->get()->toArray();
+
+            if (count($fetch_question_details) > 0) {
+                foreach ($fetch_question_details as $key => $value) {
+                    if ($value['option_type'] == 'mcq') {
+                        $question_type = $value['question_type'];
+                        if ($question_type == 'image') {
+                            $question_url = url('/') . "/upload/question_file/resize/" . $value['question'];
+                            $question = "<img src='".$question_url."' alt='' />";
+                        }
+                        if ($question_type == 'text') {
+                            $question = $value['question'];
+                        }
+
+                        $option = unserialize($value['answer']);
+                        $option['optionA_val'] = '1';
+                        $option['optionB_val'] = '2';
+                        $option['optionC_val'] = '3';
+                        $option['optionD_val'] = '4';
+                        $option['optionE_val'] = '5';
+
+                        $option_image_link = url('/') . "/upload/answers_file/resize/";
+                        
+                        $correct_answer = count(unserialize($value['correct_answer']));
+                        if ($correct_answer > 1) {
+                            $answer_type = 'multiple';
+                        } else {
+                            $answer_type = 'single';
+                        }
+
+                        if (!empty($value['explanation_file'])) {
+                            $explanation_file_link = url('/') . "/upload/explanation_file/resize/" . $value['explanation_file'];
+                        } else {
+                            $explanation_file_link = "N/A";
+                        }
+                    }
+                    else if ($value['option_type'] == 'numeric') {
+                        $question_type = $value['question_type'];
+                        if ($question_type == 'image') {
+                            $question = url('/') . "/upload/question_file/resize/" . $value['question'];
+                        }
+                        if ($question_type == 'text') {
+                            $question = $value['question'];
+                        }
+
+                        if (!empty($value['explanation_file'])) {
+                            $explanation_file_link = url('/') . "/upload/explanation_file/resize/" . $value['explanation_file'];
+                        } else {
+                            $explanation_file_link = "N/A";
+                        }
+
+                        $option = "";
+                        $option_image_link = "";
+                        $answer_type = '';
+                    }
+
+                    $question_list[] = array(
+                        'question_id' => $value['id'],
+                        'question_type' => $value['question_type'],
+                        'question' => $question,
+                        'option_type' => $value['option_type'],
+                        'option' => $option,
+                        'option_image_link' => $option_image_link,
+                        'answer_type' => $answer_type,
+                        'explanation_details' => $value['explanation_details'],
+                        'explanation_file_link' => $explanation_file_link
+                    );
+                }
+                return response()->json(['status_code' => 200, 'msg' => 'Success', 'data' => $question_list]);
+            } else {
+                return response()->json(['status_code' => 404, 'msg' => 'No question found.']);
+            }
+        } else if ($access == 2) {
+            return response()->json(['status_code' => 500, 'msg' => 'Your subscription is free. Please pay to get access to all exams!']);
+        } else {
+            return response()->json(['status_code' => 500, 'msg' => 'You are not eligible to take this test!']);
+        }
+    }
+
+    public function fetch_area_question(Request $request) {
+        $user = JWTAuth::toUser($request->token);
+        $user_id = $user['id'];
+
+        $exam_id = $request->exam_id;
+        $subject_id = $request->subject_id;
+        $area_id = $request->area_id;
+        $level = $request->level;
+
+        $question_list = array();
+
+        $fetch_question_details = QuestionAnswer::where([['subject_id', '=', $subject_id], ['area_id', '=', $area_id], ['status', '=', '1'], ['exam_id', 'like', '%'.$exam_id.'%'], ['level', '=', $level]])->orderByRaw("RAND()")->take(10)->get()->toArray();
+
+        if (count($fetch_question_details) > 0) {
+            foreach ($fetch_question_details as $key => $value) {
+                if ($value['option_type'] == 'mcq') {
+                    $question_type = $value['question_type'];
+                    if ($question_type == 'image') {
+                        $question_url = url('/') . "/upload/question_file/resize/" . $value['question'];
+                        $question = "<img src='".$question_url."' alt='' />";
+                    }
+                    if ($question_type == 'text') {
+                        $question = $value['question'];
+                    }
+
+                    $option = unserialize($value['answer']);
+                    $option['optionA_val'] = '1';
+                    $option['optionB_val'] = '2';
+                    $option['optionC_val'] = '3';
+                    $option['optionD_val'] = '4';
+                    $option['optionE_val'] = '5';
+
+                    $option_image_link = url('/') . "/upload/answers_file/resize/";
+                    
+                    $correct_answer = count(unserialize($value['correct_answer']));
+                    if ($correct_answer > 1) {
+                        $answer_type = 'multiple';
+                    } else {
+                        $answer_type = 'single';
+                    }
+
+                    if (!empty($value['explanation_file'])) {
+                        $explanation_file_link = url('/') . "/upload/explanation_file/resize/" . $value['explanation_file'];
+                    } else {
+                        $explanation_file_link = "N/A";
+                    }
+                }
+                else if ($value['option_type'] == 'numeric') {
+                    $question_type = $value['question_type'];
+                    if ($question_type == 'image') {
+                        $question = url('/') . "/upload/question_file/resize/" . $value['question'];
+                    }
+                    if ($question_type == 'text') {
+                        $question = $value['question'];
+                    }
+
+                    if (!empty($value['explanation_file'])) {
+                        $explanation_file_link = url('/') . "/upload/explanation_file/resize/" . $value['explanation_file'];
+                    } else {
+                        $explanation_file_link = "N/A";
+                    }
+
+                    $option = "";
+                    $option_image_link = "";
+                    $answer_type = '';
                 }
 
-                return response()->json(['status_code' => 200, 'question_id' => $fetch_question_details[0]['id'], 'question' => $question, 'question_type' => $fetch_question_details[0]['question_type'], 'option_type' => 'numeric', 'explanation_file_link' => $explanation_file_link, 'explanation_details' => $fetch_question_details[0]['explanation_details']]);
+                $question_list[] = array(
+                    'question_id' => $value['id'],
+                    'question_type' => $value['question_type'],
+                    'question' => $question,
+                    'option_type' => $value['option_type'],
+                    'option' => $option,
+                    'option_image_link' => $option_image_link,
+                    'answer_type' => $answer_type,
+                    'explanation_details' => $value['explanation_details'],
+                    'explanation_file_link' => $explanation_file_link
+                );
             }
-    	} else {
-    		return response()->json(['status_code' => 404, 'msg' => 'No questions found.']);
-    	}
+            return response()->json(['status_code' => 200, 'msg' => 'Success', 'data' => $question_list]);
+        } else {
+            return response()->json(['status_code' => 404, 'msg' => 'No question found.']);
+        }
     }
 
     public function fetch_user_ans(Request $request) {
@@ -216,6 +451,7 @@ class ProfileController extends Controller
             $add->area_id = $area_id;
             $add->subject_id = $subject_id;
             $add->section_id = $section_id;
+            $add->level = $level;
             $add->percentile = $marks;
             $add->total_correct_ans = $total_correct_answer;
             $add->save();
@@ -390,7 +626,104 @@ class ProfileController extends Controller
                 return response()->json(['status_code' => 200, 'question' => $question, 'question_type' => $fetch_question_details[0]['question_type'], 'option_type' => 'numeric', 'user_answer' => $user_answer, 'correct_answer' => $correct_answer, 'explanation_file_link' => $explanation_file_link, 'explanation_details' => $fetch_question_details[0]['explanation_details']]);
             }
         } else {
-            return response()->json(['status_code' => 404, 'msg' => 'No questions found.']);
+            return response()->json(['status_code' => 404, 'msg' => 'No reviews found.']);
+        }
+    }
+
+    public function review_area_exam(Request $request) {
+        $user = JWTAuth::toUser($request->token);
+        $user_id = $user['id'];
+
+        $subject_id = $request->subject_id;
+        $exam_id = $request->exam_id;
+        $area_id = $request->area_id;
+        $level = $request->level;
+
+        $review_list = array();
+
+        $fetch_question_details = QuestionAnswer::where([['subject_id', '=', $subject_id], ['area_id', '=', $area_id], ['status', '=', '1'], ['exam_id', 'like', '%'.$exam_id.'%'], ['level', '=', $level]])->get()->toArray();
+
+        if (count($fetch_question_details) > 0) {
+            foreach ($fetch_question_details as $key => $value) {
+                if ($value['option_type'] == 'mcq') {
+                    $question_type = $value['question_type'];
+                    if ($question_type == 'image') {
+                        $question_url = url('/') . "/upload/question_file/resize/" . $value['question'];
+                        $question = "<img src='".$question_url."' alt='' />";
+                    }
+                    if ($question_type == 'text') {
+                        $question = $value['question'];
+                    }
+
+                    $option = unserialize($value['answer']);
+                    $option['optionA_val'] = '1';
+                    $option['optionB_val'] = '2';
+                    $option['optionC_val'] = '3';
+                    $option['optionD_val'] = '4';
+                    $option['optionE_val'] = '5';
+
+                    $option_image_link = url('/') . "/upload/answers_file/resize/";
+                    
+                    $count_correct_answer = count(unserialize($value['correct_answer']));
+                    if ($count_correct_answer > 1) {
+                        $answer_type = 'multiple';
+                    } else {
+                        $answer_type = 'single';
+                    }
+
+                    if (!empty($value['explanation_file'])) {
+                        $explanation_file_link = url('/') . "/upload/explanation_file/resize/" . $value['explanation_file'];
+                    } else {
+                        $explanation_file_link = "N/A";
+                    }
+
+                    $fetch_user_ans_details = UserExam::where([['student_id', '=', $user_id], ['exam_id', '=', $exam_id], ['subject_id', '=', $subject_id], ['area_id', '=', $area_id], ['question_id', '=', $value['id']]])->orderBy('id', 'desc')->take(1)->get()->toArray();
+                    $user_answer = unserialize($fetch_user_ans_details[0]['user_answer']);
+                    $user_answer = $user_answer[0];
+                    $correct_answer = unserialize($value['correct_answer']);
+                    $correct_answer = $correct_answer[0];
+                }
+                else if ($value['option_type'] == 'numeric') {
+                    $question_type = $value['question_type'];
+                    if ($question_type == 'image') {
+                        $question = url('/') . "/upload/question_file/resize/" . $value['question'];
+                    }
+                    if ($question_type == 'text') {
+                        $question = $value['question'];
+                    }
+
+                    if (!empty($value['explanation_file'])) {
+                        $explanation_file_link = url('/') . "/upload/explanation_file/resize/" . $value['explanation_file'];
+                    } else {
+                        $explanation_file_link = "N/A";
+                    }
+
+                    $fetch_user_ans_details = UserExam::where([['student_id', '=', $user_id], ['exam_id', '=', $exam_id], ['subject_id', '=', $subject_id], ['area_id', '=', $area_id], ['section_id', '=', $section_id], ['question_id', '=', $value['id']]])->orderBy('id', 'desc')->take(1)->get()->toArray();
+                    $user_answer = $fetch_user_ans_details[0]['numeric_ans'];
+                    $correct_answer = $value['numeric_answer'];
+
+                    $option = "";
+                    $option_image_link = "";
+                    $answer_type = '';
+                }
+
+                $review_list[] = array(
+                    'question_id' => $value['id'],
+                    'question_type' => $value['question_type'],
+                    'question' => $question,
+                    'option_type' => $value['option_type'],
+                    'option' => $option,
+                    'option_image_link' => $option_image_link,
+                    'answer_type' => $answer_type,
+                    'user_answer' => $user_answer,
+                    'correct_answer' => $correct_answer,
+                    'explanation_details' => $value['explanation_details'],
+                    'explanation_file_link' => $explanation_file_link
+                );
+            }
+            return response()->json(['status_code' => 200, 'msg' => 'Success', 'data' => $review_list]);
+        } else {
+            return response()->json(['status_code' => 404, 'msg' => 'No reviews found.']);
         }
     }
 }

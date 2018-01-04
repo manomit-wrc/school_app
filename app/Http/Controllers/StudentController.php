@@ -24,6 +24,8 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\Registration;
 use App\QuestionAnswer;
 use App\SubjectExam;
+use App\StudentStudyMatLog;
+use App\UserMarks;
 
 class StudentController extends Controller
 {
@@ -139,17 +141,106 @@ class StudentController extends Controller
     }
 
     public function get_area(Request $request) {
+        $user = JWTAuth::toUser($request->token);
+        $user_id = $user['id'];
+
         $exam_id = $request->exam_id;
         $subject_id = $request->subject_id;
-        $area_details = Area::where([['exam_id', '=', $exam_id],['subject_id', '=', $subject_id]])->get()->toArray();
-
+        $i = 1;
+        $area_details = Area::where([['exam_id', '=', $exam_id], ['subject_id', '=', $subject_id]])->orderBy('id', 'asc')->get()->toArray();
         foreach ($area_details as $key => $value) {
-            $description = strip_tags($value['description']);
+            $area_section_lock_entry = array();
+            $section_details = array();
             $area_id = $value['id'];
-            $area_details[$key]['description'] = $description;
+            $section_id = 0;
+            if ($i == 1) {
+                $area_lock = '0';
+            } else {
+                $area_lock = '1';
+            }
+            $area_details[$key]['area_lock'] = $area_lock;
             $fetch_sections = Section::where('area_id', $area_id)->get()->toArray();
-            $area_details[$key]['sections'] = $fetch_sections;
-            
+            foreach ($fetch_sections as $sec_key => $sec_value) {
+                $section_details[] = $sec_value;
+                if ($i == 1) {
+                    $section_lock = '0';
+                    $section_id = $sec_value['id'];
+                } else {
+                    $fetch_user_exam_level1_details = UserExam::where([['exam_id', '=', $exam_id], ['subject_id', '=', $subject_id], ['section_id', '=', $section_id], ['level', '=', '1']])->get()->toArray();
+                    $fetch_user_exam_level1_count = count($fetch_user_exam_level1_details);
+                    $fetch_user_exam_level2_details = UserExam::where([['exam_id', '=', $exam_id], ['subject_id', '=', $subject_id], ['section_id', '=', $section_id], ['level', '=', '2']])->get()->toArray();
+                    $fetch_user_exam_level2_count = count($fetch_user_exam_level2_details);
+                    $fetch_user_exam_level3_details = UserExam::where([['exam_id', '=', $exam_id], ['subject_id', '=', $subject_id], ['section_id', '=', $section_id], ['level', '=', '3']])->get()->toArray();
+                    $fetch_user_exam_level3_count = count($fetch_user_exam_level3_details);
+                    if ($fetch_user_exam_level1_count > 0 && $fetch_user_exam_level2_count > 0 && $fetch_user_exam_level3_count > 0) {
+                        $section_lock = '0';
+                        $section_id = $sec_value['id'];
+                    } else {
+                        $section_lock = '1';
+                        $section_id = $sec_value['id'];
+                    }
+                }
+                $fetch_user_marks_level1_details = UserMarks::where([['student_id', '=', $user_id], ['exam_id', '=', $exam_id], ['subject_id', '=', $subject_id], ['area_id', '=', $area_id], ['section_id', '=', $section_id], ['level', '=', '1']])->orderBy('id', 'desc')->take(1)->get()->toArray();
+                if (count($fetch_user_marks_level1_details) > 0) {
+                    $fetch_correct_ans_level1 = $fetch_user_marks_level1_details[0]['total_correct_ans'];
+                } else {
+                    $fetch_correct_ans_level1 = 0;
+                }
+                $fetch_user_marks_level2_details = UserMarks::where([['student_id', '=', $user_id], ['exam_id', '=', $exam_id], ['subject_id', '=', $subject_id], ['area_id', '=', $area_id], ['section_id', '=', $section_id], ['level', '=', '2']])->orderBy('id', 'desc')->take(1)->get()->toArray();
+                if (count($fetch_user_marks_level2_details) > 0) {
+                    $fetch_correct_ans_level2 = $fetch_user_marks_level2_details[0]['total_correct_ans'];
+                } else {
+                    $fetch_correct_ans_level2 = 0;
+                }
+                $fetch_user_marks_level3_details = UserMarks::where([['student_id', '=', $user_id], ['exam_id', '=', $exam_id], ['subject_id', '=', $subject_id], ['area_id', '=', $area_id], ['section_id', '=', $section_id], ['level', '=', '3']])->orderBy('id', 'desc')->take(1)->get()->toArray();
+                if (count($fetch_user_marks_level3_details) > 0) {
+                    $fetch_correct_ans_level3 = $fetch_user_marks_level3_details[0]['total_correct_ans'];
+                } else {
+                    $fetch_correct_ans_level3 = 0;
+                }
+                $fetch_user_marks_level4_details = UserMarks::where([['student_id', '=', $user_id], ['exam_id', '=', $exam_id], ['subject_id', '=', $subject_id], ['area_id', '=', $area_id], ['section_id', '=', $section_id], ['level', '=', '4']])->orderBy('id', 'desc')->take(1)->get()->toArray();
+                if (count($fetch_user_marks_level4_details) > 0) {
+                    $fetch_correct_ans_level4 = $fetch_user_marks_level4_details[0]['total_correct_ans'];
+                } else {
+                    $fetch_correct_ans_level4 = 0;
+                }
+                if ($fetch_correct_ans_level1 >= 3 && $fetch_correct_ans_level2 >= 3 && $fetch_correct_ans_level3 >= 3 && $fetch_correct_ans_level4 >= 3) {
+                    array_push($area_section_lock_entry, 0);
+                } else {
+                    array_push($area_section_lock_entry, 1);
+                }
+                $fetch_study_mat_log = StudentStudyMatLog::where([['student_id', '=', $user_id], ['exam_id', '=', $exam_id], ['subject_id', '=', $subject_id], ['area_id', '=', $area_id], ['section_id', '=', $section_id]])->orderBy('id', 'desc')->take(1)->get()->toArray();
+                if (count($fetch_study_mat_log) > 0) {
+                    $video_log = $fetch_study_mat_log[0]['video'];
+                    $pdf_log = $fetch_study_mat_log[0]['pdf'];
+                    $document_log = $fetch_study_mat_log[0]['document'];
+                    $example_log = $fetch_study_mat_log[0]['example'];
+                    if ($video_log == 1 && $pdf_log == 1 && $document_log == 1 && $example_log == 1) {
+                        $section_test_lock = '0';
+                    } else {
+                        $section_test_lock = '1';
+                    }
+                } else {
+                    $section_test_lock = '1';
+                }
+                $section_details[$sec_key]['section_lock'] = $section_lock;
+                $section_details[$sec_key]['section_test_lock'] = $section_test_lock;
+                $i++;
+            }
+            if ($user['subscription'] == 0) {
+                $area_test_lock = '1';
+            } else {
+                foreach ($area_section_lock_entry as $lock_key => $lock_value) {
+                    if ($lock_value == 1) {
+                        $area_test_lock = '1';
+                        break;
+                    } else {
+                        $area_test_lock = '0';
+                    }
+                }
+            }
+            $area_details[$key]['area_test_lock'] = $area_test_lock;
+            $area_details[$key]['sections'] = $section_details;
         }
 
         if ($area_details) {
@@ -232,18 +323,20 @@ class StudentController extends Controller
         $user = JWTAuth::toUser($request->token);
         $user_id = $user['id'];
 
-        $exam_id = $request->exam_id;
-        $subject_id = $request->subject_id;
-        $area_id = $request->area_id;
-        $section_id = $request->section_id;
-        $question_id = $request->question_id;
+        $exam_id = ($request->exam_id != '') ? $request->exam_id : 0;
+        $subject_id = ($request->subject_id != '') ? $request->subject_id : 0;
+        $area_id = ($request->area_id != '') ? $request->area_id : 0;
+        $section_id = ($request->section_id != '') ? $request->section_id : 0;
+        $level = ($request->level != '') ? $request->level : 0;
+        $question_id = ($request->question_id != '') ? $request->question_id : 0;
 
         $user_exam = new UserExam();
         $user_exam->student_id = $user_id;
         $user_exam->exam_id = $exam_id;
         $user_exam->subject_id = $subject_id;
-        $user_exam->section_id = $section_id;
         $user_exam->area_id = $area_id;
+        $user_exam->section_id = $section_id;
+        $user_exam->level = $level;
         $user_exam->question_id = $question_id;
 
         $fetch_question_type = QuestionAnswer::where('id', $question_id)->select('option_type')->get()->toArray();
@@ -258,9 +351,55 @@ class StudentController extends Controller
         }
 
         if ($user_exam->save()) {
-            return response()->json(['msg' => 'Successfully inserted', 'status_code' => 200]);
+            return response()->json(['msg' => 'Success', 'status_code' => 200]);
         } else {
-            return response()->json(['msg' => 'Insertion error.', 'status_code' => 500]);
+            return response()->json(['msg' => 'Error.', 'status_code' => 500]);
+        }
+    }
+
+    public function update_study_mat_log(Request $request) {
+        $user = JWTAuth::toUser($request->token);
+        $user_id = $user['id'];
+
+        $exam_id = $request->exam_id;
+        $subject_id = $request->subject_id;
+        $area_id = $request->area_id;
+        $section_id = $request->section_id;
+
+        $fetch_user_details = StudentStudyMatLog::where([['student_id', '=', $user_id], ['exam_id', '=', $exam_id], ['subject_id', '=', $subject_id], ['area_id', '=', $area_id], ['section_id', '=', $section_id]])->orderBy('id', 'desc')->take(1)->get()->toArray();
+        if (count($fetch_user_details) > 0) {
+            $log_id = $fetch_user_details[0]['id'];
+            $edit = StudentStudyMatLog::find($log_id);
+            $edit->student_id = $user_id;
+            $edit->exam_id = $exam_id;
+            $edit->subject_id = $subject_id;
+            $edit->area_id = $area_id;
+            $edit->section_id = $section_id;
+            $edit->video = ($request->video != '') ? $request->video : $edit->video;
+            $edit->document = ($request->document != '') ? $request->document : $edit->document;
+            $edit->pdf = ($request->pdf != '') ? $request->pdf : $edit->pdf;
+            $edit->example = ($request->example != '') ? $request->example : $edit->example;
+            if ($edit->save()) {
+                return response()->json(['status_code' => 200, 'msg' => 'Success']);
+            } else {
+                return response()->json(['status_code' => 500, 'msg' => 'Error']);
+            }
+        } else {
+            $add = new StudentStudyMatLog();
+            $add->student_id = $user_id;
+            $add->exam_id = $exam_id;
+            $add->subject_id = $subject_id;
+            $add->area_id = $area_id;
+            $add->section_id = $section_id;
+            $add->video = ($request->video != '') ? $request->video : 0;
+            $add->document = ($request->document != '') ? $request->document : 0;
+            $add->pdf = ($request->pdf != '') ? $request->pdf : 0;
+            $add->example = ($request->example != '') ? $request->example : 0;
+            if ($add->save()) {
+                return response()->json(['msg' => 'Success', 'status_code' => 200]);
+            } else {
+                return response()->json(['msg' => 'Error.', 'status_code' => 500]);
+            }
         }
     }
 }

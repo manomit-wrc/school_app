@@ -31,11 +31,9 @@
                         <div class="col-md-10 {{ $errors->has('subject') ? 'has-error' : '' }}">
                             <select class="form-control" placeholder="Section subject" type="text" name="subject" id="subject">
                                 <option value="">Select Subject</option>
-
                                 @foreach($fetch_all_subject as $key => $value)
-                                    <option value="{{ $key }}" subject_name="{{ $key }}" @if($fetch_question_details['subject_id'] == $key) selected="selected" @endif>{{ $value }}</option>
+                                    <option value="{{ $key }}" @if($fetch_question_details['subject_id'] == $key) selected="selected" @endif>{{ $value }}</option>
                                 @endforeach
-
                             </select>
                         </div>
                         @if ($errors->first('subject'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('subject') }}</span>@endif
@@ -46,11 +44,9 @@
                         <div class="col-md-10 {{ $errors->has('exam') ? 'has-error' : '' }}">
                             <select class="form-control" placeholder="Section exam" type="text" name="exam[]" id="exam" subject_id='' multiple>
                                 <option value="">Select Exam</option>
-
                                 @foreach($fetch_exam as $key => $value)
                                     <option value="{{ $key }}" @if(in_array($key, $exam_ids)) selected="selected" @endif>{{ $value }}</option>
                                 @endforeach
-
                             </select>
                         </div>
                         @if ($errors->first('exam'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('exam') }}</span>@endif
@@ -61,11 +57,9 @@
                         <div class="col-md-10 {{ $errors->has('area') ? 'has-error' : '' }}">
                             <select class="form-control" placeholder="Section exam" type="text" name="area" id="area">
                                 <option value="">Select Area</option>
-
                                 @foreach($fetch_area as $key => $value)
                                     <option value="{{ $key }}" @if($fetch_question_details['area_id']==$key) selected="selected" @endif>{{ $value }}</option>
                                 @endforeach
-
                             </select>
                         </div>
                         @if ($errors->first('area'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('area') }}</span>@endif
@@ -76,14 +70,11 @@
                         <div class="col-md-10 {{ $errors->has('section') ? 'has-error' : '' }}">
                             <select class="form-control" placeholder="Section exam" type="text" name="section" id="section">
                                 <option value="">Select Section</option>
-
                                 @foreach($fetch_section as $key => $value)
                                     <option value="{{ $key }}" @if($fetch_question_details['section_id']==$key) selected="selected" @endif>{{ $value }}</option>
                                 @endforeach
-
                             </select>
                         </div>
-                        @if ($errors->first('section'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('section') }}</span>@endif
                     </div>
 
                     <div class="form-group">
@@ -96,9 +87,12 @@
                                 <option value="3" @if($fetch_question_details['level'] == 3) selected="selected" @endif>Level 3</option>
                                 <option value="4" @if($fetch_question_details['level'] == 4) selected="selected" @endif>Level 4</option>
                                 <option value="5" @if($fetch_question_details['level'] == 5) selected="selected" @endif>Level 5</option>
+                                <option value="6" @if($fetch_question_details['level'] == 6) selected="selected" @endif>Area Test</option>
+                                <option value="7" @if($fetch_question_details['level'] == 7) selected="selected" @endif>Subject Test</option>
+                                <option value="8" @if($fetch_question_details['level'] == 8) selected="selected" @endif>Full Length Test</option>
                             </select>
                         </div>
-                        @if ($errors->first('level'))<span class="input-group col-md-offset-2 level-danger">{{ $errors->first('level') }}</span>@endif
+                        @if ($errors->first('level'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('level') }}</span>@endif
                     </div>
                     
                     <div class="form-group">
@@ -728,23 +722,19 @@
 
             $('#subject').on('change', function () {
                 var subject_id = $(this).val();
-                var subject_name = $('option:selected', this).attr('subject_name');
-
                 if(subject_id) {
                     $.ajax({
                         type: 'POST',
                         url: '/question/fetch-exam-subject-wise',
                         data: {
-                            subject_id :subject_name,
+                            subject_id :subject_id,
                             _token : "{{ csrf_token() }}"
                         },
                         success:function(response) {
-                            $('#exam').attr('subject_id',subject_name);
-
+                            $('#exam').attr('subject_id', subject_id);
                             $("#exam").find('option').not(':first').remove();
                             $("#section").find('option').not(':first').remove();
                             $("#area").find('option').not(':first').remove();
-
                             for(var i=0; i<response.tempArray.length;i++) {
                                 $("#exam").append('<option value="'+response.tempArray[i].exam_id+'">'+response.tempArray[i].exam_name+'</option>');
                             }
@@ -753,8 +743,7 @@
 
                         }
                     });
-                }
-                else {
+                } else {
                     $("#exam").find('option').not(':first').remove();
                 }
             });
@@ -762,8 +751,7 @@
             $('#exam').on('change', function () {
                 var exam_id = $(this).val();
                 var subject_id = $(this).attr('subject_id');
-
-                if(exam_id){
+                if (exam_id) {
                     $.ajax({
                         type: 'POST',
                         url: '/question/fetch-area-exam-wise',
@@ -774,7 +762,7 @@
                         },
                         success:function(response) {
                             $("#area").find('option').not(':first').remove();
-                            for(var i=0; i<response.fetch_area.length;i++) {
+                            for(var i = 0; i < response.fetch_area.length; i++) {
                                 $("#area").append('<option value="'+response.fetch_area[i].id+'">'+response.fetch_area[i].name+'</option>');
                             }
                         },
@@ -782,16 +770,14 @@
 
                         }
                     });
-
-                }else{
+                } else {
                     $("#area").find('option').not(':first').remove();
                 }
             });
 
             $('#area').on('change', function() {
                 var area_id = $(this).val();
-
-                if(area_id){
+                if (area_id) {
                     $.ajax({
                         type: 'POST',
                         url: '/question/fetch-section-area-wise',
@@ -801,7 +787,7 @@
                         },
                         success:function(response) {
                             $("#section").find('option').not(':first').remove();
-                            for(var i=0; i<response.fetch_section_details.length;i++) {
+                            for(var i = 0; i < response.fetch_section_details.length; i++) {
                                 $("#section").append('<option value="'+response.fetch_section_details[i].id+'">'+response.fetch_section_details[i].name+'</option>');
                             }
                         },
@@ -809,12 +795,10 @@
 
                         }
                     });
-
-                }else{
+                } else {
                     $("#section").find('option').not(':first').remove();
                 }
             });
-            
         });
     </script>
 @endsection
