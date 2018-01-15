@@ -7,6 +7,8 @@ use App\Section;
 use Validator;
 use App\StudyMat;
 use App\StudyMatSampleQues;
+use App\StudyMatVideo;
+use App\StudyMatTheory;
 use App\SubjectExam;
 use App\Exam;
 
@@ -83,7 +85,7 @@ class StudyMatController extends Controller
     		'subject' => 'required',
             'exam' => 'required',
     		'area' => 'required',
-    		'section' => 'required|unique:study_mats,section_id,'.$request->section
+    		'section' => 'required|unique:study_mats,section_id'
     	],[
     		'subject.required' => 'Please select subject',
             'exam.required' => 'Please select exam',
@@ -110,10 +112,8 @@ class StudyMatController extends Controller
 				//original destination path
 				$destinationPath = public_path().'/upload/study_video/';
 				$file->move($destinationPath, $videoName);
-                $key = array_search($file->getClientOriginalName(), $request->video_order);
 				$video_arr[] = array(
-					'video' => $videoName,
-					'video_order' => $key
+					'video' => $videoName
 		     	);
     		}
 		} else {
@@ -142,10 +142,8 @@ class StudyMatController extends Controller
 				//original destination path
 				$destinationPath = public_path().'/upload/study_doc/';
 				$file->move($destinationPath, $docName);
-                $key = array_search($file->getClientOriginalName(), $request->doc_order);
 				$doc_arr[] = array(
-					'doc' => $docName,
-					'doc_order' => $key
+					'doc' => $docName
 		     	);
     		}
 		} else {
@@ -155,27 +153,52 @@ class StudyMatController extends Controller
         $exam_ids = $request->exam;
         $exam_ids = implode(",", $exam_ids);
 
-        $sample = array_combine($request->sample_questions, $request->sample_answers);
+        //$sample = array_combine($request->sample_questions, $request->sample_answers);
 
     	$add = new StudyMat();
     	$add->subject_id = $request->subject;
         $add->exam_id = $exam_ids;
     	$add->area_id = $request->area;
     	$add->section_id = $request->section;
-		$add->video = serialize($video_arr);
 		$add->pdf = serialize($pdf_arr);
-		$add->document = serialize($doc_arr);
         $add->description = $request->description;
 		$add->duration = $request->duration;
 
 		if ($add->save()) {
             $studymat_id = $add->id;
-            foreach ($sample as $question => $answer) {
-                $add_sample_ques = new StudyMatSampleQues();
-                $add_sample_ques->study_mat_id = $studymat_id;
-                $add_sample_ques->questions = $question;
-                $add_sample_ques->answers = $answer;
-                $add_sample_ques->save();
+            foreach ($request->sample_questions as $sample_key => $sample_val) {
+                if ($sample_val != "" && $request->sample_answers[$sample_key] != "") {
+                    $add_sample_ques = new StudyMatSampleQues();
+                    $add_sample_ques->study_mat_id = $studymat_id;
+                    $add_sample_ques->questions = $sample_val;
+                    $add_sample_ques->answers = $request->sample_answers[$sample_key];
+                    $add_sample_ques->ques_order = $request->ques_order[$sample_key];
+                    $add_sample_ques->save();
+                }
+            }
+
+            foreach ($request->video_name as $video_key => $video_val) {
+                if ($video_val != "" && $video_arr[$video_key]['video'] != "") {
+                    $add_video = new StudyMatVideo();
+                    $add_video->study_mat_id = $studymat_id;
+                    $add_video->video_name = $video_val;
+                    $add_video->video_desc = $request->video_desc[$video_key];
+                    $add_video->video_file = $video_arr[$video_key]['video'];
+                    $add_video->video_order = $request->video_order[$video_key];
+                    $add_video->save();
+                }
+            }
+
+            foreach ($request->theory_name as $theory_key => $theory_val) {
+                if ($theory_val != "" && $doc_arr[$theory_key]['doc'] != "") {
+                    $add_theory = new StudyMatTheory();
+                    $add_theory->study_mat_id = $studymat_id;
+                    $add_theory->theory_name = $theory_val;
+                    $add_theory->theory_desc = $request->theory_desc[$theory_key];
+                    $add_theory->theory_file = $doc_arr[$theory_key]['doc'];
+                    $add_theory->theory_order = $request->theory_order[$theory_key];
+                    $add_theory->save();
+                }
             }
             return 1;
         } else {
@@ -185,33 +208,35 @@ class StudyMatController extends Controller
 
     public function edit_study_mat_view($id) {
         $fetch_study_mat = StudyMat::find($id)->toArray();
-        $fetch_study_videos = unserialize($fetch_study_mat['video']);
+        /*$fetch_study_videos = unserialize($fetch_study_mat['video']);
         usort($fetch_study_videos, function($a, $b) {
             $t1 = $a['video_order'];
             $t2 = $b['video_order'];
             return $t1 - $t2;
-        });
+        });*/
         $fetch_study_pdfs = unserialize($fetch_study_mat['pdf']);
         usort($fetch_study_pdfs, function($a, $b) {
             $t1 = $a['pdf_order'];
             $t2 = $b['pdf_order'];
             return $t1 - $t2;
         });
-        $fetch_study_documents = unserialize($fetch_study_mat['document']);
+        /*$fetch_study_documents = unserialize($fetch_study_mat['document']);
         usort($fetch_study_documents, function($a, $b) {
             $t1 = $a['doc_order'];
             $t2 = $b['doc_order'];
             return $t1 - $t2;
-        });
+        });*/
         $fetch_all_subject = Subject::where('status', '1')->pluck('sub_full_name', 'id')->toArray();
-        $fetch_all_exam = Exam::where('status','1')->pluck('name','id')->toArray();
+        $fetch_all_exam = Exam::where('status','1')->pluck('name', 'id')->toArray();
         $fetch_all_area = Area::where('status', '1')->pluck('name', 'id')->toArray();
         $fetch_all_section = Section::pluck('name', 'id')->toArray();
         $exam_ids = explode(",", $fetch_study_mat['exam_id']);
 
-        $fetch_sample_ques = StudyMatSampleQues::where('study_mat_id', $id)->pluck('answers', 'questions')->toArray();
+        $fetch_sample_ques = StudyMatSampleQues::where('study_mat_id', $id)->get()->toArray();
+        $fetch_study_videos = StudyMatVideo::where('study_mat_id', $id)->get()->toArray();
+        $fetch_study_theories = StudyMatTheory::where('study_mat_id', $id)->get()->toArray();
 
-        return view('frontend.studymat.edit')->with(['fetch_study_mat' => $fetch_study_mat, 'fetch_all_exam' => $fetch_all_exam,'fetch_study_videos' => $fetch_study_videos,'fetch_study_pdfs' => $fetch_study_pdfs,'fetch_study_documents' => $fetch_study_documents,'fetch_all_subject' => $fetch_all_subject,'fetch_all_area' => $fetch_all_area,'fetch_all_section' => $fetch_all_section, 'exam_ids' => $exam_ids, 'fetch_sample_ques' => $fetch_sample_ques]);
+        return view('frontend.studymat.edit')->with(['fetch_study_mat' => $fetch_study_mat, 'fetch_all_exam' => $fetch_all_exam, 'fetch_study_videos' => $fetch_study_videos, 'fetch_study_pdfs' => $fetch_study_pdfs, 'fetch_study_theories' => $fetch_study_theories, 'fetch_all_subject' => $fetch_all_subject, 'fetch_all_area' => $fetch_all_area, 'fetch_all_section' => $fetch_all_section, 'exam_ids' => $exam_ids, 'fetch_sample_ques' => $fetch_sample_ques]);
     }
 
     public function study_mat_update(Request $request) {
@@ -220,7 +245,7 @@ class StudyMatController extends Controller
             'subject' => 'required',
             'exam' => 'required',
             'area' => 'required',
-            'section' => 'required|unique:study_mats,section_id,'.$request->section
+            'section' => 'required|unique:study_mats,section_id,'.$id
         ],[
             'subject.required' => 'Please select subject',
             'exam.required' => 'Please select exam',
@@ -243,9 +268,19 @@ class StudyMatController extends Controller
         $pdf_arr = array();
         $doc_arr = array();
 
-        $video_arr = unserialize($studymat['video']);
+        //$video_arr = unserialize($studymat['video']);
         $pdf_arr = unserialize($studymat['pdf']);
-        $doc_arr = unserialize($studymat['document']);
+        //$doc_arr = unserialize($studymat['document']);
+
+        $study_mat_videos = StudyMatVideo::where('study_mat_id', $id)->get()->toArray();
+        foreach ($study_mat_videos as $video_key => $video_val) {
+            $video_arr[$video_key]['video'] = $video_val['video_file'];
+        }
+
+        $study_mat_theories = StudyMatTheory::where('study_mat_id', $id)->get()->toArray();
+        foreach ($study_mat_theories as $theory_key => $theory_val) {
+            $doc_arr[$theory_key]['doc'] = $theory_val['theory_file'];
+        }
 
         if ($request->hasFile('video_files')) {
             foreach ($request->file('video_files') as $file) {
@@ -253,22 +288,10 @@ class StudyMatController extends Controller
                 //original destination path
                 $destinationPath = public_path().'/upload/study_video/';
                 $file->move($destinationPath, $videoName);
-                $key = array_search($file->getClientOriginalName(), $request->video_order);
                 $video_arr[] = array(
-                    'video' => $videoName,
-                    'video_order' => $key
+                    'video' => $videoName
                 );
             }
-        } else {
-            $temp_video_arr = array();
-            foreach ($video_arr as $file) {
-                $key = array_search($file['video'], $request->video_order);
-                $temp_video_arr[] = array(
-                    'video' => $file['video'],
-                    'video_order' => $key
-                );
-            }
-            $video_arr = $temp_video_arr;
         }
 
         if ($request->hasFile('pdf_files')) {
@@ -301,25 +324,13 @@ class StudyMatController extends Controller
                 //original destination path
                 $destinationPath = public_path().'/upload/study_doc/';
                 $file->move($destinationPath, $docName);
-                $key = array_search($file->getClientOriginalName(), $request->doc_order);
                 $doc_arr[] = array(
-                    'doc' => $docName,
-                    'doc_order' => $key
+                    'doc' => $docName
                 );
             }
-        } else {
-            $temp_doc_arr = array();
-            foreach ($doc_arr as $file) {
-                $key = array_search($file['doc'], $request->doc_order);
-                $temp_doc_arr[] = array(
-                    'doc' => $file['doc'],
-                    'doc_order' => $key
-                );
-            }
-            $doc_arr = $temp_doc_arr;
         }
 
-        $sample = array_combine($request->sample_questions, $request->sample_answers);
+        //$sample = array_combine($request->sample_questions, $request->sample_answers);
 
         $studymat->subject_id = $request->subject;
         $studymat->area_id = $request->area;
@@ -333,12 +344,43 @@ class StudyMatController extends Controller
         if ($studymat->save()) {
             $study_mat_sample_ques = StudyMatSampleQues::where('study_mat_id', $id);
             $study_mat_sample_ques->delete();
-            foreach ($sample as $question => $answer) {
-                $add_sample_ques = new StudyMatSampleQues();
-                $add_sample_ques->study_mat_id = $id;
-                $add_sample_ques->questions = $question;
-                $add_sample_ques->answers = $answer;
-                $add_sample_ques->save();
+            foreach ($request->sample_questions as $sample_key => $sample_val) {
+                if ($sample_val != "" && $request->sample_answers[$sample_key] != "") {
+                    $add_sample_ques = new StudyMatSampleQues();
+                    $add_sample_ques->study_mat_id = $id;
+                    $add_sample_ques->questions = $sample_val;
+                    $add_sample_ques->answers = $request->sample_answers[$sample_key];
+                    $add_sample_ques->ques_order = $request->ques_order[$sample_key];
+                    $add_sample_ques->save();
+                }
+            }
+
+            $study_mat_videos = StudyMatVideo::where('study_mat_id', $id);
+            $study_mat_videos->delete();
+            foreach ($request->video_name as $video_key => $video_val) {
+                if ($video_val != "" && $video_arr[$video_key]['video'] != "") {
+                    $add_video = new StudyMatVideo();
+                    $add_video->study_mat_id = $id;
+                    $add_video->video_name = $video_val;
+                    $add_video->video_desc = $request->video_desc[$video_key];
+                    $add_video->video_file = $video_arr[$video_key]['video'];
+                    $add_video->video_order = $request->video_order[$video_key];
+                    $add_video->save();
+                }
+            }
+
+            $study_mat_theories = StudyMatTheory::where('study_mat_id', $id);
+            $study_mat_theories->delete();
+            foreach ($request->theory_name as $theory_key => $theory_val) {
+                if ($theory_val != "" && $doc_arr[$theory_key]['doc'] != "") {
+                    $add_theory = new StudyMatTheory();
+                    $add_theory->study_mat_id = $id;
+                    $add_theory->theory_name = $theory_val;
+                    $add_theory->theory_desc = $request->theory_desc[$theory_key];
+                    $add_theory->theory_file = $doc_arr[$theory_key]['doc'];
+                    $add_theory->theory_order = $request->theory_order[$theory_key];
+                    $add_theory->save();
+                }
             }
             return 1;
         } else {
@@ -357,12 +399,12 @@ class StudyMatController extends Controller
         }
     }
 
-    public function video_delete($study_id, $video_id) {
-        $studymat = StudyMat::find($study_id);
-        $video_arr = unserialize($studymat['video']);
-        unset($video_arr[$video_id]);
-        $studymat->video = serialize($video_arr);
-        if ($studymat->save()) {
+    public function video_delete($video_id) {
+        $studymat = StudyMatVideo::find($video_id);
+        // $video_arr = unserialize($studymat['video']);
+        // unset($video_arr[$video_id]);
+        // $studymat->video = serialize($video_arr);
+        if ($studymat->delete()) {
             return 1;
         } else {
             return 0;

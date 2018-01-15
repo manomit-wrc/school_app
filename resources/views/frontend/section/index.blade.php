@@ -39,7 +39,6 @@
                         <thead>
                             <tr>
                                 <th>SL NO</th>
-                                <th>Code</th>
                                 <th>Name</th>
                                 <th>Action</th>
                             </tr>
@@ -48,7 +47,6 @@
                             @foreach($sections as $key => $value)
                                 <tr class="odd gradeX">
                                     <td>{{ ++$key }}</td>
-                                    <td>{{ $value['code'] }}</td>
                                     <td>{{ $value['name'] }}</td>
                                     <td>
                                         <a title="Edit" href="/area/section/{{ $area_id }}/edit/{{$value['id']}}" class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i></a>

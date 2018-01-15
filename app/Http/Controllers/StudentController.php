@@ -8,6 +8,7 @@ header('Access-Control-Max-Age: 1000');
 header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token , Authorization');
 
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 use App\Student;
 use App\Exam;
 use App\Area;
@@ -16,6 +17,7 @@ use App\Section;
 use App\StudyMat;
 use App\StudyMatSampleQues;
 use App\UserExam;
+use App\UserExamAnswer;
 use JWTAuth;
 use JWTAuthException;
 use Validator;
@@ -23,9 +25,13 @@ use Config;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\Registration;
 use App\QuestionAnswer;
+use App\ExamQuestionAnswer;
 use App\SubjectExam;
 use App\StudentStudyMatLog;
 use App\UserMarks;
+use App\StudyMatVideo;
+use App\StudyMatTheory;
+use App\Tips;
 
 class StudentController extends Controller
 {
@@ -87,7 +93,7 @@ class StudentController extends Controller
         if ($user->image == '') {
             $image = url('/') .'/upload/profile_image/default.png';
         } else {
-            $image = url('/') .'/upload/profile_image/resize/'. $user->image;
+            $image = url('/') .'/upload/profile_image/original/'. $user->image;
         }
         if ($user->status == 0) {
             return response()->json(['msg' => 'Account not activated.', 'status_code' => 404]);
@@ -99,7 +105,8 @@ class StudentController extends Controller
                 'first_name' => ucfirst($user->first_name),
                 'last_name' => ucfirst($user->last_name),
                 'image' => $image,
-                'exam_id' => $user->exam_id
+                'exam_id' => $user->exam_id,
+                'rating' => $user->current_rating
             ]);
         }
     }
@@ -146,8 +153,10 @@ class StudentController extends Controller
 
         $exam_id = $request->exam_id;
         $subject_id = $request->subject_id;
+
+        $area_test_lock_entry = array();
         $i = 1;
-        $area_details = Area::where([['exam_id', '=', $exam_id], ['subject_id', '=', $subject_id]])->orderBy('id', 'asc')->get()->toArray();
+        $area_details = Area::where([['exam_id', '=', $exam_id], ['subject_id', '=', $subject_id]])->orderBy('sort_order', 'asc')->get()->toArray();
         foreach ($area_details as $key => $value) {
             $area_section_lock_entry = array();
             $section_details = array();
@@ -156,13 +165,29 @@ class StudentController extends Controller
             if ($i == 1) {
                 $area_lock = '0';
             } else {
-                $area_lock = '1';
+                $fetch_area_user_marks_details = UserMarks::where([['student_id', '=', $user_id], ['exam_id', '=', $exam_id], ['subject_id', '=', $subject_id], ['area_id', '=', $pre_area_id], ['level', '=', '6']])->orderBy('id', 'desc')->take(1)->get()->toArray();
+                if (count($fetch_area_user_marks_details) > 0) {
+                    $fetch_area_correct_ans = $fetch_area_user_marks_details[0]['total_correct_ans'];
+                } else {
+                    $fetch_area_correct_ans = 0;
+                }
+                if ($fetch_area_correct_ans >= 6) {
+                    $area_lock = '0';
+                } else {
+                    $area_lock = '1';
+                }
             }
             $area_details[$key]['area_lock'] = $area_lock;
             $fetch_sections = Section::where('area_id', $area_id)->get()->toArray();
             foreach ($fetch_sections as $sec_key => $sec_value) {
                 $section_details[] = $sec_value;
                 if ($i == 1) {
+                    $section_lock = '0';
+                    $section_id = $sec_value['id'];
+                } else if ($area_lock == '1') {
+                    $section_lock = '1';
+                    $section_id = $sec_value['id'];
+                } else if ($area_id != $pre_area_id) {
                     $section_lock = '0';
                     $section_id = $sec_value['id'];
                 } else {
@@ -210,7 +235,9 @@ class StudentController extends Controller
                     array_push($area_section_lock_entry, 1);
                 }
                 $fetch_study_mat_log = StudentStudyMatLog::where([['student_id', '=', $user_id], ['exam_id', '=', $exam_id], ['subject_id', '=', $subject_id], ['area_id', '=', $area_id], ['section_id', '=', $section_id]])->orderBy('id', 'desc')->take(1)->get()->toArray();
-                if (count($fetch_study_mat_log) > 0) {
+                if ($area_lock == '1') {
+                    $section_test_lock = '1';
+                } else if (count($fetch_study_mat_log) > 0) {
                     $video_log = $fetch_study_mat_log[0]['video'];
                     $pdf_log = $fetch_study_mat_log[0]['pdf'];
                     $document_log = $fetch_study_mat_log[0]['document'];
@@ -226,6 +253,7 @@ class StudentController extends Controller
                 $section_details[$sec_key]['section_lock'] = $section_lock;
                 $section_details[$sec_key]['section_test_lock'] = $section_test_lock;
                 $i++;
+                $pre_area_id = $area_id;
             }
             if ($user['subscription'] == 0) {
                 $area_test_lock = '1';
@@ -239,12 +267,22 @@ class StudentController extends Controller
                     }
                 }
             }
+            array_push($area_test_lock_entry, $area_test_lock);
             $area_details[$key]['area_test_lock'] = $area_test_lock;
             $area_details[$key]['sections'] = $section_details;
         }
 
+        foreach ($area_test_lock_entry as $area_lock_key => $area_lock_value) {
+            if ($area_lock_value == 1) {
+                $subject_test_lock = '1';
+                break;
+            } else {
+                $subject_test_lock = '0';
+            }
+        }
+
         if ($area_details) {
-            return response()->json(['msg' => 'Success', 'status_code' => 200, 'data' => $area_details]);
+            return response()->json(['msg' => 'Success', 'status_code' => 200, 'data' => $area_details, 'subject_test_lock' => $subject_test_lock]);
         } else {
             return response()->json(['msg' => 'No area available', 'status_code' => 404]);
         }
@@ -266,17 +304,23 @@ class StudentController extends Controller
         $subject_id = $request->subject_id;
         $area_id = $request->area_id;
         $section_id = $request->section_id;
-        $studymat_details = StudyMat::where([['subject_id', '=', $subject_id],['exam_id', 'LIKE', "%".$exam_id."%"],['area_id', '=', $area_id],['section_id', '=', $section_id]])->get()->toArray();
+        $studymat_details = StudyMat::where([['subject_id', '=', $subject_id], ['exam_id', 'LIKE', "%".$exam_id."%"], ['area_id', '=', $area_id], ['section_id', '=', $section_id]])->get()->toArray();
         if ($studymat_details) {
             foreach ($studymat_details as $key => $value) {
                 $fetch_subject = Subject::where('id', $value['subject_id'])->get()->toArray();
                 $fetch_area = Area::where('id', $value['area_id'])->get()->toArray();
                 $fetch_section = Section::where('id', $value['section_id'])->get()->toArray();
 
-                $video = array();
+                /*$video = array();
                 $video_lists = unserialize($value['video']);
                 foreach ($video_lists as $v) {
                     $video[] = url('/') .'/upload/study_video/'. $v['video'];
+                }*/
+
+                $fetch_studymat_videos = StudyMatVideo::where('study_mat_id', $value['id'])->orderBy('video_order', 'asc')->get()->toArray();
+                foreach ($fetch_studymat_videos as $video_key => $video_value) {
+                    $video_url = url('/') .'/upload/study_video/'. $video_value['video_file'];
+                    $fetch_studymat_videos[$video_key]['video_url'] = $video_url;
                 }
 
                 $pdf = array();
@@ -284,28 +328,33 @@ class StudentController extends Controller
                 foreach ($pdf_lists as $p) {
                     $file_name = url('/') .'/upload/study_pdf/'. $p['pdf'];
                     $file_extn = pathinfo($p['pdf'], PATHINFO_EXTENSION);
-
                     $pdf[] = array(
                         'file' => $file_name,
                         'ext' => $file_extn
                     );
                 }
 
-                $doc = array();
+                /*$doc = array();
                 $doc_lists = unserialize($value['document']);
                 foreach ($doc_lists as $d) {
                     $doc[] = url('/') .'/upload/study_doc/'. $d['doc'];
+                }*/
+
+                $fetch_studymat_theories = StudyMatTheory::where('study_mat_id', $value['id'])->orderBy('theory_order', 'asc')->get()->toArray();
+                foreach ($fetch_studymat_theories as $thry_key => $thry_value) {
+                    $theory_url = url('/') .'/upload/study_doc/'. $thry_value['theory_file'];
+                    $fetch_studymat_theories[$thry_key]['theory_url'] = $theory_url;
                 }
 
-                $fetch_studymat_sample_ques = StudyMatSampleQues::where('study_mat_id', $value['id'])->get()->toArray();
+                $fetch_studymat_sample_ques = StudyMatSampleQues::where('study_mat_id', $value['id'])->orderBy('ques_order', 'asc')->get()->toArray();
 
                 $studymat_arr[] = array(
                     'subject_name' => $fetch_subject[0]['sub_full_name'],
                     'area_name' => $fetch_area[0]['name'],
                     'section_name' => $fetch_section[0]['name'],
-                    'video' => $video,
+                    'video' => $fetch_studymat_videos,
                     'course_structure' => $pdf,
-                    'theory' => $doc,
+                    'theory' => $fetch_studymat_theories,
                     'description' => $value['description'],
                     'duration' => $value['duration'] . " hrs",
                     'sample_ques_ans' => $fetch_studymat_sample_ques
@@ -400,6 +449,49 @@ class StudentController extends Controller
             } else {
                 return response()->json(['msg' => 'Error.', 'status_code' => 500]);
             }
+        }
+    }
+
+    public function get_tip_of_the_day(Request $request) {
+        $cur_date = Carbon::now()->format('Y-m-d');
+        
+        $today_tips = Tips::where('created_at', 'like', '%' . $cur_date . '%')->orderBy('created_at', 'desc')->get()->toArray();
+        if ($today_tips) {
+            return response()->json(['msg' => 'Success', 'status_code' => 200, 'data' => $today_tips]);
+        } else {
+            return response()->json(['msg' => 'No tips available for today', 'status_code' => 404]);
+        }
+    }
+
+    public function add_user_exam_answer(Request $request) {
+        $ans_arr = array();
+        
+        $user = JWTAuth::toUser($request->token);
+        $user_id = $user['id'];
+
+        $exam_id = ($request->exam_id != '') ? $request->exam_id : 0;
+        $question_id = ($request->question_id != '') ? $request->question_id : 0;
+
+        $user_exam = new UserExamAnswer();
+        $user_exam->student_id = $user_id;
+        $user_exam->exam_id = $exam_id;
+        $user_exam->question_id = $question_id;
+
+        $fetch_question_type = ExamQuestionAnswer::where('id', $question_id)->select('option_type')->get()->toArray();
+        if ($fetch_question_type[0]['option_type'] == 'mcq') {
+            $ans_arr = explode(',', $request->user_answer);
+            $user_answer = serialize($ans_arr);
+
+            $user_exam->user_answer = $user_answer;
+        }
+        if ($fetch_question_type[0]['option_type'] == 'numeric') {
+            $user_exam->numeric_ans = $request->user_answer;
+        }
+
+        if ($user_exam->save()) {
+            return response()->json(['msg' => 'Success', 'status_code' => 200]);
+        } else {
+            return response()->json(['msg' => 'Error.', 'status_code' => 500]);
         }
     }
 }

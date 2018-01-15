@@ -20,12 +20,9 @@ class SectionController extends Controller
 
     public function save(Request $request, $area_id) {
     	Validator::make($request->all(),[
-    		'code' => 'required|unique:areas,code',
     		'name' => 'required|unique:areas,name',
     		'description' => 'required'
 		],[
-			'code.required' => 'Please enter area code',
-			'code.unique' => 'Code already taken',
 			'name.required' => 'Please enter area name',
 			'name.unique' => 'Name already taken',
 			'description.required' => 'Please enter description'
@@ -33,7 +30,6 @@ class SectionController extends Controller
 
 		$section = new Section();
 		$section->area_id = $area_id;
-		$section->code = $request->code;
 		$section->name = $request->name;
 		$section->description = $request->description;
 
@@ -50,12 +46,9 @@ class SectionController extends Controller
 
     public function update(Request $request, $area_id, $id) {
     	Validator::make($request->all(),[
-    		'code' => 'required|unique:areas,code,'.$id,
     		'name' => 'required|unique:areas,name,'.$id,
     		'description' => 'required'
 		],[
-			'code.required' => 'Please enter area code',
-			'code.unique' => 'Code already taken',
 			'name.required' => 'Please enter area name',
 			'name.unique' => 'Name already taken',
 			'description.required' => 'Please enter description'
@@ -63,7 +56,6 @@ class SectionController extends Controller
 
 		$section = Section::find($id);
 		$section->area_id = $area_id;
-		$section->code = $request->code;
 		$section->name = $request->name;
 		$section->description = $request->description;
 

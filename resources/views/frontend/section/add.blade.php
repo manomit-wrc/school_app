@@ -28,14 +28,6 @@
                     {{ csrf_field() }}
                     
                     <div class="form-group">
-                        <label class="col-md-2 control-label">Code</label>
-                        <div class="col-md-10 {{ $errors->has('code') ? 'has-error' : '' }}">
-                            <input class="form-control" placeholder="Section Code" type="text" name="code" id="code" value="{{ old('code') }}">
-                        </div>
-                        @if ($errors->first('code'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('code') }}</span>@endif
-                    </div>
-
-                    <div class="form-group">
                         <label class="col-md-2 control-label">Name</label>
                         <div class="col-md-10 {{ $errors->has('name') ? 'has-error' : '' }}">
                             <input class="form-control" placeholder="Section Name" type="text" name="name" id="name" value="{{ old('name') }}">
@@ -56,7 +48,7 @@
                     <div class="form-group">
                         <div class="col-md-4 col-md-offset-2">
                             <button type="submit" class="btn btn-sm btn-primary">Submit</button>
-                            {{-- <button type="reset" class="btn btn-sm btn-default">Cancel</button> --}}
+                            <a href="/section" class="btn btn-sm btn-default">Cancel</a>
                         </div>
                     </div>
                 </form>

@@ -60,6 +60,12 @@
 			    </a>
 			</li>
 
+			<li class="has-sub {{ (Request::segment(1) === "exam_question" ? 'active' : '') }}">
+				<a href="/exam_question">
+				    <span>Exam Question</span>
+			    </a>
+			</li>
+
 			<li class="has-sub {{ (Request::segment(1) === "tags" ? 'active' : '') }}">
 				<a href="/tags">
 				    <span>Tags</span>
@@ -69,6 +75,18 @@
 			<li class="has-sub {{ (Request::segment(1) === "banner" ? 'active' : '') }}">
 				<a href="/banner">
 				    <span>Banner</span>
+			    </a>
+			</li>
+
+			<li class="has-sub {{ (Request::segment(1) === "tips" ? 'active' : '') }}">
+				<a href="/tips">
+				    <span>Tips</span>
+			    </a>
+			</li>
+
+			<li class="has-sub {{ (Request::segment(1) === "exam_timer" ? 'active' : '') }}">
+				<a href="/exam_timer">
+				    <span>Exam Timer</span>
 			    </a>
 			</li>
 

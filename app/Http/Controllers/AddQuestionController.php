@@ -16,7 +16,7 @@ use DB;
 class AddQuestionController extends Controller
 {
     public function index() {
-    	$fetch_all_question = QuestionAnswer::with('subject', 'area', 'section')->where('status', '1')->orderby('id','desc')->get()->toArray();
+    	$fetch_all_question = QuestionAnswer::with('subject', 'area', 'section')->where('status', '1')->orderby('id', 'desc')->get()->toArray();
     	foreach ($fetch_all_question as $key => $value) {
     		$exam_name = '';
     		$exam_ids = explode(',', $value['exam_id']);
@@ -74,7 +74,7 @@ class AddQuestionController extends Controller
     	Validator::make($request->all(),[
     		'subject' => 'required',
     		'exam' => 'required',
-    		'area' => 'required',
+    		//'area' => 'required',
     		//'section' => 'required',
     		'level' => 'required',
     		'question_type' => 'required|in:text,image',
@@ -84,7 +84,7 @@ class AddQuestionController extends Controller
     	],[
     		'subject.required' => 'Please select subject',
     		'exam.required' => 'Please select exam',
-    		'area.required' => 'Please select area',
+    		//'area.required' => 'Please select area',
     		//'section.required' => 'Please select section',
     		'level.required' => 'Please select question level',
     		'question_type.required' => 'Please select question type',
@@ -345,7 +345,7 @@ class AddQuestionController extends Controller
     	Validator::make($request->all(),[
     		'subject' => 'required',
     		'exam' => 'required',
-    		'area' => 'required',
+    		//'area' => 'required',
     		//'section' => 'required',
     		'level' => 'required',
     		'question_type' => 'required|in:text,image',
@@ -355,7 +355,7 @@ class AddQuestionController extends Controller
     	],[
     		'subject.required' => 'Please select subject',
     		'exam.required' => 'Please select exam type',
-    		'area.required' => 'Please select area',
+    		//'area.required' => 'Please select area',
     		//'section.required' => 'Please select section',
     		'level.required' => 'Please select question level',
     		'question_type.required' => 'Please select question type',
@@ -622,17 +622,23 @@ class AddQuestionController extends Controller
     				->when($request->level, function($query) use ($request) {
     					return $query->where('level', $request->level);
     				})
-    				->get()->toArray(); 
-                    
-
+    				->get()->toArray();
     	foreach ($question as $key => $value) {
     		$new_question = (array) $value;
     		$fetch_subject_details = Subject::find($value->subject_id)->toArray();
     		$new_question['subject']['sub_full_name'] = $fetch_subject_details['sub_full_name'];
-    		$fetch_area_details = Area::find($value->area_id)->toArray();
-    		$new_question['area']['name'] = $fetch_area_details['name'];
-    		$fetch_section_details = Section::find($value->section_id)->toArray();
-    		$new_question['section']['name'] = $fetch_section_details['name'];
+            if ($value->area_id != 0) {
+        		$fetch_area_details = Area::find($value->area_id)->toArray();
+        		$new_question['area']['name'] = $fetch_area_details['name'];
+            } else {
+                $new_question['area']['name'] = '';
+            }
+            if ($value->section_id != 0) {
+        		$fetch_section_details = Section::find($value->section_id)->toArray();
+        		$new_question['section']['name'] = $fetch_section_details['name'];
+            } else {
+                $new_question['section']['name'] = '';
+            }
 
             $exam_name = '';
             $exam_ids = explode(',', $value->exam_id);

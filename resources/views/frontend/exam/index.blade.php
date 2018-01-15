@@ -40,8 +40,6 @@
                                 <th>SL NO</th>
                                 <th>Code</th>
                                 <th>Name</th>
-                                <th>Start Date</th>
-                                <th>End Date</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -52,8 +50,6 @@
                                     <td>{{ ++$key }}</td>
                                     <td>{{ $value->code }}</td>
                                     <td>{{ $value->name }}</td>
-                                    <td>{{Carbon\Carbon::parse($value->start_date)->format('d-m-Y')}}</td>
-                                    <td>{{Carbon\Carbon::parse($value->end_date)->format('d-m-Y')}}</td>
                                     <td>{{ $value->status == '1'? 'Active': 'Inactive' }}</td>
                                     <td>
                                         <a title="Edit" href="/exam/edit/{{$value->id}}" class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i></a>

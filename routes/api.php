@@ -41,4 +41,10 @@ Route::group(['middleware' => ['jwt.auth']], function () {
 	Route::post('/updatestudymatlog', 'StudentController@update_study_mat_log');
 	Route::post('/fetchareaquestion', 'ProfileController@fetch_area_question');
 	Route::post('/reviewareaexam', 'ProfileController@review_area_exam');
+	Route::post('/calculateuserrating', 'ProfileController@calculate_user_rating');
+	Route::post('/tipsoftheday', 'StudentController@get_tip_of_the_day');
+	Route::post('/fetchexamquestion', 'ProfileController@fetch_exam_question');
+	Route::post('/adduserexamans', 'StudentController@add_user_exam_answer');
+	Route::post('/fetchuserexamans', 'ProfileController@fetch_user_exam_ans');
+	Route::post('/reviewexamanswer', 'ProfileController@review_exam_answer');
 });

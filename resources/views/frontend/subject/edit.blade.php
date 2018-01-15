@@ -26,37 +26,31 @@
                 <form name="sub_edit_form" method="POST" action="/subject/sub-edit/{{ $subject_details['id'] }}" class="form-horizontal" enctype="multipart/form-data">
                     {{ csrf_field() }}
                     <div class="form-group">
-                        <label class="col-md-2 control-label">Subject Full Name</label>
+                        <label class="col-md-2 control-label">Subject Name</label>
                         <div class="col-md-10 {{ $errors->has('sub_full_name') ? 'has-error' : '' }}">
-                            <input class="form-control" placeholder="Subject Full Name" type="text" name="sub_full_name" id="sub_full_name" value="{{ $subject_details['sub_full_name'] }}">
+                            <input class="form-control" placeholder="Subject Name" type="text" name="sub_full_name" id="sub_full_name" value="{{ $subject_details['sub_full_name'] }}">
                         </div>
                         @if ($errors->first('sub_full_name'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('sub_full_name') }}</span>@endif
                     </div>
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">Subject Short Name</label>
-                        <div class="col-md-10 {{ $errors->has('sub_short_name') ? 'has-error' : '' }}">
-                            <input class="form-control" name="sub_short_name" id="sub_short_name" placeholder="Subject Short Name" type="text" value="{{ $subject_details['sub_short_name'] }}">
-                        </div>
-                        @if ($errors->first('sub_short_name'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('sub_short_name') }}</span>@endif
-                    </div>
+                    
                     <div class="form-group">
                         <label class="col-md-2 control-label">Exam</label>
                         <div class="col-md-10 {{ $errors->has('exam_id') ? 'has-error' : '' }}">
                             <select name="exam_id[]" id="exam_id" class="form-control" multiple="">
-                                @foreach($fetch_all_course as $key=> $value )
-                                    <option value="{{ $value['id'] }}" @if(in_array($value['id'], $exam_ids_array)) selected="selected" @endif >{{ ucwords($value['name']).' ('.($value['code']).')' }}</option>
+                                @foreach($fetch_all_course as $key => $value )
+                                    <option value="{{ $value['id'] }}" @if(in_array($value['id'], $exam_ids_array)) selected="selected" @endif >{{ $value['name'] }}</option>
                                 @endforeach
                             </select>
                         </div>
                         @if ($errors->first('exam_id'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('exam_id') }}</span>@endif
                     </div>
+
                     <div class="form-group">
                         <label class="col-md-2 control-label">Subject Description</label>
                         <div class="col-md-10 {{ $errors->has('description') ? 'has-error' : '' }}">
                             <textarea rows="12" cols="200" id="description" name="description" placeholder="Write your message here..." class="editor form-control">
                                 {{$subject_details['sub_desc']}}
                             </textarea>
-
                         </div>
                         @if ($errors->first('description'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('description') }}</span>@endif
                     </div>
@@ -65,18 +59,18 @@
                         <label class="col-md-2 control-label">Tags</label>
                         <div class="col-md-10 {{ $errors->has('tags') ? 'has-error' : '' }}">
                             <select name="tags[]" id="tags" class="form-control" multiple>
-                                @foreach($all_tags as $key=>$value)
+                                @foreach($all_tags as $key => $value)
                                     <option value="{{ $value['id'] }}" @if(in_array($value['id'], $tags_array)) selected="selected" @endif>{{ $value['tag_name'] }}</option>
                                 @endforeach
                             </select>
                         </div>
-
                         @if ($errors->first('tags'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('tags') }}</span>@endif
                     </div>
+
                     <div class="form-group">
                         <div class="col-md-4 col-md-offset-2">
                             <button type="submit" class="btn btn-sm btn-primary">Submit</button>
-                            {{-- <button type="reset" class="btn btn-sm btn-default">Cancel</button> --}}
+                            <a href="/subject" class="btn btn-sm btn-default">Cancel</a>
                         </div>
                     </div>
                 </form>

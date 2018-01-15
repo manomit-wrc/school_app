@@ -71,14 +71,22 @@
                             </select>
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
-                        <label class="col-md-2 control-label">Video</label>
-                        <div class="col-md-10">
-                            <input type="file" name="video_files[]" id="video_files" class="form-control" onchange="handleVideos();" accept=".mp4" multiple />
-                            <span class="pull-left">Allowed file types .mp4 [User can upload multiple videos at a time or separately]</span>
+                        <label class="col-md-2 control-label">Videos Section</label>
+                        <div class="col-md-9" id="dynamic-div-video">
+                            <div class="div-border">
+                                <input type="text" name="video_name[]" id="video_name1" class="form-control video_name" placeholder="Video Name" /><br />
+                                <textarea name="video_desc[]" id="video_desc1" class="form-control video_desc" placeholder="Video Description"></textarea><br />
+                                <input type="file" name="video_files[]" id="video_file1" class="form-control video_file" accept=".mp4"  />
+                                <span class="pull-left">Allowed file types .mp4 [User can upload multiple videos by adding more]</span><br /><br />
+                                <input type="text" name="video_order[]" id="video_order1" class="video_order" placeholder="Video Order" />
+                            </div>
                         </div>
-                        <ul id="video_sortable" class="ui-sortable"></ul>
+                        <div class="col-md-1">
+                            <button class="btn btn-primary btn-sm add_div_video" title="Add more video section"><i class="fa fa-plus"></i></button>
+                            <button class="btn btn-danger btn-sm remove_div_video" style="visibility: hidden;" title="remove video section"><i class="fa fa-minus"></i></button>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -91,12 +99,20 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="col-md-2 control-label">Theory</label>
-                        <div class="col-md-10">
-                            <input type="file" name="doc_files[]" id="doc_files" class="form-control" onchange="handleDocs();" accept=".pdf" multiple />
-                            <span class="pull-left">Allowed file types .pdf [User can upload multiple documents (pdf) at a time or separately]</span>
+                        <label class="col-md-2 control-label">Theory Section</label>
+                        <div class="col-md-9" id="dynamic-div-theory">
+                            <div class="div-border">
+                                <input type="text" name="theory_name[]" id="theory_name1" class="form-control theory_name" placeholder="Theory Name" /><br />
+                                <textarea name="theory_desc[]" id="theory_desc1" class="form-control theory_desc" placeholder="Theory Description"></textarea><br />
+                                <input type="file" name="theory_files[]" id="theory_file1" class="form-control theory_file" accept=".pdf" />
+                                <span class="pull-left">Allowed file types .pdf [User can upload multiple documents (pdf) by adding more]</span><br /><br />
+                                <input type="text" name="theory_order[]" id="theory_order1" class="theory_order" placeholder="Theory Order" />
+                            </div>
                         </div>
-                        <ul id="doc_sortable" class="ui-sortable"></ul>
+                        <div class="col-md-1">
+                            <button class="btn btn-primary btn-sm add_div_theory" title="Add more theory section"><i class="fa fa-plus"></i></button>
+                            <button class="btn btn-danger btn-sm remove_div_theory" style="visibility: hidden;" title="remove theory section"><i class="fa fa-minus"></i></button>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -117,8 +133,9 @@
                         <label class="col-md-2 control-label">Sample Questions</label>
                         <div class="col-md-9" id="dynamic-div">
                             <div class="div-border">
-                                <textarea name="sample_ques[]" id="sample_ques1" class="form-control sample_ques" placeholder="Sample Question" /></textarea><br />
-                                <textarea name="sample_ans[]" id="sample_ans1" class="form-control sample_ans" placeholder="Sample Answer" /></textarea>
+                                <textarea name="sample_ques[]" id="sample_ques1" class="form-control sample_ques" placeholder="Sample Question"></textarea><br />
+                                <textarea name="sample_ans[]" id="sample_ans1" class="form-control sample_ans" placeholder="Sample Answer"></textarea><br />
+                                <input type="text" name="ques_order[]" id="ques_order1" class="ques_order" placeholder="Question Order" />
                             </div>
                         </div>
                         <div class="col-md-1">
@@ -130,7 +147,7 @@
                     <div class="form-group">
                         <div class="col-md-4 col-md-offset-2">
                             <button type="submit" id="study_mat_submit" class="btn btn-sm btn-primary">Submit</button>
-                            <button type="reset" class="btn btn-sm btn-default">Reset</button>
+                            <a href="/study_mat" class="btn btn-sm btn-default">Cancel</a>
                         </div>
                     </div>
                 </form>
@@ -162,8 +179,8 @@
         .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
             color: #333!important;
         }
-        #video_sortable, #pdf_sortable, #doc_sortable { width: 50%; float: left; margin-left: 18%; margin-top: 5px; padding: 0; }
-        #video_sortable li, #pdf_sortable li, #doc_sortable li { list-style: outside none none; padding: 5px 10px; cursor: move; }
+        #pdf_sortable { width: 50%; float: left; margin-left: 18%; margin-top: 5px; padding: 0; }
+        #pdf_sortable li { list-style: outside none none; padding: 5px 10px; cursor: move; }
         .div-border { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
         input[type="file"] { height: auto; }
     </style>
@@ -172,6 +189,7 @@
 
     <script type="text/javascript">
         var formdata = new FormData();
+        
         $(document).ready(function() {
             $("#exam").select2({
                 placeholder: 'Select Exams',
@@ -265,17 +283,9 @@
         }
 
         var video_files = [];
-        var inputElement = document.getElementById("video_files");
-        inputElement.addEventListener("change", handleVideos, false);
-        function handleVideos() {
-            var names = $.map(this.files, function(val) {
-                var stat = findPropertyWithValue(video_files, val.name);
-                if(!stat) {
-                    formdata.append('video_files[]', val);
-                    $('#video_sortable').append('<li class="ui-state-default li-video">'+val.name+'</li>');
-                }
-            });
-        }
+        $(document).on("change", ".video_file", function(e) {
+            formdata.append('video_files[]', this.files[0]);
+        });
 
         var pdf_files = [];
         var inputElement = document.getElementById("pdf_files");
@@ -283,7 +293,7 @@
         function handlePdfs() {
             var names = $.map(this.files, function(val) {
                 var stat = findPropertyWithValue(pdf_files, val.name);
-                if(!stat) {
+                if (!stat) {
                     formdata.append('pdf_files[]', val);
                     $('#pdf_sortable').append('<li class="ui-state-default li-pdf">'+val.name+'</li>');
                 }
@@ -291,17 +301,9 @@
         }
 
         var doc_files = [];
-        var inputElement = document.getElementById("doc_files");
-        inputElement.addEventListener("change", handleDocs, false);
-        function handleDocs() {
-            var names = $.map(this.files, function(val) {
-                var stat = findPropertyWithValue(doc_files, val.name);
-                if(!stat) {
-                    formdata.append('doc_files[]', val);
-                    $('#doc_sortable').append('<li class="ui-state-default li-doc">'+val.name+'</li>');
-                }
-            });
-        }
+        $(document).on("change", ".theory_file", function(e) {
+            formdata.append('doc_files[]', this.files[0]);
+        });
 
         $(document).ready(function() {
             $( "#video_sortable" ).sortable();
@@ -358,20 +360,41 @@
                     formdata.append('description', CKEDITOR.instances['description'].getData());
                     formdata.append('duration', $("#duration").val());
                     formdata.append('_token', '{{csrf_token()}}');
-                    $(".li-video").each(function(index) {
+                    /*$(".li-video").each(function(index) {
                         formdata.append('video_order[]', $(this).text());
-                    });
+                    });*/
                     $(".li-pdf").each(function(index) {
                         formdata.append('pdf_order[]', $(this).text());
                     });
-                    $(".li-doc").each(function(index) {
+                    /*$(".li-doc").each(function(index) {
                         formdata.append('doc_order[]', $(this).text());
-                    });
+                    });*/
                     $(".sample_ques").each(function(index) {
                         formdata.append('sample_questions[]', $(this).val());
                     });
                     $(".sample_ans").each(function(index) {
                         formdata.append('sample_answers[]', $(this).val());
+                    });
+                    $(".ques_order").each(function(index) {
+                        formdata.append('ques_order[]', $(this).val());
+                    });
+                    $(".video_name").each(function(index) {
+                        formdata.append('video_name[]', $(this).val());
+                    });
+                    $(".video_desc").each(function(index) {
+                        formdata.append('video_desc[]', $(this).val());
+                    });
+                    $(".video_order").each(function(index) {
+                        formdata.append('video_order[]', $(this).val());
+                    });
+                    $(".theory_name").each(function(index) {
+                        formdata.append('theory_name[]', $(this).val());
+                    });
+                    $(".theory_desc").each(function(index) {
+                        formdata.append('theory_desc[]', $(this).val());
+                    });
+                    $(".theory_order").each(function(index) {
+                        formdata.append('theory_order[]', $(this).val());
                     });
                     $.ajax({
                         type: "POST",
@@ -394,10 +417,12 @@
             });
 
             var iCnt = 1;
+            var iCntVdo = 1;
+            var iCntThry = 1;
 
             $('.add_div').on('click', function () {
                 iCnt = iCnt + 1;
-                $('#dynamic-div').append('<div id="div-'+iCnt+'" class="div-border"><textarea name="sample_ques[]" id="sample_ques'+iCnt+'" class="form-control sample_ques" placeholder="Sample Question" /></textarea><br /><textarea name="sample_ans[]" id="sample_ans'+iCnt+'" class="form-control sample_ans" placeholder="Sample Answer" /></textarea></div>');
+                $('#dynamic-div').append('<div id="div-'+iCnt+'" class="div-border"><textarea name="sample_ques[]" id="sample_ques'+iCnt+'" class="form-control sample_ques" placeholder="Sample Question"></textarea><br /><textarea name="sample_ans[]" id="sample_ans'+iCnt+'" class="form-control sample_ans" placeholder="Sample Answer"></textarea><br /><input type="text" name="ques_order[]" id="ques_order'+iCnt+'" class="ques_order" placeholder="Question Order" /></div>');
                 $('.remove_div').css('visibility', 'visible');
                 return false;
             });
@@ -408,6 +433,38 @@
                     iCnt = iCnt - 1;
                 }
                 if (iCnt == 1) $('.remove_div').css('visibility', 'hidden');
+                return false;
+            });
+
+            $('.add_div_video').on('click', function () {
+                iCntVdo = iCntVdo + 1;
+                $('#dynamic-div-video').append('<div id="video-'+iCntVdo+'" class="div-border"><input type="text" name="video_name[]" id="video_name'+iCntVdo+'" class="form-control video_name" placeholder="Video Name" /><br /><textarea name="video_desc[]" id="video_desc'+iCntVdo+'" class="form-control video_desc" placeholder="Video Description"></textarea><br /><input type="file" name="video_files[]" id="video_file'+iCntVdo+'" class="form-control video_file" accept=".mp4"  /><span class="pull-left">Allowed file types .mp4 [User can upload multiple videos by adding more]</span><br /><br /><input type="text" name="video_order[]" id="video_order'+iCntVdo+'" class="video_order" placeholder="Video Order" /></div>');
+                $('.remove_div_video').css('visibility', 'visible');
+                return false;
+            });
+            
+            $('.remove_div_video').on('click', function () {
+                if (iCntVdo != 1) {
+                    $('#video-'+iCntVdo).remove();
+                    iCntVdo = iCntVdo - 1;
+                }
+                if (iCntVdo == 1) $('.remove_div_video').css('visibility', 'hidden');
+                return false;
+            });
+
+            $('.add_div_theory').on('click', function () {
+                iCntThry = iCntThry + 1;
+                $('#dynamic-div-theory').append('<div id="theory-'+iCntThry+'" class="div-border"><input type="text" name="theory_name[]" id="theory_name'+iCntThry+'" class="form-control theory_name" placeholder="Theory Name" /><br /><textarea name="theory_desc[]" id="theory_desc'+iCntThry+'" class="form-control theory_desc" placeholder="Theory Description"></textarea><br /><input type="file" name="theory_files[]" id="theory_file'+iCntThry+'" class="form-control theory_file" accept=".pdf" onchange="handleDocs();" /><span class="pull-left">Allowed file types .pdf [User can upload multiple documents (pdf) by adding more]</span><br /><br /><input type="text" name="theory_order[]" id="theory_order'+iCntThry+'" class="theory_order" placeholder="Theory Order" /></div>');
+                $('.remove_div_theory').css('visibility', 'visible');
+                return false;
+            });
+            
+            $('.remove_div_theory').on('click', function () {
+                if (iCntThry != 1) {
+                    $('#theory-'+iCntThry).remove();
+                    iCntThry = iCntThry - 1;
+                }
+                if (iCntThry == 1) $('.remove_div_theory').css('visibility', 'hidden');
                 return false;
             });
         });

@@ -30,7 +30,7 @@
                         <label class="col-md-2 control-label">Subject</label>
                         <div class="col-md-10 {{ $errors->has('subject') ? 'has-error' : '' }}">
                             <select class="form-control" name="subject" id="subject">
-                                <option value="">Select Subject</option>
+                                <option value="0">Select Subject</option>
                                 @foreach($fetch_all_subject as $key => $value)
                                     <option value="{{ $key }}">{{ $value }}</option>
                                 @endforeach
@@ -43,7 +43,7 @@
                         <label class="col-md-2 control-label">Exam</label>
                         <div class="col-md-10 {{ $errors->has('exam') ? 'has-error' : '' }}">
                             <select class="form-control" name="exam[]" id="exam" multiple>
-                                <option value="">Select Exam</option>
+                                <option value="0">Select Exam</option>
                                 {{--@foreach($fetch_all_exam as $key => $value)
                                     <option value="{{ $key }}">{{ $value }}</option>
                                 @endforeach--}}
@@ -56,7 +56,7 @@
                         <label class="col-md-2 control-label">Area</label>
                         <div class="col-md-10 {{ $errors->has('area') ? 'has-error' : '' }}">
                             <select class="form-control" name="area" id="area">
-                                <option value="">Select Area</option>
+                                <option value="0">Select Area</option>
                             </select>
                         </div>
                         @if ($errors->first('area'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('area') }}</span>@endif
@@ -66,7 +66,7 @@
                         <label class="col-md-2 control-label">Section</label>
                         <div class="col-md-10 {{ $errors->has('section') ? 'has-error' : '' }}">
                             <select class="form-control" name="section" id="section">
-                                <option value="">Select Section</option>
+                                <option value="0">Select Section</option>
                             </select>
                         </div>
                     </div>
@@ -75,7 +75,7 @@
                         <label class="col-md-2 control-label">Level</label>
                         <div class="col-md-10 {{ $errors->has('level') ? 'has-error' : '' }}">
                             <select class="form-control" name="level" id="level">
-                                <option value="">Select Level</option>
+                                <option value="0">Select Level</option>
                                 <option value="1">Level 1</option>
                                 <option value="2">Level 2</option>
                                 <option value="3">Level 3</option>
@@ -306,7 +306,7 @@
                     <div class="form-group">
                         <div class="col-md-4 col-md-offset-2">
                             <button type="submit" class="btn btn-sm btn-primary">Submit</button>
-                            <button type="reset" class="btn btn-sm btn-default" id="reset_form">Reset</button>
+                            <a href="/question" class="btn btn-sm btn-default">Cancel</a>
                         </div>
                     </div>
                 </form>

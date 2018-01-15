@@ -39,7 +39,7 @@
                             <tr>
                                 <th>SL NO</th>
                                 <th>Subject Full Name</th>
-                                <th>Subject Short Name</th>
+                                <th>No. of Areas</th>
                                 <th>Exam Name</th>
                                 <th>Action</th>
                             </tr>
@@ -49,7 +49,7 @@
                                 <tr class="odd gradeX">
                                     <td>{{ ++$key }}</td>
                                     <td>{{ $value['sub_full_name'] }}</td>
-                                    <td>{{ $value['sub_short_name'] }}</td>
+                                    <td><a href="/subject/area/{{$value['id']}}">{{ $value['no_of_areas'] }}</td>
                                     <td>{{ $value['exam_names'] }}</td>
                                     <td>
                                         <a title="Edit" href="/subject/edit/{{$value['id']}}" class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i></a>

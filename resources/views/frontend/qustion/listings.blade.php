@@ -43,7 +43,7 @@
                                 <label class="col-md-2 control-label">Subject</label>
                                 <div class="col-md-10">
                                     <select class="form-control" name="subject" id="subject">
-                                        <option value="">Select Subject</option>
+                                        <option value="0">Select Subject</option>
                                         @foreach($fetch_all_subject as $key => $value)
                                             <option value="{{ $key }}" @if(isset($subject) && $key == $subject) selected="selected" @endif>{{ $value }}</option>
                                         @endforeach
@@ -55,7 +55,7 @@
                                 <label class="col-md-2 control-label">Exam</label>
                                 <div class="col-md-10">
                                     <select class="form-control" name="exam" id="exam">
-                                        <option value="">Select Exam</option>
+                                        <option value="0">Select Exam</option>
                                         @foreach($fetch_all_exam as $key => $value)
                                             <option value="{{ $key }}" @if(isset($exam) && $key == $exam) selected="selected" @endif>{{ $value }}</option>
                                         @endforeach
@@ -67,7 +67,7 @@
                                 <label class="col-md-2 control-label">Area</label>
                                 <div class="col-md-10">
                                     <select class="form-control" name="area" id="area">
-                                        <option value="">Select Area</option>
+                                        <option value="0">Select Area</option>
                                         @foreach($fetch_all_area as $key => $value)
                                             <option value="{{ $key }}" @if(isset($area) && $key == $area) selected="selected" @endif>{{ $value }}</option>
                                         @endforeach
@@ -79,7 +79,7 @@
                                 <label class="col-md-2 control-label">Section</label>
                                 <div class="col-md-10">
                                     <select class="form-control" name="section" id="section">
-                                        <option value="">Select Section</option>
+                                        <option value="0">Select Section</option>
                                         @foreach($fetch_all_section as $key => $value)
                                             <option value="{{ $key }}" @if(isset($section) && $key == $section) selected="selected" @endif>{{ $value }}</option>
                                         @endforeach
@@ -91,7 +91,7 @@
                                 <label class="col-md-2 control-label">Level</label>
                                 <div class="col-md-10">
                                     <select class="form-control" name="level" id="level">
-                                        <option value="">Select Level</option>
+                                        <option value="0">Select Level</option>
                                         <option value="1" @if(isset($level) && $level == 1) selected="selected" @endif>Level 1</option>
                                         <option value="2" @if(isset($level) && $level == 2) selected="selected" @endif>Level 2</option>
                                         <option value="3" @if(isset($level) && $level == 3) selected="selected" @endif>Level 3</option>

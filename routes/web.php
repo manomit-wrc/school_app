@@ -79,6 +79,8 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::get('/exam/edit/{id}','ExamController@edit');
 	Route::post('/exam/update/{id}', 'ExamController@update');
 	Route::get('/exam/delete/{id}','ExamController@delete');
+	Route::get('/exam_timer', 'ExamController@view_timer');
+	Route::post('/update_exam_timer', 'ExamController@update_exam_timer');
 
 	Route::get('/area','AreaController@index');
 	Route::get('/area/add','AreaController@add');
@@ -87,6 +89,9 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::get('/area/edit/{id}','AreaController@edit');
 	Route::post('/area/update/{id}','AreaController@update');
 	Route::get('/area/delete/{id}','AreaController@delete');
+	Route::post('/area/filter-submit', 'AreaController@filter_submit');
+	Route::post('/area/sort-order-update', 'AreaController@sort_order_update');
+	Route::get('/subject/area/{subject_id}','AreaController@listing');
 
 	Route::get('/area/section/{area_id}','SectionController@index');
 	Route::get('/area/section/{area_id}/add','SectionController@add');
@@ -116,9 +121,17 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::get('/study_mat/edit/{id}','StudyMatController@edit_study_mat_view');
 	Route::post('/study_mat/study-mat-update','StudyMatController@study_mat_update');
 	Route::get('/study_mat/delete/{id}','StudyMatController@study_mat_delete');
-	Route::get('/study_mat/del_video/{study_id}/{video_id}','StudyMatController@video_delete');
+	Route::get('/study_mat/del_video/{video_id}','StudyMatController@video_delete');
 	Route::get('/study_mat/del_pdf/{study_id}/{pdf_id}','StudyMatController@pdf_delete');
 	Route::get('/study_mat/del_doc/{study_id}/{doc_id}','StudyMatController@doc_delete');
+
+	Route::get('/exam_question', 'ExamQuestionController@index');
+	Route::match(array('GET', 'POST'), '/exam_question/add','ExamQuestionController@add_qustion_view');
+	Route::post('/exam_question/add-submit', 'ExamQuestionController@add_qustion_submit');
+	Route::get('/exam_question/edit/{question_id}', 'ExamQuestionController@edit');
+	Route::post('/exam_question/edit-submit/{question_id}', 'ExamQuestionController@edit_submit');
+	Route::get('/exam_question/delete/{question_id}', 'ExamQuestionController@delete');
+	Route::post('/exam_question/filter-submit', 'ExamQuestionController@filter_submit');
 
 	Route::get('/students-details','DashboardController@students_list');
 	// Route::get('/dashboard/student-delete/{student_id}', 'DashboardController@students_delete');
@@ -131,4 +144,10 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::post('/banner/edit_submit/{banner_id}','BannerController@edit_submit');
 	Route::get('/banner/delete/{banner_id}', 'BannerController@delete');
 
+	Route::get('/tips','TipsController@index');
+	Route::get('/tips/add','TipsController@add');
+	Route::post('/tips/add_submit','TipsController@add_submit');
+	Route::get('/tips/edit/{tips_id}','TipsController@edit');
+	Route::post('/tips/edit_submit/{tips_id}','TipsController@edit_submit');
+	Route::get('/tips/delete/{tips_id}', 'TipsController@delete');
 });

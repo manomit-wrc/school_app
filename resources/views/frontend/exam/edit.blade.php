@@ -47,43 +47,26 @@
                             <textarea rows="12" cols="200" id="description" name="description" placeholder="Write your message here..." class="editor form-control">
                                 {{ $exam->description }}
                             </textarea>
-
                         </div>
                         @if ($errors->first('description'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('description') }}</span>@endif
                     </div>
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">Start Date</label>
-                        <div class="input-group col-md-10 date {{ $errors->has('start_date') ? 'has-error' : '' }}" id="datepicker-disabled-past" data-date-format="dd-mm-yyyy" data-date-start-date="Date.default">
-                            <input type="text" name="start_date" id="start_date" class="form-control" placeholder="Select Date" value="{{Carbon\Carbon::parse($exam->start_date)->format('d-m-Y')}}">
-                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                        </div>
-                        @if ($errors->first('start_date'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('start_date') }}</span>@endif
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">End Date</label>
-                        <div class="input-group col-md-10 date {{ $errors->has('end_date') ? 'has-error' : '' }}" id="datepicker-disabled-past" data-date-format="dd-mm-yyyy" data-date-start-date="Date.default">
-                            <input type="text" name="end_date" id="end_date" class="form-control" placeholder="End Date" value="{{Carbon\Carbon::parse($exam->end_date)->format('d-m-Y')}}">
-                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                        </div>
-
-                        @if ($errors->first('end_date'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('end_date') }}</span>@endif
-                    </div>
+                    
                     <div class="form-group">
                         <label class="col-md-2 control-label">Tags</label>
                         <div class="col-md-10 {{ $errors->has('tags') ? 'has-error' : '' }}">
                             <select name="tags[]" id="tags" class="form-control" multiple>
-                                @foreach($all_tags as $key=>$value)
+                                @foreach($all_tags as $key => $value)
                                     <option value="{{ $value['id'] }}" @if(in_array($value['id'], $tags_array)) selected="selected" @endif>{{ $value['tag_name'] }}</option>
                                 @endforeach
                             </select>
                         </div>
-
                         @if ($errors->first('tags'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('tags') }}</span>@endif
                     </div>
+
                     <div class="form-group">
                         <div class="col-md-4 col-md-offset-2">
                             <button type="submit" class="btn btn-sm btn-primary">Submit</button>
-                            {{-- <button type="reset" class="btn btn-sm btn-default">Cancel</button> --}}
+                            <a href="/exam" class="btn btn-sm btn-default">Cancel</a>
                         </div>
                     </div>
                 </form>

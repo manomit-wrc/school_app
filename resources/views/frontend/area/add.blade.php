@@ -15,7 +15,6 @@
         <!-- end breadcrumb -->
         <!-- begin page-header -->
         
-
         <!-- end page-header -->
         <!-- begin profile-container -->
         <div class="profile-container">
@@ -37,21 +36,15 @@
                         </div>
                         @if ($errors->first('subject_id'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('subject_id') }}</span>@endif
                     </div>
+
                     <div class="form-group">
                         <label class="col-md-2 control-label">Exam</label>
                         <div class="col-md-10 {{ $errors->has('exam_id') ? 'has-error' : '' }}">
-                            <select name="exam_id" id="exam_id" class="form-control">
+                            <select name="exam_id[]" id="exam_id" class="form-control" multiple>
                                 <option value="">Select Exam</option>
                             </select>
                         </div>
                         @if ($errors->first('exam_id'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('exam_id') }}</span>@endif
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">Code</label>
-                        <div class="col-md-10 {{ $errors->has('code') ? 'has-error' : '' }}">
-                            <input class="form-control" placeholder="Area Code" type="text" name="code" id="code" value="{{ old('code') }}">
-                        </div>
-                        @if ($errors->first('code'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('code') }}</span>@endif
                     </div>
 
                     <div class="form-group">
@@ -65,17 +58,15 @@
                     <div class="form-group">
                         <label class="col-md-2 control-label">Description</label>
                         <div class="col-md-10 {{ $errors->has('description') ? 'has-error' : '' }}">
-                            <textarea rows="12" cols="200" id="description" name="description" placeholder="Write your message here..." class="editor form-control">
-                                {{ old('description') }}
-                            </textarea>
-
+                            <textarea id="description" name="description" placeholder="Write your message here..." class="editor form-control">{{ old('description') }}</textarea>
                         </div>
                         @if ($errors->first('description'))<span class="input-group col-md-offset-2 text-danger">{{ $errors->first('description') }}</span>@endif
                     </div>
+
                     <div class="form-group">
                         <div class="col-md-4 col-md-offset-2">
                             <button type="submit" class="btn btn-sm btn-primary">Submit</button>
-                            {{-- <button type="reset" class="btn btn-sm btn-default">Cancel</button> --}}
+                            <a href="/area" class="btn btn-sm btn-default">Cancel</a>
                         </div>
                     </div>
                 </form>
@@ -112,8 +103,8 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
-            $("#tags").select2({
-                placeholder: 'Select Tags',
+            $("#exam_id").select2({
+                placeholder: 'Select Exams',
             });
 
             $("#subject_id").change(function(e) {
