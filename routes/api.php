@@ -22,6 +22,7 @@ Route::post('/login', 'StudentController@login');
 Route::post('/forgot_password' , 'ProfileController@forgot_password');
 Route::post('/otp_verification','ProfileController@otp_verification');
 Route::post('/forgot_pw_verification', 'ProfileController@forgot_pw_verification');
+Route::get('/test-noti', 'StudentController@test_noti');
 
 Route::group(['middleware' => ['jwt.auth']], function () {
 	Route::post('/changepass', 'StudentController@changepass');

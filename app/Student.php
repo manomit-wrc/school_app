@@ -12,7 +12,7 @@ class Student extends Authenticatable
 	protected $table = 'students';
 
 	protected $fillable = [
-		'first_name','last_name','username','email','password','address','city','pincode','image','status'
+		'first_name','last_name','username','email','password','address','city','pincode','image','status','device_id'
 	];
 
 	public function exams(){

@@ -27,6 +27,11 @@ use App\StudentRatingLog;
 use App\ExamTimer;
 use App\SubjectExam;
 
+use LaravelFCM\Message\OptionsBuilder;
+use LaravelFCM\Message\PayloadDataBuilder;
+use LaravelFCM\Message\PayloadNotificationBuilder;
+use FCM;
+
 class ProfileController extends Controller
 {
     public function index(Request $request) {
@@ -385,6 +390,44 @@ class ProfileController extends Controller
             $add->exam_rating = $exam_rating;
             $add->save();
         }
+
+        $check_percentile = (int)$marks;
+
+        $user_push_stat_list = \App\UserPushStat::with('stats')->where([['section_id', '=', $request->section_id],['level', '=', $level],['student_id', '=', $user_id]]);
+
+        if($check_percentile < 60) {
+            $user_push_stat = new \App\UserPushStat();
+            $user_push_stat->section_id = $request->section_id;
+            $user_push_stat->student_id = $user_id;
+            $user_push_stat->marks_obtained = $marks;
+            $user_push_stat->level = $level;
+            $user_push_stat->save();
+        }
+        else {
+            $user_push_stat_list->delete();
+        }
+
+        
+
+        if($user_push_stat_list->get()->count() > 2) {
+            $user_push_details = $user_push_stat_list->get();
+            $section_name = $user_push_details[0]['stats']->name;
+
+            $notificationBuilder = new PayloadNotificationBuilder('Fail Alert');
+            $notificationBuilder->setBody('Please study '.$section_name)
+                                ->setSound('default');
+
+            $notification = $notificationBuilder->build();
+
+            $token = $user['device_id'];
+
+            $downstreamResponse = FCM::sendTo($token, null, $notification, null);
+        }
+        else {
+            $section_name = '';
+        }
+
+       
 
         return response()->json(['status_code' => 200, 'total_no_of_question' => $total_no_of_question, 'total_correct_answer' => $total_correct_answer, 'marks' => $marks]);
     }

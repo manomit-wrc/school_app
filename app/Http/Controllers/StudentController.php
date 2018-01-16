@@ -33,6 +33,11 @@ use App\StudyMatVideo;
 use App\StudyMatTheory;
 use App\Tips;
 
+use LaravelFCM\Message\OptionsBuilder;
+use LaravelFCM\Message\PayloadDataBuilder;
+use LaravelFCM\Message\PayloadNotificationBuilder;
+use FCM;
+
 class StudentController extends Controller
 {
     public function registration(Request $request) {
@@ -56,6 +61,7 @@ class StudentController extends Controller
         	$student->mobile_no = $request->mobile_no;
             $student->city = $request->city;
             $student->country = $request->country;
+            $student->device_id = $request->device_id;
             $eaxm_name = trim($request->exam_id);
             $fetch_exam_id = Exam::where('code','like',"%".$eaxm_name."%")->get()->toArray();
             $exam_id = $fetch_exam_id[0]['id'];
@@ -98,15 +104,19 @@ class StudentController extends Controller
         if ($user->status == 0) {
             return response()->json(['msg' => 'Account not activated.', 'status_code' => 404]);
         } else {
+            $user_device_update = Student::find($user['id']);
+            $user_device_update->device_id = $request->device_id;
+            $user_device_update->save();
+
             return response()->json([
                 'msg' => 'Successfully login',
                 'status_code' => 200,
                 'token' => $token,
-                'first_name' => ucfirst($user->first_name),
-                'last_name' => ucfirst($user->last_name),
+                'first_name' => ucfirst($user['first_name']),
+                'last_name' => ucfirst($user['last_name']),
                 'image' => $image,
-                'exam_id' => $user->exam_id,
-                'rating' => $user->current_rating
+                'exam_id' => $user['exam_id'],
+                'rating' => $user['rating']
             ]);
         }
     }
@@ -493,5 +503,23 @@ class StudentController extends Controller
         } else {
             return response()->json(['msg' => 'Error.', 'status_code' => 500]);
         }
+    }
+
+    public function test_noti(Request $request) {
+        
+
+        $notificationBuilder = new PayloadNotificationBuilder('my title');
+        $notificationBuilder->setBody('Hello world')
+                            ->setSound('default');
+
+        $notification = $notificationBuilder->build();
+
+        $token = "e1qY7inm-D4:APA91bGvohOlwceEBZN3C3J81IQhYMLFHrMv3or2-XfPFBK5ErhTCRajF7i9FWTNTJofZ-zdVAQeDQ3axswJDF2ji0E2-71GMMhzbjlAJrjcfJ5mBLjNzrboieUpLlSq4NJLZup4gYyE";
+
+        $downstreamResponse = FCM::sendTo($token, null, $notification, null);
+
+        
+
+        return response()->json(['success' => $downstreamResponse->numberSuccess(), 'fail' => $downstreamResponse->numberFailure(), 'modify' => $downstreamResponse->numberModification()]);
     }
 }
